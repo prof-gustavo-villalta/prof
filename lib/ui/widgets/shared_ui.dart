@@ -152,6 +152,124 @@ class StatBadge extends StatelessWidget {
   }
 }
 
+enum LessonDisplayStatus { current, next, pending, open, closed, scheduled }
+
+({String label, Color color}) resolveLessonStatus(LessonDisplayStatus status) {
+  return switch (status) {
+    LessonDisplayStatus.current => (label: 'Atual', color: const Color(0xFFEF4444)),
+    LessonDisplayStatus.next => (label: 'Próxima', color: const Color(0xFF2563EB)),
+    LessonDisplayStatus.pending => (label: 'Pendente', color: const Color(0xFFEF4444)),
+    LessonDisplayStatus.open => (label: 'Aberta', color: const Color(0xFF2563EB)),
+    LessonDisplayStatus.closed => (label: 'Fechada', color: const Color(0xFF10B981)),
+    LessonDisplayStatus.scheduled => (label: 'Agendada', color: const Color(0xFF64748B)),
+  };
+}
+
+class LessonInfoRow extends StatelessWidget {
+  const LessonInfoRow({
+    super.key,
+    required this.statusLabel,
+    required this.statusColor,
+    required this.title,
+    required this.time,
+  });
+
+  final String statusLabel;
+  final Color statusColor;
+  final String title;
+  final String time;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 20,
+          child: Text(
+            statusLabel.toUpperCase(),
+            style: TextStyle(
+              color: statusColor,
+              fontWeight: FontWeight.w900,
+              fontSize: 13,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 50,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 30,
+          child: Text(
+            time,
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+typedef AttendanceStatusStyle = ({
+  Color accentColor,
+  Color borderColor,
+  String label,
+});
+
+AttendanceStatusStyle resolveAttendanceStatusStyle(AttendanceStatus status) {
+  return switch (status) {
+    AttendanceStatus.present => (
+        accentColor: const Color(0xFF10B981),
+        borderColor: const Color(0xFF10B981).withOpacity(0.4),
+        label: 'Presente',
+      ),
+    AttendanceStatus.absent => (
+        accentColor: const Color(0xFFEF4444),
+        borderColor: const Color(0xFFEF4444).withOpacity(0.4),
+        label: 'Ausente',
+      ),
+    AttendanceStatus.late => (
+        accentColor: const Color(0xFFF59E0B),
+        borderColor: const Color(0xFFF59E0B).withOpacity(0.4),
+        label: 'Atrasado',
+      ),
+    AttendanceStatus.justified => (
+        accentColor: const Color(0xFF3B82F6),
+        borderColor: const Color(0xFF3B82F6).withOpacity(0.4),
+        label: 'Justificado',
+      ),
+  };
+}
+
+bool matchesAttendanceFilter(AttendanceStatus status, String filter) {
+  return switch (filter) {
+    'Todos' => true,
+    'Presentes' => status == AttendanceStatus.present,
+    'Ausentes' => status == AttendanceStatus.absent,
+    'Atrasos' => status == AttendanceStatus.late,
+    'Justificados' => status == AttendanceStatus.justified,
+    _ => true,
+  };
+}
+
 String lessonTime(LessonOccurrence lesson) {
   return '${clock(lesson.weeklyClass.startMinutes)} - ${clock(lesson.weeklyClass.endMinutes)}';
 }
@@ -213,27 +331,39 @@ class AppSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurface,
-        fontWeight: FontWeight.w600,
-      ),
-      decoration: InputDecoration(
-        prefixIcon: Icon(
-          Icons.search_rounded,
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-        ),
-        hintText: hintText,
-        hintStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-          fontWeight: FontWeight.w600,
-        ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        border: const Border(
+          top: BorderSide(color: Color(0xFF0F172A), width: 2.0),
+          bottom: BorderSide(color: Color(0xFF0F172A), width: 2.0),
         ),
       ),
-      onChanged: onChanged,
+      child: TextField(
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontWeight: FontWeight.w800,
+          fontSize: 18,
+        ),
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+          ),
+          hintText: hintText,
+          hintStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            fontWeight: FontWeight.w800,
+            fontSize: 18,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 18,
+          ),
+          border: InputBorder.none,
+        ),
+        onChanged: onChanged,
+      ),
     );
   }
 }
@@ -244,57 +374,64 @@ class AppFilterRow extends StatelessWidget {
     required this.filters,
     required this.selectedFilter,
     required this.onSelected,
+    this.filterColors,
   });
 
   final List<String> filters;
   final String selectedFilter;
   final ValueChanged<String> onSelected;
+  final Map<String, Color>? filterColors;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          for (final filter in filters)
-            Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: AnimatedTapScale(
-                onTap: () => onSelected(filter),
-                child: ChoiceChip(
-                  label: Text(filter),
-                  selected: selectedFilter == filter,
-                  onSelected: (_) => onSelected(filter),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                    side: BorderSide(
-                      color: selectedFilter == filter
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context).colorScheme.outlineVariant,
-                      width: 1.5,
+    return Row(
+      children: [
+        for (final entry in filters.indexed)
+          Expanded(
+            child: AnimatedTapScale(
+              onTap: () => onSelected(entry.$2),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: selectedFilter == entry.$2
+                      ? _colorFor(context, entry.$2)
+                      : Theme.of(context).colorScheme.surface,
+                  border: Border(
+                    top: BorderSide(
+                      color: selectedFilter == entry.$2
+                          ? _colorFor(context, entry.$2)
+                          : const Color(0xFF0F172A),
+                      width: 2.0,
+                    ),
+                    bottom: BorderSide(
+                      color: selectedFilter == entry.$2
+                          ? _colorFor(context, entry.$2)
+                          : const Color(0xFF0F172A),
+                      width: 2.0,
                     ),
                   ),
-                  backgroundColor: Theme.of(context).colorScheme.surface,
-                  selectedColor: Theme.of(context).colorScheme.primary,
-                  labelStyle: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    color: selectedFilter == filter
+                ),
+                child: Text(
+                  entry.$2.toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                    color: selectedFilter == entry.$2
                         ? Colors.white
                         : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                    fontSize: 13,
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  showCheckmark: false,
-                  elevation: 0,
                 ),
               ),
             ),
-        ],
-      ),
+          ),
+      ],
     );
+  }
+
+  Color _colorFor(BuildContext context, String filter) {
+    return filterColors?[filter] ?? Theme.of(context).colorScheme.primary;
   }
 }
 

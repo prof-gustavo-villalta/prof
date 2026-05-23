@@ -50,12 +50,12 @@ void main() {
 
     expect(find.text('Ana Silva'), findsOneWidget);
     expect(find.text('Bruno Costa'), findsOneWidget);
-    expect(find.text('Ausente'), findsWidgets);
+    expect(find.text('AUSENTE'), findsWidgets);
 
     await tester.tap(find.byKey(const ValueKey('student_Ana Silva')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Presente'), findsOneWidget);
+    expect(find.text('PRESENTE'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('close_attendance')));
     await tester.pumpAndSettle();
@@ -72,8 +72,8 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('closed_attendance_0')));
     await tester.pumpAndSettle();
-    expect(find.text('Reabrir'), findsOneWidget);
-    await tester.tap(find.text('Reabrir'));
+    expect(find.text('Reabrir chamada'), findsOneWidget);
+    await tester.tap(find.text('Reabrir chamada'));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('close_attendance')), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('close_attendance')));

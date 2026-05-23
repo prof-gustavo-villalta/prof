@@ -12,91 +12,138 @@ class TodayScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final current = controller.currentLesson();
-    final next = current ?? controller.nextLesson();
-    final pending = controller.pendingLessons();
-    final pendingTake10 = pending.take(10).toList();
-    final todays = controller.todaysLessons();
-    final weekdayLabelStr = weekdayLabel(DateTime.now().weekday);
-    
-    return ListView(
-      padding: const EdgeInsets.symmetric(vertical: 24),
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text(
-            weekdayLabelStr,
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-        ),
-        const SizedBox(height: 20),
-        if (next == null)
-          const EmptyCard(text: 'Nenhuma aula encontrada na Grade Semanal.', noSideBorders: true)
-        else
-          LessonHeroCard(
-            controller: controller,
-            lesson: next,
-            isCurrent: current != null,
-          ),
-        const SizedBox(height: 28),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text('Aulas do dia', style: Theme.of(context).textTheme.headlineMedium),
-        ),
-        const SizedBox(height: 12),
-        for (final entry in todays.indexed)
-          AnimatedTapScale(
-            onTap: () async {
-              final attendance = await controller.startAttendance(entry.$2);
-              if (!context.mounted) return;
-              await Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => AttendanceScreen(
-                    controller: controller,
-                    lesson: entry.$2,
-                    attendanceId: attendance.id,
-                  ),
-                ),
-              );
-            },
-            child: LessonTile(
-              controller: controller,
-              lesson: entry.$2,
-              isLast: entry.$1 == todays.length - 1,
-            ),
-          ),
-        const SizedBox(height: 28),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Text('Pendentes', style: Theme.of(context).textTheme.headlineMedium),
-        ),
-        const SizedBox(height: 12),
-        if (pending.isEmpty)
-          const EmptyCard(text: 'Nenhuma chamada pendente.', noSideBorders: true)
-        else
-          for (final entry in pendingTake10.indexed)
-            AnimatedTapScale(
-              onTap: () async {
-                final attendance = await controller.startAttendance(entry.$2);
-                if (!context.mounted) return;
-                await Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => AttendanceScreen(
-                      controller: controller,
-                      lesson: entry.$2,
-                      attendanceId: attendance.id,
-                    ),
-                  ),
-                );
-              },
-              child: LessonTile(
-                controller: controller,
-                lesson: entry.$2,
-                pending: true,
-                isLast: entry.$1 == pendingTake10.length - 1,
+    return ListenableBuilder(
+      listenable: controller,
+      builder: (context, _) {
+        final current = controller.currentLesson();
+        final next = current ?? controller.nextLesson();
+        final pending = controller.pendingLessons();
+        final pendingTake10 = pending.take(10).toList();
+        final todays = controller.todaysLessons();
+        final weekdayLabelStr = weekdayLabel(DateTime.now().weekday);
+
+        return ListView(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                weekdayLabelStr,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
-      ],
+            const SizedBox(height: 20),
+            if (next == null)
+              const EmptyCard(
+                text: 'Nenhuma aula encontrada na Grade Semanal.',
+                noSideBorders: true,
+              )
+            else
+              LessonHeroCard(
+                controller: controller,
+                lesson: next,
+                isCurrent: current != null,
+              ),
+            const SizedBox(height: 28),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Aulas do dia',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+            const SizedBox(height: 12),
+            for (final entry in todays.indexed)
+              AnimatedTapScale(
+                onTap: () => _openAttendance(context, entry.$2),
+                child: LessonTile(
+                  controller: controller,
+                  lesson: entry.$2,
+                  isLast: entry.$1 == todays.length - 1,
+                ),
+              ),
+            const SizedBox(height: 28),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Pendentes',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (pending.isEmpty)
+              const EmptyCard(
+                text: 'Nenhuma chamada pendente.',
+                noSideBorders: true,
+              )
+            else
+              for (final entry in pendingTake10.indexed)
+                AnimatedTapScale(
+                  onTap: () => _openAttendance(context, entry.$2),
+                  child: LessonTile(
+                    controller: controller,
+                    lesson: entry.$2,
+                    pending: true,
+                    isLast: entry.$1 == pendingTake10.length - 1,
+                  ),
+                ),
+            if (pending.length > 10)
+              _MorePendingIndicator(count: pending.length - 10),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _openAttendance(BuildContext context, LessonOccurrence lesson) async {
+    final attendance = await controller.startAttendance(lesson);
+    if (!context.mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => AttendanceScreen(
+          controller: controller,
+          lesson: lesson,
+          attendanceId: attendance.id,
+        ),
+      ),
+    );
+  }
+}
+
+class _MorePendingIndicator extends StatelessWidget {
+  const _MorePendingIndicator({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        border: const Border(
+          top: BorderSide(color: Color(0xFF0F172A), width: 2.0),
+          bottom: BorderSide(color: Color(0xFF0F172A), width: 2.0),
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      child: Row(
+        children: [
+          Icon(
+            Icons.more_horiz_rounded,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            size: 20,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Mais $count pendente${count == 1 ? '' : 's'}',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -117,29 +164,24 @@ class LessonHeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final group = controller.classGroup(lesson.weeklyClass.classGroupId);
     final discipline = controller.discipline(lesson.weeklyClass.disciplineId);
-    final accentColor = isCurrent ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary;
+    final accentColor = isCurrent
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.secondary;
 
     final attendance = controller.attendanceFor(lesson.id);
-    final String statusLabel;
-    final Color statusColor;
-
+    final LessonDisplayStatus displayStatus;
     if (isCurrent) {
       if (attendance != null) {
-        if (attendance.isClosed) {
-          statusLabel = 'Fechada';
-          statusColor = const Color(0xFF10B981);
-        } else {
-          statusLabel = 'Aberta';
-          statusColor = const Color(0xFF2563EB);
-        }
+        displayStatus = attendance.isClosed
+            ? LessonDisplayStatus.closed
+            : LessonDisplayStatus.open;
       } else {
-        statusLabel = 'Atual';
-        statusColor = const Color(0xFFEF4444);
+        displayStatus = LessonDisplayStatus.current;
       }
     } else {
-      statusLabel = 'Próxima';
-      statusColor = const Color(0xFF2563EB);
+      displayStatus = LessonDisplayStatus.next;
     }
+    final status = resolveLessonStatus(displayStatus);
 
     return Container(
       decoration: BoxDecoration(
@@ -153,52 +195,11 @@ class LessonHeroCard extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Row(
-              children: [
-                // 1. Status (20%)
-                Expanded(
-                  flex: 20,
-                  child: Text(
-                    statusLabel.toUpperCase(),
-                    style: TextStyle(
-                      color: statusColor,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 13,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-                // 2. Titulo principal (50%)
-                Expanded(
-                  flex: 50,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Text(
-                      '${group.name} - ${discipline.name}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 15,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-                // 3. Horario (30%)
-                Expanded(
-                  flex: 30,
-                  child: Text(
-                    lessonTime(lesson),
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
+            child: LessonInfoRow(
+              statusLabel: status.label,
+              statusColor: status.color,
+              title: '${group.name} - ${discipline.name}',
+              time: lessonTime(lesson),
             ),
           ),
           SizedBox(
@@ -211,21 +212,9 @@ class LessonHeroCard extends StatelessWidget {
                   child: AppButton(
                     key: const ValueKey('start_attendance'),
                     text: 'Iniciar chamada',
-                    color: const Color(0xFF1E40AF), // Azul escuro
+                    color: const Color(0xFF1E40AF),
                     height: 66,
-                    onPressed: () async {
-                      final attendance = await controller.startAttendance(lesson);
-                      if (!context.mounted) return;
-                      await Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => AttendanceScreen(
-                            controller: controller,
-                            lesson: lesson,
-                            attendanceId: attendance.id,
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () => _openAttendance(context, lesson),
                   ),
                 ),
                 Expanded(
@@ -242,6 +231,20 @@ class LessonHeroCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _openAttendance(BuildContext context, LessonOccurrence lesson) async {
+    final attendance = await controller.startAttendance(lesson);
+    if (!context.mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => AttendanceScreen(
+          controller: controller,
+          lesson: lesson,
+          attendanceId: attendance.id,
+        ),
       ),
     );
   }
@@ -267,24 +270,17 @@ class LessonTile extends StatelessWidget {
     final discipline = controller.discipline(lesson.weeklyClass.disciplineId);
 
     final attendance = controller.attendanceFor(lesson.id);
-    final String statusLabel;
-    final Color statusColor;
-
+    final LessonDisplayStatus displayStatus;
     if (pending) {
-      statusLabel = 'Pendente';
-      statusColor = const Color(0xFFEF4444);
+      displayStatus = LessonDisplayStatus.pending;
     } else if (attendance != null) {
-      if (attendance.isClosed) {
-        statusLabel = 'Fechada';
-        statusColor = const Color(0xFF10B981);
-      } else {
-        statusLabel = 'Aberta';
-        statusColor = const Color(0xFF2563EB);
-      }
+      displayStatus = attendance.isClosed
+          ? LessonDisplayStatus.closed
+          : LessonDisplayStatus.open;
     } else {
-      statusLabel = 'Agendada';
-      statusColor = const Color(0xFF64748B);
+      displayStatus = LessonDisplayStatus.scheduled;
     }
+    final status = resolveLessonStatus(displayStatus);
 
     return Container(
       decoration: BoxDecoration(
@@ -297,52 +293,11 @@ class LessonTile extends StatelessWidget {
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      child: Row(
-        children: [
-          // 1. Status (20%)
-          Expanded(
-            flex: 20,
-            child: Text(
-              statusLabel.toUpperCase(),
-              style: TextStyle(
-                color: statusColor,
-                fontWeight: FontWeight.w900,
-                fontSize: 13,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-          // 2. Titulo principal (50%)
-          Expanded(
-            flex: 50,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: Text(
-                '${group.name} - ${discipline.name}',
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ),
-          // 3. Horario (30%)
-          Expanded(
-            flex: 30,
-            child: Text(
-              lessonTime(lesson),
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
+      child: LessonInfoRow(
+        statusLabel: status.label,
+        statusColor: status.color,
+        title: '${group.name} - ${discipline.name}',
+        time: lessonTime(lesson),
       ),
     );
   }
