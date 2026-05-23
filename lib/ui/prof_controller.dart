@@ -1,23 +1,29 @@
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../data/prof_repository.dart';
 import '../domain/models.dart';
+import '../domain/lesson_resolver.dart';
+import '../domain/attendance_reporter.dart';
 
 class ProfController extends ChangeNotifier {
-  ProfController({required ProfRepository repository, DateTime? now})
-    : _repository = repository,
-      _nowOverride = now;
+  ProfController({
+    required ProfRepository repository,
+    DateTime? now,
+    LessonOccurrenceResolver lessonResolver = const LessonOccurrenceResolver(),
+    AttendanceReporter attendanceReporter = const AttendanceReporter(),
+  })  : _repository = repository,
+        _nowOverride = now,
+        _lessonResolver = lessonResolver,
+        _attendanceReporter = attendanceReporter;
 
   final ProfRepository _repository;
   final DateTime? _nowOverride;
+  final LessonOccurrenceResolver _lessonResolver;
+  final AttendanceReporter _attendanceReporter;
   ProfData _data = const ProfData();
   bool _isLoaded = false;
   int _selectedIndex = 0;
-  String _statusFilter = 'Todos';
-  String _studentQuery = '';
+  int _idSequence = 0;
 
   ProfData get data => _data;
 
@@ -25,14 +31,17 @@ class ProfController extends ChangeNotifier {
 
   int get selectedIndex => _selectedIndex;
 
-  String get statusFilter => _statusFilter;
-
-  String get studentQuery => _studentQuery;
-
   DateTime get now => _nowOverride ?? DateTime.now();
 
   Future<void> load() async {
-    _data = await _repository.load();
+    final loaded = await _repository.load();
+    final hasDuplicateStudentIds = _hasDuplicateStudentIds(loaded);
+    _data = hasDuplicateStudentIds
+        ? _repairDuplicateStudentIds(loaded)
+        : loaded;
+    if (hasDuplicateStudentIds) {
+      await _repository.save(_data);
+    }
     _isLoaded = true;
     notifyListeners();
   }
@@ -245,92 +254,13 @@ class ProfController extends ChangeNotifier {
 
   Term term(String id) => _data.terms.firstWhere((item) => item.id == id);
 
-  LessonOccurrence? currentLesson() {
-    for (final weeklyClass in _data.weeklyClasses) {
-      final occurrence = LessonOccurrence(weeklyClass: weeklyClass, date: now);
-      if (weeklyClass.weekday == now.weekday &&
-          !_isCancelled(occurrence.id) &&
-          !now.isBefore(occurrence.start) &&
-          now.isBefore(occurrence.end) &&
-          _withinTerm(occurrence)) {
-        return occurrence;
-      }
-    }
-    return null;
-  }
+  LessonOccurrence? currentLesson() => _lessonResolver.currentLesson(_data, now);
 
-  LessonOccurrence? nextLesson() {
-    LessonOccurrence? next;
-    for (var offset = 0; offset < 21; offset += 1) {
-      final date = DateTime(
-        now.year,
-        now.month,
-        now.day,
-      ).add(Duration(days: offset));
-      for (final weeklyClass in _data.weeklyClasses) {
-        if (weeklyClass.weekday != date.weekday) {
-          continue;
-        }
-        final occurrence = LessonOccurrence(
-          weeklyClass: weeklyClass,
-          date: date,
-        );
-        if (_isCancelled(occurrence.id) || !_withinTerm(occurrence)) {
-          continue;
-        }
-        if (!occurrence.end.isAfter(now)) {
-          continue;
-        }
-        if (next == null || occurrence.start.isBefore(next.start)) {
-          next = occurrence;
-        }
-      }
-      if (next != null && offset == 0) {
-        return next;
-      }
-    }
-    return next;
-  }
+  LessonOccurrence? nextLesson() => _lessonResolver.nextLesson(_data, now);
 
-  List<LessonOccurrence> todaysLessons() {
-    final lessons =
-        _data.weeklyClasses
-            .where((weeklyClass) => weeklyClass.weekday == now.weekday)
-            .map(
-              (weeklyClass) =>
-                  LessonOccurrence(weeklyClass: weeklyClass, date: now),
-            )
-            .where((lesson) => !_isCancelled(lesson.id) && _withinTerm(lesson))
-            .toList()
-          ..sort((a, b) => a.start.compareTo(b.start));
-    return lessons;
-  }
+  List<LessonOccurrence> todaysLessons() => _lessonResolver.todaysLessons(_data, now);
 
-  List<LessonOccurrence> pendingLessons() {
-    final pending = <LessonOccurrence>[];
-    final today = DateTime(now.year, now.month, now.day);
-    for (var offset = 1; offset <= 21; offset += 1) {
-      final date = today.subtract(Duration(days: offset));
-      for (final weeklyClass in _data.weeklyClasses) {
-        if (weeklyClass.weekday != date.weekday) {
-          continue;
-        }
-        final occurrence = LessonOccurrence(
-          weeklyClass: weeklyClass,
-          date: date,
-        );
-        if (_isCancelled(occurrence.id) || !_withinTerm(occurrence)) {
-          continue;
-        }
-        final attendance = attendanceFor(occurrence.id);
-        if (attendance == null || !attendance.isClosed) {
-          pending.add(occurrence);
-        }
-      }
-    }
-    pending.sort((a, b) => b.start.compareTo(a.start));
-    return pending;
-  }
+  List<LessonOccurrence> pendingLessons() => _lessonResolver.pendingLessons(_data, now);
 
   Attendance? attendanceFor(String lessonId) {
     for (final attendance in _data.attendances) {
@@ -368,17 +298,20 @@ class ProfController extends ChangeNotifier {
     String studentId,
     AttendanceStatus status,
   ) async {
-    final updated = attendance.copyWith(
-      statusByStudentId: {...attendance.statusByStudentId, studentId: status},
+    final current = _currentAttendance(attendance);
+    final updated = current.copyWith(
+      statusByStudentId: {...current.statusByStudentId, studentId: status},
     );
     await _replaceAttendance(updated);
   }
 
   Future<void> togglePresence(Attendance attendance, String studentId) async {
+    final currentAttendance = _currentAttendance(attendance);
     final current =
-        attendance.statusByStudentId[studentId] ?? AttendanceStatus.absent;
+        currentAttendance.statusByStudentId[studentId] ??
+        AttendanceStatus.absent;
     await markStudent(
-      attendance,
+      currentAttendance,
       studentId,
       current == AttendanceStatus.present
           ? AttendanceStatus.absent
@@ -395,7 +328,7 @@ class ProfController extends ChangeNotifier {
   }
 
   Future<void> cancelLesson(LessonOccurrence lesson) async {
-    if (_isCancelled(lesson.id)) {
+    if (_lessonResolver.isCancelled(_data, lesson.id)) {
       return;
     }
     _data = _data.copyWith(
@@ -407,47 +340,7 @@ class ProfController extends ChangeNotifier {
     await _persist();
   }
 
-  void setStatusFilter(String value) {
-    _statusFilter = value;
-    notifyListeners();
-  }
 
-  void setStudentQuery(String value) {
-    _studentQuery = value;
-    notifyListeners();
-  }
-
-  List<Student> visibleAttendanceStudents(Attendance attendance) {
-    final weeklyClass = _data.weeklyClasses.firstWhere(
-      (item) => item.id == attendance.weeklyClassId,
-    );
-    return studentsForClass(weeklyClass.classGroupId).where((student) {
-      final matchesQuery = student.name.toLowerCase().contains(
-        _studentQuery.trim().toLowerCase(),
-      );
-      final status =
-          attendance.statusByStudentId[student.id] ?? AttendanceStatus.absent;
-      final matchesFilter =
-          _statusFilter == 'Todos' ||
-          (_statusFilter == 'Presentes' &&
-              status == AttendanceStatus.present) ||
-          (_statusFilter == 'Ausentes' && status == AttendanceStatus.absent) ||
-          (_statusFilter == 'Atrasos' && status == AttendanceStatus.late) ||
-          (_statusFilter == 'Justificados' &&
-              status == AttendanceStatus.justified);
-      return matchesQuery && matchesFilter;
-    }).toList();
-  }
-
-  Future<void> pickStudentPhoto(Student student, ImageSource source) async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: source, maxWidth: 1024);
-    if (image == null) {
-      return;
-    }
-    final bytes = await image.readAsBytes();
-    await saveStudentPhotoBase64(student, base64Encode(bytes));
-  }
 
   Future<void> saveStudentPhotoBase64(
     Student student,
@@ -463,89 +356,24 @@ class ProfController extends ChangeNotifier {
     await _persist();
   }
 
-  List<AttendanceSummary> summaries() {
-    final result = <AttendanceSummary>[];
-    final closed = _data.attendances.where((attendance) => attendance.isClosed);
-    for (final student in _data.students) {
-      for (final weeklyClass in _data.weeklyClasses.where(
-        (item) => item.classGroupId == student.classGroupId,
-      )) {
-        final attendances = closed
-            .where((item) => item.weeklyClassId == weeklyClass.id)
-            .toList();
-        if (attendances.isEmpty) {
-          continue;
-        }
-        var present = 0;
-        var late = 0;
-        var absent = 0;
-        var justified = 0;
-        for (final attendance in attendances) {
-          switch (attendance.statusByStudentId[student.id] ??
-              AttendanceStatus.absent) {
-            case AttendanceStatus.present:
-              present += 1;
-              break;
-            case AttendanceStatus.late:
-              late += 1;
-              break;
-            case AttendanceStatus.absent:
-              absent += 1;
-              break;
-            case AttendanceStatus.justified:
-              justified += 1;
-              break;
-          }
-        }
-        result.add(
-          AttendanceSummary(
-            student: student,
-            classGroup: classGroup(weeklyClass.classGroupId),
-            discipline: discipline(weeklyClass.disciplineId),
-            term: term(classGroup(weeklyClass.classGroupId).termId),
-            calledLessons: attendances.length,
-            present: present,
-            late: late,
-            absent: absent,
-            justified: justified,
-          ),
-        );
-      }
-    }
-    result.sort((a, b) => a.student.name.compareTo(b.student.name));
-    return result;
-  }
+  List<AttendanceSummary> summaries({
+    String? classGroupId,
+    String? disciplineId,
+  }) => _attendanceReporter.summaries(
+        _data,
+        classGroupId: classGroupId,
+        disciplineId: disciplineId,
+      );
 
-  String csvExport() {
-    final rows = [
-      [
-        'Aluno',
-        'Turma',
-        'Disciplina',
-        'Periodo letivo',
-        'Aulas chamadas',
-        'Presencas',
-        'Atrasos',
-        'Ausencias',
-        'Justificativas',
-        'Percentual de presenca',
-      ],
-      for (final summary in summaries())
-        [
-          summary.student.name,
-          summary.classGroup.name,
-          summary.discipline.name,
-          summary.term.name,
-          '${summary.calledLessons}',
-          '${summary.present}',
-          '${summary.late}',
-          '${summary.absent}',
-          '${summary.justified}',
-          '${summary.presencePercent}%',
-        ],
-    ];
-    return rows.map((row) => row.map(_csvCell).join(',')).join('\n');
-  }
+  String csvExport({String? classGroupId, String? disciplineId}) =>
+      _attendanceReporter.csvExport(
+        _data,
+        classGroupId: classGroupId,
+        disciplineId: disciplineId,
+      );
+
+  List<ClosedAttendanceView> closedAttendanceViews() =>
+      _attendanceReporter.closedAttendanceViews(_data);
 
   Future<void> loadDemoData() async {
     if (_data.hasMinimumSetup) {
@@ -557,6 +385,7 @@ class ProfController extends ChangeNotifier {
       disciplina: 'PAM2',
       alunos: 'Ana Silva\nBruno Costa\nCarla Rocha\nDiego Lima',
     );
+    await saveStudentPhotoBase64(_data.students.first, demoStudentPhotoBase64);
     await addDiscipline('WEB2');
     await addWeeklyClass(
       classGroupId: _data.classGroups.first.id,
@@ -577,64 +406,28 @@ class ProfController extends ChangeNotifier {
     await _persist();
   }
 
+  Attendance _currentAttendance(Attendance attendance) {
+    for (final item in _data.attendances) {
+      if (item.id == attendance.id) {
+        return item;
+      }
+    }
+    return attendance;
+  }
+
   Future<void> _persist() async {
     await _repository.save(_data);
     notifyListeners();
   }
 
-  bool _isCancelled(String lessonId) =>
-      _data.cancelledLessons.any((item) => item.lessonId == lessonId);
 
-  bool _withinTerm(LessonOccurrence lesson) {
-    final group = classGroup(lesson.weeklyClass.classGroupId);
-    final currentTerm = term(group.termId);
-    final day = DateTime(lesson.date.year, lesson.date.month, lesson.date.day);
-    final start = currentTerm.startDate;
-    final end = currentTerm.endDate;
-    if (start != null &&
-        day.isBefore(DateTime(start.year, start.month, start.day))) {
-      return false;
-    }
-    if (end != null && day.isAfter(DateTime(end.year, end.month, end.day))) {
-      return false;
-    }
-    return true;
-  }
 
   String _id(String prefix) =>
-      '$prefix-${DateTime.now().microsecondsSinceEpoch}-${_data.hashCode}';
+      '$prefix-${DateTime.now().microsecondsSinceEpoch}-${_idSequence++}';
 }
 
-class AttendanceSummary {
-  const AttendanceSummary({
-    required this.student,
-    required this.classGroup,
-    required this.discipline,
-    required this.term,
-    required this.calledLessons,
-    required this.present,
-    required this.late,
-    required this.absent,
-    required this.justified,
-  });
-
-  final Student student;
-  final ClassGroup classGroup;
-  final Discipline discipline;
-  final Term term;
-  final int calledLessons;
-  final int present;
-  final int late;
-  final int absent;
-  final int justified;
-
-  int get presencePercent {
-    if (calledLessons == 0) {
-      return 0;
-    }
-    return (((present + late) / calledLessons) * 100).round();
-  }
-}
+const demoStudentPhotoBase64 =
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADElEQVR4nGNgYPgPAAEDAQC3FWqWAAAAAElFTkSuQmCC';
 
 List<String> _parseStudentNames(String names) {
   return names
@@ -646,9 +439,63 @@ List<String> _parseStudentNames(String names) {
     ..sort();
 }
 
-String _csvCell(String value) {
-  if (!value.contains(',') && !value.contains('"') && !value.contains('\n')) {
-    return value;
+bool _hasDuplicateStudentIds(ProfData data) {
+  final seen = <String>{};
+  for (final student in data.students) {
+    if (!seen.add(student.id)) {
+      return true;
+    }
   }
-  return '"${value.replaceAll('"', '""')}"';
+  return false;
+}
+
+ProfData _repairDuplicateStudentIds(ProfData data) {
+  var sequence = 0;
+  final usedIds = <String>{};
+  final duplicateIds = <String, List<String>>{};
+  final repairedStudents = <Student>[];
+
+  String nextStudentId() {
+    String id;
+    do {
+      id =
+          'aluno-repaired-${DateTime.now().microsecondsSinceEpoch}-${sequence++}';
+    } while (usedIds.contains(id));
+    usedIds.add(id);
+    return id;
+  }
+
+  for (final student in data.students) {
+    if (usedIds.add(student.id)) {
+      repairedStudents.add(student);
+      continue;
+    }
+
+    final repairedId = nextStudentId();
+    duplicateIds.putIfAbsent(student.id, () => []).add(repairedId);
+    repairedStudents.add(
+      Student(
+        id: repairedId,
+        classGroupId: student.classGroupId,
+        name: student.name,
+        photoBase64: student.photoBase64,
+      ),
+    );
+  }
+
+  final repairedAttendances = [
+    for (final attendance in data.attendances)
+      attendance.copyWith(
+        statusByStudentId: {
+          ...attendance.statusByStudentId,
+          for (final ids in duplicateIds.values)
+            for (final id in ids) id: AttendanceStatus.absent,
+        },
+      ),
+  ];
+
+  return data.copyWith(
+    students: repairedStudents,
+    attendances: repairedAttendances,
+  );
 }

@@ -360,3 +360,48 @@ String _dateKey(DateTime date) {
   final day = date.day.toString().padLeft(2, '0');
   return '${date.year}-$month-$day';
 }
+
+class AttendanceSummary {
+  const AttendanceSummary({
+    required this.student,
+    required this.classGroup,
+    required this.discipline,
+    required this.term,
+    required this.calledLessons,
+    required this.present,
+    required this.late,
+    required this.absent,
+    required this.justified,
+  });
+
+  final Student student;
+  final ClassGroup classGroup;
+  final Discipline discipline;
+  final Term term;
+  final int calledLessons;
+  final int present;
+  final int late;
+  final int absent;
+  final int justified;
+
+  int get presencePercent {
+    if (calledLessons == 0) {
+      return 0;
+    }
+    return (((present + late) / calledLessons) * 100).round();
+  }
+}
+
+class ClosedAttendanceView {
+  const ClosedAttendanceView({
+    required this.attendance,
+    required this.weeklyClass,
+    required this.classGroup,
+    required this.discipline,
+  });
+
+  final Attendance attendance;
+  final WeeklyClass weeklyClass;
+  final ClassGroup classGroup;
+  final Discipline discipline;
+}

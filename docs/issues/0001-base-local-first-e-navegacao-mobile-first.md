@@ -6,12 +6,12 @@ Construir a base do app pessoal do **Professor** para Web e Android, sem login, 
 
 ## Acceptance criteria
 
-- [ ] O app abre em Web e Android com a navegacao principal: Hoje, Turmas, Historico e Ajustes.
-- [ ] O app nao exige login, senha ou PIN.
-- [ ] Existe uma camada de persistencia local pronta para armazenar dados do MVP.
-- [ ] A interface usa portugues do Brasil e os termos canonicos do dominio.
-- [ ] A tela inicial nao mostra mais o contador padrao do Flutter.
-- [ ] Ha teste ou verificacao automatizada cobrindo o bootstrap basico do app.
+- [x] O app abre em Web e Android com a navegacao principal: Hoje, Turmas, Historico e Ajustes.
+- [x] O app nao exige login, senha ou PIN.
+- [x] Existe uma camada de persistencia local pronta para armazenar dados do MVP.
+- [x] A interface usa portugues do Brasil e os termos canonicos do dominio.
+- [x] A tela inicial nao mostra mais o contador padrao do Flutter.
+- [x] Ha teste ou verificacao automatizada cobrindo o bootstrap basico do app.
 
 ## Blocked by
 

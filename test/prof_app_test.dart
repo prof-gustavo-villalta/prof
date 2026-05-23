@@ -67,12 +67,25 @@ void main() {
     expect(find.text('100%'), findsOneWidget);
     expect(find.text('Bruno Costa'), findsOneWidget);
     expect(find.text('0%'), findsOneWidget);
+    expect(find.text('Chamadas fechadas'), findsOneWidget);
+    expect(find.textContaining('DS3 - PAM2'), findsWidgets);
+
+    await tester.tap(find.byKey(const ValueKey('closed_attendance_0')));
+    await tester.pumpAndSettle();
+    expect(find.text('Reabrir'), findsOneWidget);
+    await tester.tap(find.text('Reabrir'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('close_attendance')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('close_attendance')));
+    await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(
       find.byKey(const ValueKey('copy_csv')),
-      300,
+      120,
       scrollable: find.byType(Scrollable).first,
     );
+    await tester.ensureVisible(find.byKey(const ValueKey('copy_csv')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('copy_csv')));
     await tester.pump(const Duration(milliseconds: 750));
     expect(find.text('CSV pronto para copiar'), findsOneWidget);

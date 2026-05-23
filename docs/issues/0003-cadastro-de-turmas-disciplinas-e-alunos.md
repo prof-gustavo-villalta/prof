@@ -6,13 +6,13 @@ Implementar o cadastro principal de **Turmas**, **Disciplinas** e **Alunos** for
 
 ## Acceptance criteria
 
-- [ ] O Professor consegue criar, editar e visualizar Turmas com Periodo letivo.
-- [ ] O Periodo letivo aceita texto livre e datas inicial/final opcionais.
-- [ ] O Professor consegue criar e reutilizar Disciplinas em mais de uma Turma.
-- [ ] O Professor consegue cadastrar Alunos individualmente em uma Turma.
-- [ ] O Professor consegue colar uma lista de nomes e criar varios Alunos sem foto.
-- [ ] Alunos da Turma aparecem alfabeticamente por nome.
-- [ ] O MVP nao oferece fluxo de transferencia/remocao depois que chamadas comecam.
+- [x] O Professor consegue criar, editar e visualizar Turmas com Periodo letivo.
+- [x] O Periodo letivo aceita texto livre e datas inicial/final opcionais.
+- [x] O Professor consegue criar e reutilizar Disciplinas em mais de uma Turma.
+- [x] O Professor consegue cadastrar Alunos individualmente em uma Turma.
+- [x] O Professor consegue colar uma lista de nomes e criar varios Alunos sem foto.
+- [x] Alunos da Turma aparecem alfabeticamente por nome.
+- [x] O MVP nao oferece fluxo de transferencia/remocao depois que chamadas comecam.
 
 ## Blocked by
 

@@ -6,13 +6,13 @@ Implementar o tratamento de **Chamadas pendentes**, **Aula cancelada** e **Corre
 
 ## Acceptance criteria
 
-- [ ] Aula passada nao cancelada e sem Chamada fechada aparece em Pendentes na tela Hoje.
-- [ ] Chamada pendente pode ser aberta e fechada pelo Professor.
-- [ ] O Professor consegue cancelar uma ocorrencia especifica de Aula sem alterar a Grade Semanal.
-- [ ] Aula cancelada nao aparece como pendencia e nao gera Ausencia.
-- [ ] Aula cancelada e ignorada no Historico de chamada.
-- [ ] Chamada fechada pode ser reaberta, editada e fechada novamente.
-- [ ] Reabrir uma Chamada nao cria outra Chamada para a mesma Aula.
+- [x] Aula passada nao cancelada e sem Chamada fechada aparece em Pendentes na tela Hoje.
+- [x] Chamada pendente pode ser aberta e fechada pelo Professor.
+- [x] O Professor consegue cancelar uma ocorrencia especifica de Aula sem alterar a Grade Semanal.
+- [x] Aula cancelada nao aparece como pendencia e nao gera Ausencia.
+- [x] Aula cancelada e ignorada no Historico de chamada.
+- [x] Chamada fechada pode ser reaberta, editada e fechada novamente.
+- [x] Reabrir uma Chamada nao cria outra Chamada para a mesma Aula.
 
 ## Blocked by
 

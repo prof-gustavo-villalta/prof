@@ -1,0 +1,525 @@
+import 'package:flutter/material.dart';
+import '../../domain/models.dart';
+import 'animated_tap_scale.dart';
+
+class SectionCard extends StatelessWidget {
+  const SectionCard({super.key, required this.title, required this.children});
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.2,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+            ),
+            const SizedBox(height: 14),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class Field extends StatelessWidget {
+  const Field({super.key, required this.label, required this.controller, this.keyName});
+
+  final String label;
+  final TextEditingController controller;
+  final String? keyName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        key: keyName == null ? null : ValueKey<String>(keyName!),
+        controller: controller,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w600),
+        decoration: InputDecoration(
+          labelText: label,
+        ),
+      ),
+    );
+  }
+}
+
+class EmptyCard extends StatelessWidget {
+  const EmptyCard({super.key, required this.text, this.noSideBorders = false});
+
+  final String text;
+  final bool noSideBorders;
+
+  @override
+  Widget build(BuildContext context) {
+    final content = Padding(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          Icon(
+            Icons.info_outline_rounded,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            size: 22,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (noSideBorders) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardTheme.color,
+          border: const Border(
+            top: BorderSide(color: Color(0xFF0F172A), width: 2.0),
+            bottom: BorderSide(color: Color(0xFF0F172A), width: 2.0),
+          ),
+        ),
+        child: content,
+      );
+    }
+
+    return Card(child: content);
+  }
+}
+
+class StatBadge extends StatelessWidget {
+  const StatBadge({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final int value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.zero,
+        border: Border.all(color: color.withOpacity(0.25), width: 1.5),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            color: color,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            '$label $value',
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String lessonTime(LessonOccurrence lesson) {
+  return '${clock(lesson.weeklyClass.startMinutes)} - ${clock(lesson.weeklyClass.endMinutes)}';
+}
+
+String clock(int minutes) {
+  final hour = (minutes ~/ 60).toString().padLeft(2, '0');
+  final minute = (minutes % 60).toString().padLeft(2, '0');
+  return '$hour:$minute';
+}
+
+int parseClock(String value) {
+  final parts = value.split(':');
+  if (parts.length != 2) {
+    return 0;
+  }
+  final hour = int.tryParse(parts[0]) ?? 0;
+  final minute = int.tryParse(parts[1]) ?? 0;
+  return (hour.clamp(0, 23) * 60 + minute.clamp(0, 59)).toInt();
+}
+
+String weekdayLabel(int weekday) {
+  return switch (weekday) {
+    1 => 'Segunda',
+    2 => 'Terça',
+    3 => 'Quarta',
+    4 => 'Quinta',
+    5 => 'Sexta',
+    6 => 'Sábado',
+    _ => 'Domingo',
+  };
+}
+
+DateTime? parseDate(String value) {
+  final trimmed = value.trim();
+  if (trimmed.isEmpty) {
+    return null;
+  }
+  return DateTime.tryParse(trimmed);
+}
+
+String dateText(DateTime? date) {
+  if (date == null) {
+    return '';
+  }
+  final month = date.month.toString().padLeft(2, '0');
+  final day = date.day.toString().padLeft(2, '0');
+  return '${date.year}-$month-$day';
+}
+
+class AppSearchBar extends StatelessWidget {
+  const AppSearchBar({
+    super.key,
+    required this.hintText,
+    required this.onChanged,
+  });
+
+  final String hintText;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
+        fontWeight: FontWeight.w600,
+      ),
+      decoration: InputDecoration(
+        prefixIcon: Icon(
+          Icons.search_rounded,
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+        ),
+        hintText: hintText,
+        hintStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+          fontWeight: FontWeight.w600,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
+      ),
+      onChanged: onChanged,
+    );
+  }
+}
+
+class AppFilterRow extends StatelessWidget {
+  const AppFilterRow({
+    super.key,
+    required this.filters,
+    required this.selectedFilter,
+    required this.onSelected,
+  });
+
+  final List<String> filters;
+  final String selectedFilter;
+  final ValueChanged<String> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (final filter in filters)
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: AnimatedTapScale(
+                onTap: () => onSelected(filter),
+                child: ChoiceChip(
+                  label: Text(filter),
+                  selected: selectedFilter == filter,
+                  onSelected: (_) => onSelected(filter),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                    side: BorderSide(
+                      color: selectedFilter == filter
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.outlineVariant,
+                      width: 1.5,
+                    ),
+                  ),
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                  selectedColor: Theme.of(context).colorScheme.primary,
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    color: selectedFilter == filter
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    fontSize: 13,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  showCheckmark: false,
+                  elevation: 0,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class AppButton extends StatelessWidget {
+  const AppButton({
+    super.key,
+    required this.text,
+    this.onPressed,
+    this.color,
+    this.height = 54.0,
+    this.fontSize,
+    this.icon,
+  });
+
+  final String text;
+  final VoidCallback? onPressed;
+  final Color? color;
+  final double height;
+  final double? fontSize;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final baseColor = color ?? Theme.of(context).colorScheme.primary;
+    final effectiveColor = onPressed == null ? baseColor.withOpacity(0.4) : baseColor;
+    
+    // Gradiente sutil que escurece a cor base para dar o tom plano e mais escuro
+    final gradient = LinearGradient(
+      colors: [
+        Color.alphaBlend(Colors.black.withOpacity(0.08), effectiveColor),
+        Color.alphaBlend(Colors.black.withOpacity(0.24), effectiveColor),
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+
+    final effectiveFontSize = fontSize ?? (height >= 60 ? 18.0 : 15.0);
+
+    return AnimatedTapScale(
+      onTap: onPressed,
+      child: Container(
+        height: height,
+        decoration: BoxDecoration(
+          gradient: gradient,
+          borderRadius: BorderRadius.zero,
+        ),
+        child: Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: icon == null
+              ? Text(
+                  text,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: effectiveFontSize,
+                    letterSpacing: 0.5,
+                  ),
+                )
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(icon, color: Colors.white, size: 20),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        text,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: effectiveFontSize,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class HoldToConfirmButton extends StatefulWidget {
+  const HoldToConfirmButton({
+    super.key,
+    required this.text,
+    required this.onConfirmed,
+    required this.baseColor,
+    required this.fillColor,
+    this.height = 54.0,
+    this.duration = const Duration(milliseconds: 1500),
+  });
+
+  final String text;
+  final VoidCallback onConfirmed;
+  final Color baseColor;
+  final Color fillColor;
+  final double height;
+  final Duration duration;
+
+  @override
+  State<HoldToConfirmButton> createState() => _HoldToConfirmButtonState();
+}
+
+class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  bool _isHolding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    );
+
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        widget.onConfirmed();
+        _controller.reset();
+        setState(() {
+          _isHolding = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _startHolding() {
+    setState(() {
+      _isHolding = true;
+    });
+    _controller.forward();
+  }
+
+  void _stopHolding() {
+    setState(() {
+      _isHolding = false;
+    });
+    if (_controller.status != AnimationStatus.completed) {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final baseGradient = LinearGradient(
+      colors: [
+        Color.alphaBlend(Colors.black.withOpacity(0.08), widget.baseColor),
+        Color.alphaBlend(Colors.black.withOpacity(0.24), widget.baseColor),
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+
+    final fillGradient = LinearGradient(
+      colors: [
+        Color.alphaBlend(Colors.black.withOpacity(0.08), widget.fillColor),
+        Color.alphaBlend(Colors.black.withOpacity(0.24), widget.fillColor),
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
+
+    return GestureDetector(
+      onTapDown: (_) => _startHolding(),
+      onTapUp: (_) => _stopHolding(),
+      onTapCancel: () => _stopHolding(),
+      child: AnimatedScale(
+        scale: _isHolding ? 0.97 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        child: Container(
+          height: widget.height,
+          decoration: BoxDecoration(
+            gradient: baseGradient,
+            borderRadius: BorderRadius.zero,
+          ),
+          child: Stack(
+            children: [
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Align(
+                    alignment: Alignment.centerRight,
+                    child: FractionallySizedBox(
+                      widthFactor: _controller.value,
+                      heightFactor: 1.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: fillGradient,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    widget.text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: widget.height >= 60 ? 18.0 : 15.0,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

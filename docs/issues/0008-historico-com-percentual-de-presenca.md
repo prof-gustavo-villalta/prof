@@ -6,15 +6,15 @@ Implementar o **Historico de chamada** a partir de **Chamadas fechadas**, com co
 
 ## Acceptance criteria
 
-- [ ] Apenas Chamadas fechadas entram no Historico de chamada.
-- [ ] Chamadas pendentes nao entram no Historico ate serem fechadas.
-- [ ] Aulas canceladas nao entram no Historico.
-- [ ] O Historico pode ser consultado por Aula.
-- [ ] O Historico pode ser consultado por Aluno.
-- [ ] O Historico pode ser consultado por Turma e Disciplina.
-- [ ] O Historico mostra totais de Presencas, Atrasos, Ausencias e Justificativas.
-- [ ] O Percentual de presenca conta Presenca e Atraso como comparecimento.
-- [ ] Justificativa aparece separada e nao conta como Presenca.
+- [x] Apenas Chamadas fechadas entram no Historico de chamada.
+- [x] Chamadas pendentes nao entram no Historico ate serem fechadas.
+- [x] Aulas canceladas nao entram no Historico.
+- [x] O Historico pode ser consultado por Aula.
+- [x] O Historico pode ser consultado por Aluno.
+- [x] O Historico pode ser consultado por Turma e Disciplina.
+- [x] O Historico mostra totais de Presencas, Atrasos, Ausencias e Justificativas.
+- [x] O Percentual de presenca conta Presenca e Atraso como comparecimento.
+- [x] Justificativa aparece separada e nao conta como Presenca.
 
 ## Blocked by
 

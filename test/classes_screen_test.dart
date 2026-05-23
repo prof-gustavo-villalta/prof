@@ -65,8 +65,8 @@ void main() {
         'WEB2',
       );
       await tester.testTextInput.receiveAction(TextInputAction.done);
-      await tester.pump();
       await tester.ensureVisible(find.byKey(const ValueKey('add_discipline')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('add_discipline')));
       await tester.pumpAndSettle();
 
@@ -83,6 +83,39 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('DS3 Noite - WEB2'), findsOneWidget);
+
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, 600));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('edit_schedule_WEB2')).last);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('edit_schedule_start')),
+        '21:00',
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('edit_schedule_end')),
+        '22:00',
+      );
+      await tester.tap(find.byKey(const ValueKey('save_schedule')));
+      await tester.pumpAndSettle();
+
+      expect(find.text('21:00 - 22:00'), findsOneWidget);
+
+      // Agora vamos editar novamente e remover o horário usando o HoldToConfirmButton
+      await tester.tap(find.byKey(const ValueKey('edit_schedule_WEB2')).last);
+      await tester.pumpAndSettle();
+
+      final deleteButton = find.byKey(const ValueKey('delete_schedule'));
+      expect(deleteButton, findsOneWidget);
+
+      // Inicia o gesto de pressionar e segura
+      final gesture = await tester.startGesture(tester.getCenter(deleteButton));
+      await tester.pumpAndSettle();
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      // O horário deve ter sido removido e o texto não deve mais aparecer na tela
+      expect(find.textContaining('DS3 Noite - WEB2'), findsNothing);
     },
   );
 }

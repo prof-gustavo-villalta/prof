@@ -6,12 +6,12 @@ Adicionar dados demo apenas para desenvolvimento e testes, com **Turma** DS3, **
 
 ## Acceptance criteria
 
-- [ ] Existe uma forma clara de carregar dados demo em ambiente de desenvolvimento.
-- [ ] Os dados demo incluem Turma DS3.
-- [ ] Os dados demo incluem Disciplinas PAM2 e WEB2 associadas a DS3.
-- [ ] Os dados demo incluem itens da Grade Semanal suficientes para testar Aula atual e Proxima aula.
-- [ ] Os dados demo incluem Alunos com foto e sem foto.
-- [ ] Os dados demo nao sao exigidos nem carregados automaticamente para o usuario final do MVP.
+- [x] Existe uma forma clara de carregar dados demo em ambiente de desenvolvimento.
+- [x] Os dados demo incluem Turma DS3.
+- [x] Os dados demo incluem Disciplinas PAM2 e WEB2 associadas a DS3.
+- [x] Os dados demo incluem itens da Grade Semanal suficientes para testar Aula atual e Proxima aula.
+- [x] Os dados demo incluem Alunos com foto e sem foto.
+- [x] Os dados demo nao sao exigidos nem carregados automaticamente para o usuario final do MVP.
 
 ## Blocked by
 

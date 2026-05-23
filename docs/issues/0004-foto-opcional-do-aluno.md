@@ -6,12 +6,12 @@ Adicionar suporte a **Foto do aluno** como dado opcional do cadastro de **Aluno*
 
 ## Acceptance criteria
 
-- [ ] O Aluno pode ser salvo sem foto.
-- [ ] Aluno sem foto aparece com iniciais em telas de cadastro e chamada.
-- [ ] No Android, o app permite escolher foto por camera ou galeria.
-- [ ] Na Web, o app permite obter foto por camera ou upload.
-- [ ] A foto fica persistida localmente junto aos dados do Aluno.
-- [ ] O fluxo tem tratamento visual para erro/cancelamento de captura ou selecao.
+- [x] O Aluno pode ser salvo sem foto.
+- [x] Aluno sem foto aparece com iniciais em telas de cadastro e chamada.
+- [x] No Android, o app permite escolher foto por camera ou galeria.
+- [x] Na Web, o app permite obter foto por camera ou upload.
+- [x] A foto fica persistida localmente junto aos dados do Aluno.
+- [x] O fluxo tem tratamento visual para erro/cancelamento de captura ou selecao.
 
 ## Blocked by
 

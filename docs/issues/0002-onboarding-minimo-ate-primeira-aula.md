@@ -6,12 +6,12 @@ Criar o fluxo inicial para quando o app ainda nao tem dados. O onboarding deve g
 
 ## Acceptance criteria
 
-- [ ] Quando nao ha dados, o app abre no onboarding em vez da tela Hoje vazia.
-- [ ] O Professor consegue criar uma Turma com Periodo letivo.
-- [ ] O Professor consegue criar uma Disciplina e associa-la a Turma.
-- [ ] O Professor consegue cadastrar Alunos durante o onboarding.
-- [ ] O Professor consegue criar um item da Grade Semanal com dia, inicio, fim, Turma e Disciplina.
-- [ ] Ao concluir o onboarding, o app navega para Hoje e nao repete o fluxo enquanto houver dados minimos.
+- [x] Quando nao ha dados, o app abre no onboarding em vez da tela Hoje vazia.
+- [x] O Professor consegue criar uma Turma com Periodo letivo.
+- [x] O Professor consegue criar uma Disciplina e associa-la a Turma.
+- [x] O Professor consegue cadastrar Alunos durante o onboarding.
+- [x] O Professor consegue criar um item da Grade Semanal com dia, inicio, fim, Turma e Disciplina.
+- [x] Ao concluir o onboarding, o app navega para Hoje e nao repete o fluxo enquanto houver dados minimos.
 
 ## Blocked by
 

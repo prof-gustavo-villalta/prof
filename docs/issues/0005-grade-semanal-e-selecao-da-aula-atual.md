@@ -6,13 +6,13 @@ Implementar a **Grade Semanal** e a selecao automatica da **Aula atual** ou **Pr
 
 ## Acceptance criteria
 
-- [ ] O Professor consegue criar, editar e remover itens da Grade Semanal.
-- [ ] Cada item da Grade Semanal exige dia da semana, inicio, fim, Turma e Disciplina.
-- [ ] Ao abrir Hoje durante um horario cadastrado, o app mostra a Aula atual em destaque.
-- [ ] Fora do horario de aula, Hoje mostra a Proxima aula, preferindo outra aula do mesmo dia.
-- [ ] A Proxima aula pode ter Chamada iniciada manualmente antes do horario.
-- [ ] Se o Periodo letivo tiver datas inicial/final, aulas fora desse intervalo nao aparecem como atuais/proximas.
-- [ ] Nao existe calendario visual mensal/semanal no MVP.
+- [x] O Professor consegue criar, editar e remover itens da Grade Semanal.
+- [x] Cada item da Grade Semanal exige dia da semana, inicio, fim, Turma e Disciplina.
+- [x] Ao abrir Hoje durante um horario cadastrado, o app mostra a Aula atual em destaque.
+- [x] Fora do horario de aula, Hoje mostra a Proxima aula, preferindo outra aula do mesmo dia.
+- [x] A Proxima aula pode ter Chamada iniciada manualmente antes do horario.
+- [x] Se o Periodo letivo tiver datas inicial/final, aulas fora desse intervalo nao aparecem como atuais/proximas.
+- [x] Nao existe calendario visual mensal/semanal no MVP.
 
 ## Blocked by
 

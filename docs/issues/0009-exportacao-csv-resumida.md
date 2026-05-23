@@ -6,13 +6,13 @@ Implementar **Exportacao de chamada** em CSV a partir do **Historico de chamada*
 
 ## Acceptance criteria
 
-- [ ] O Professor consegue exportar CSV a partir do Historico de uma Turma e Disciplina.
-- [ ] O CSV contem as colunas definidas no escopo do MVP.
-- [ ] Cada linha representa um Aluno.
-- [ ] Aulas chamadas considera apenas Chamadas fechadas.
-- [ ] Atrasos, Ausencias e Justificativas aparecem em colunas separadas.
-- [ ] Percentual de presenca usa a mesma regra do Historico.
-- [ ] Exportacao detalhada por data nao aparece no MVP.
+- [x] O Professor consegue exportar CSV a partir do Historico de uma Turma e Disciplina.
+- [x] O CSV contem as colunas definidas no escopo do MVP.
+- [x] Cada linha representa um Aluno.
+- [x] Aulas chamadas considera apenas Chamadas fechadas.
+- [x] Atrasos, Ausencias e Justificativas aparecem em colunas separadas.
+- [x] Percentual de presenca usa a mesma regra do Historico.
+- [x] Exportacao detalhada por data nao aparece no MVP.
 
 ## Blocked by
 
