@@ -220,3 +220,10 @@ _Avoid_: Abono, falta justificada
 - "curso" foi usado para PAM2 e WEB2, mas neste contexto o termo canonico e **Disciplina**; DS3 e a **Turma**.
 - "sem marcacao" foi rejeitado como estado de dominio; a **Chamada** comeca em **Ausencia**.
 - "idade" foi removida do cadastro de **Aluno**; o app deve usar nome e foto.
+
+## UI & Layout Guidelines
+
+1. **Responsabilidade unica**: Cada tela tem uma unica responsabilidade.
+2. **Navegacao linear**: Nunca usar pop-ups ou modais, sempre usar telas inteiras para interacoes e dialogos.
+3. **Estrutura base**: As telas devem ser definidas em termos de layout de coluna unica, com linhas que ocupem a largura toda da tela.
+4. **Sub-elementos**: Os sub-elementos podem se organizar dentro do layout usando quebras como 20%/50%/30% ou 2/3 + 1/3.

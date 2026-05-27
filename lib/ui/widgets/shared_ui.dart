@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
+import '../design_system/app_colors.dart';
 import 'animated_tap_scale.dart';
 
 class SectionCard extends StatelessWidget {
@@ -58,6 +59,38 @@ class Field extends StatelessWidget {
   }
 }
 
+class MultilineField extends StatelessWidget {
+  const MultilineField({
+    super.key,
+    required this.label,
+    required this.controller,
+    this.minLines = 3,
+    this.maxLines = 6,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final int minLines;
+  final int maxLines;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      minLines: minLines,
+      maxLines: maxLines,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
+        fontWeight: FontWeight.w600,
+      ),
+      decoration: InputDecoration(
+        labelText: label,
+        alignLabelWithHint: true,
+      ),
+    );
+  }
+}
+
 class EmptyCard extends StatelessWidget {
   const EmptyCard({super.key, required this.text, this.noSideBorders = false});
 
@@ -72,7 +105,7 @@ class EmptyCard extends StatelessWidget {
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             size: 22,
           ),
           const SizedBox(width: 12),
@@ -80,7 +113,7 @@ class EmptyCard extends StatelessWidget {
             child: Text(
               text,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
@@ -95,8 +128,8 @@ class EmptyCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color,
           border: const Border(
-            top: BorderSide(color: Color(0xFF0F172A), width: 2.0),
-            bottom: BorderSide(color: Color(0xFF0F172A), width: 2.0),
+            top: BorderSide(color: AppColors.slate950, width: 2.0),
+            bottom: BorderSide(color: AppColors.slate950, width: 2.0),
           ),
         ),
         child: content,
@@ -124,9 +157,9 @@ class StatBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.zero,
-        border: Border.all(color: color.withOpacity(0.25), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.25), width: 1.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -156,12 +189,12 @@ enum LessonDisplayStatus { current, next, pending, open, closed, scheduled }
 
 ({String label, Color color}) resolveLessonStatus(LessonDisplayStatus status) {
   return switch (status) {
-    LessonDisplayStatus.current => (label: 'Atual', color: const Color(0xFFEF4444)),
-    LessonDisplayStatus.next => (label: 'Próxima', color: const Color(0xFF2563EB)),
-    LessonDisplayStatus.pending => (label: 'Pendente', color: const Color(0xFFEF4444)),
-    LessonDisplayStatus.open => (label: 'Aberta', color: const Color(0xFF2563EB)),
-    LessonDisplayStatus.closed => (label: 'Fechada', color: const Color(0xFF10B981)),
-    LessonDisplayStatus.scheduled => (label: 'Agendada', color: const Color(0xFF64748B)),
+    LessonDisplayStatus.current => (label: 'Atual', color: AppColors.absent),
+    LessonDisplayStatus.next => (label: 'Próxima', color: AppColors.open),
+    LessonDisplayStatus.pending => (label: 'Pendente', color: AppColors.absent),
+    LessonDisplayStatus.open => (label: 'Aberta', color: AppColors.open),
+    LessonDisplayStatus.closed => (label: 'Fechada', color: AppColors.present),
+    LessonDisplayStatus.scheduled => (label: 'Agendada', color: AppColors.scheduled),
   };
 }
 
@@ -217,7 +250,7 @@ class LessonInfoRow extends StatelessWidget {
             time,
             textAlign: TextAlign.right,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -237,23 +270,23 @@ typedef AttendanceStatusStyle = ({
 AttendanceStatusStyle resolveAttendanceStatusStyle(AttendanceStatus status) {
   return switch (status) {
     AttendanceStatus.present => (
-        accentColor: const Color(0xFF10B981),
-        borderColor: const Color(0xFF10B981).withOpacity(0.4),
+        accentColor: AppColors.present,
+        borderColor: AppColors.present.withValues(alpha: 0.4),
         label: 'Presente',
       ),
     AttendanceStatus.absent => (
-        accentColor: const Color(0xFFEF4444),
-        borderColor: const Color(0xFFEF4444).withOpacity(0.4),
+        accentColor: AppColors.absent,
+        borderColor: AppColors.absent.withValues(alpha: 0.4),
         label: 'Ausente',
       ),
     AttendanceStatus.late => (
-        accentColor: const Color(0xFFF59E0B),
-        borderColor: const Color(0xFFF59E0B).withOpacity(0.4),
+        accentColor: AppColors.lateColor,
+        borderColor: AppColors.lateColor.withValues(alpha: 0.4),
         label: 'Atrasado',
       ),
     AttendanceStatus.justified => (
-        accentColor: const Color(0xFF3B82F6),
-        borderColor: const Color(0xFF3B82F6).withOpacity(0.4),
+        accentColor: AppColors.justified,
+        borderColor: AppColors.justified.withValues(alpha: 0.4),
         label: 'Justificado',
       ),
   };
@@ -335,8 +368,8 @@ class AppSearchBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         border: const Border(
-          top: BorderSide(color: Color(0xFF0F172A), width: 2.0),
-          bottom: BorderSide(color: Color(0xFF0F172A), width: 2.0),
+          top: BorderSide(color: AppColors.slate950, width: 2.0),
+          bottom: BorderSide(color: AppColors.slate950, width: 2.0),
         ),
       ),
       child: TextField(
@@ -348,11 +381,11 @@ class AppSearchBar extends StatelessWidget {
         decoration: InputDecoration(
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           hintText: hintText,
           hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             fontWeight: FontWeight.w800,
             fontSize: 18,
           ),
@@ -400,13 +433,13 @@ class AppFilterRow extends StatelessWidget {
                     top: BorderSide(
                       color: selectedFilter == entry.$2
                           ? _colorFor(context, entry.$2)
-                          : const Color(0xFF0F172A),
+                          : AppColors.slate950,
                       width: 2.0,
                     ),
                     bottom: BorderSide(
                       color: selectedFilter == entry.$2
                           ? _colorFor(context, entry.$2)
-                          : const Color(0xFF0F172A),
+                          : AppColors.slate950,
                       width: 2.0,
                     ),
                   ),
@@ -420,7 +453,7 @@ class AppFilterRow extends StatelessWidget {
                     letterSpacing: 0.5,
                     color: selectedFilter == entry.$2
                         ? Colors.white
-                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -456,13 +489,13 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final baseColor = color ?? Theme.of(context).colorScheme.primary;
-    final effectiveColor = onPressed == null ? baseColor.withOpacity(0.4) : baseColor;
+    final effectiveColor = onPressed == null ? baseColor.withValues(alpha: 0.4) : baseColor;
     
     // Gradiente sutil que escurece a cor base para dar o tom plano e mais escuro
     final gradient = LinearGradient(
       colors: [
-        Color.alphaBlend(Colors.black.withOpacity(0.08), effectiveColor),
-        Color.alphaBlend(Colors.black.withOpacity(0.24), effectiveColor),
+        Color.alphaBlend(Colors.black.withValues(alpha: 0.08), effectiveColor),
+        Color.alphaBlend(Colors.black.withValues(alpha: 0.24), effectiveColor),
       ],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -590,8 +623,8 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
   Widget build(BuildContext context) {
     final baseGradient = LinearGradient(
       colors: [
-        Color.alphaBlend(Colors.black.withOpacity(0.08), widget.baseColor),
-        Color.alphaBlend(Colors.black.withOpacity(0.24), widget.baseColor),
+        Color.alphaBlend(Colors.black.withValues(alpha: 0.08), widget.baseColor),
+        Color.alphaBlend(Colors.black.withValues(alpha: 0.24), widget.baseColor),
       ],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -599,8 +632,8 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
 
     final fillGradient = LinearGradient(
       colors: [
-        Color.alphaBlend(Colors.black.withOpacity(0.08), widget.fillColor),
-        Color.alphaBlend(Colors.black.withOpacity(0.24), widget.fillColor),
+        Color.alphaBlend(Colors.black.withValues(alpha: 0.08), widget.fillColor),
+        Color.alphaBlend(Colors.black.withValues(alpha: 0.24), widget.fillColor),
       ],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,

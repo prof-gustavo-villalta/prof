@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:prof/main.dart';
-import 'package:prof/data/prof_repository.dart';
+import 'package:prof/data/diario_storage.dart';
 
 void main() {
   testWidgets('professor configura turma e fecha uma chamada', (
     WidgetTester tester,
   ) async {
-    final repository = InMemoryProfRepository();
+    final storage = InMemoryDiarioStorage();
 
     await tester.pumpWidget(
-      ProfApp(repository: repository, now: DateTime(2026, 5, 21, 19)),
+      ProfApp(storage: storage, now: DateTime(2026, 5, 21, 19)),
     );
     await tester.pumpAndSettle();
 

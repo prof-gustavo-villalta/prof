@@ -109,14 +109,14 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activeColor = Theme.of(context).colorScheme.primary;
-    final inactiveColor = Theme.of(context).colorScheme.onSurface.withOpacity(0.5);
+    final inactiveColor = Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
 
     return AnimatedTapScale(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withOpacity(0.08) : Colors.transparent,
+          color: isSelected ? activeColor.withValues(alpha: 0.08) : Colors.transparent,
           borderRadius: BorderRadius.zero,
         ),
         child: Column(

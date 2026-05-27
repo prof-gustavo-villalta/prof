@@ -1,12 +1,14 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:prof/data/prof_repository.dart';
-import 'package:prof/domain/models.dart';
+import 'package:prof/data/diario_storage.dart';
+import 'package:prof/domain/diario_de_classe.dart';
 import 'package:prof/ui/prof_controller.dart';
+import 'package:prof/domain/models.dart';
 
 void main() {
   test('dados demo cobrem turma, disciplinas, grade e fotos mistas', () async {
+    final diario = DiarioDeClasseImpl(storage: InMemoryDiarioStorage());
     final controller = ProfController(
-      repository: InMemoryProfRepository(),
+      diario: diario,
       now: DateTime(2026, 5, 21, 19),
     );
     await controller.load();
@@ -29,7 +31,7 @@ void main() {
       endMinutes: 22 * 60,
     );
     final web2Controller = ProfController(
-      repository: InMemoryProfRepository(controller.data),
+      diario: DiarioDeClasseImpl(storage: InMemoryDiarioStorage(controller.data)),
       now: DateTime(2026, 5, 21, 21, 30),
     );
     await web2Controller.load();
@@ -70,7 +72,7 @@ void main() {
     );
 
     final loadedAgain = ProfController(
-      repository: InMemoryProfRepository(web2Controller.data),
+      diario: DiarioDeClasseImpl(storage: InMemoryDiarioStorage(web2Controller.data)),
       now: DateTime(2026, 5, 21, 19),
     );
     await loadedAgain.load();
@@ -80,7 +82,7 @@ void main() {
 
   test('cadastro edita turma, periodo, aluno, foto e grade semanal', () async {
     final controller = ProfController(
-      repository: InMemoryProfRepository(),
+      diario: DiarioDeClasseImpl(storage: InMemoryDiarioStorage()),
       now: DateTime(2026, 5, 21, 19),
     );
     await controller.load();
@@ -135,7 +137,7 @@ void main() {
     expect(controller.currentLesson(), isNull);
 
     final fridayController = ProfController(
-      repository: InMemoryProfRepository(controller.data),
+      diario: DiarioDeClasseImpl(storage: InMemoryDiarioStorage(controller.data)),
       now: DateTime(2026, 5, 22, 20, 30),
     );
     await fridayController.load();
@@ -148,7 +150,7 @@ void main() {
   test('chamada pendente, cancelada e percentual seguem o dominio', () async {
     final now = DateTime(2026, 5, 21, 19);
     final controller = ProfController(
-      repository: InMemoryProfRepository(),
+      diario: DiarioDeClasseImpl(storage: InMemoryDiarioStorage()),
       now: now,
     );
     await controller.load();
@@ -188,7 +190,7 @@ void main() {
     expect(csv, contains('Ana Silva,DS3,PAM2,2026/1,1,0,1,0,0,100%'));
 
     final pendingController = ProfController(
-      repository: InMemoryProfRepository(controller.data),
+      diario: DiarioDeClasseImpl(storage: InMemoryDiarioStorage(controller.data)),
       now: DateTime(2026, 5, 28, 19),
     );
     await pendingController.load();
@@ -214,7 +216,7 @@ void main() {
       classGroupId: 'turma-1',
       disciplineId: 'disciplina-1',
     );
-    final repository = InMemoryProfRepository(
+    final storage = InMemoryDiarioStorage(
       const ProfData(
         terms: [term],
         classGroups: [group],
@@ -231,7 +233,7 @@ void main() {
       ),
     );
     final controller = ProfController(
-      repository: repository,
+      diario: DiarioDeClasseImpl(storage: storage),
       now: DateTime(2026, 5, 21, 19, 30),
     );
 

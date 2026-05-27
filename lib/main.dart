@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'data/prof_repository.dart';
+import 'data/diario_storage.dart';
 import 'ui/home_shell.dart';
 import 'ui/prof_controller.dart';
 import 'ui/screens/onboarding_screen.dart';
+import 'domain/diario_de_classe.dart';
 
 void main() {
   runApp(const ProfApp());
 }
 
 class ProfApp extends StatefulWidget {
-  const ProfApp({super.key, ProfRepository? repository, this.now})
-    : repository = repository ?? const SharedPreferencesProfRepository();
+  const ProfApp({super.key, DiarioStorage? storage, this.now})
+    : storage = storage ?? const SharedPreferencesDiarioStorage();
 
-  final ProfRepository repository;
+  final DiarioStorage storage;
   final DateTime? now;
 
   @override
@@ -26,8 +27,10 @@ class _ProfAppState extends State<ProfApp> {
   @override
   void initState() {
     super.initState();
-    controller = ProfController(repository: widget.repository, now: widget.now)
-      ..load();
+    controller = ProfController(
+      diario: DiarioDeClasseImpl(storage: widget.storage), 
+      now: widget.now,
+    )..load();
   }
 
   @override
@@ -216,7 +219,7 @@ class _ProfAppState extends State<ProfApp> {
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          if (!controller.data.hasMinimumSetup) {
+          if (!controller.hasMinimumSetup) {
             return OnboardingScreen(controller: controller);
           }
           return HomeShell(controller: controller);

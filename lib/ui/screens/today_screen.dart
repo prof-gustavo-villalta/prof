@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
+import '../design_system/app_colors.dart';
 import '../prof_controller.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/shared_ui.dart';
@@ -54,14 +55,18 @@ class TodayScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             for (final entry in todays.indexed)
-              AnimatedTapScale(
-                onTap: () => _openAttendance(context, entry.$2),
-                child: LessonTile(
-                  controller: controller,
-                  lesson: entry.$2,
-                  isLast: entry.$1 == todays.length - 1,
-                ),
-              ),
+              Builder(builder: (context) {
+                final lesson = entry.$2;
+                final isLast = entry.$1 == todays.length - 1;
+                return AnimatedTapScale(
+                  onTap: () => _openAttendance(context, lesson),
+                  child: LessonTile(
+                    controller: controller,
+                    lesson: lesson,
+                    isLast: isLast,
+                  ),
+                );
+              }),
             const SizedBox(height: 28),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -78,15 +83,19 @@ class TodayScreen extends StatelessWidget {
               )
             else
               for (final entry in pendingTake10.indexed)
-                AnimatedTapScale(
-                  onTap: () => _openAttendance(context, entry.$2),
-                  child: LessonTile(
-                    controller: controller,
-                    lesson: entry.$2,
-                    pending: true,
-                    isLast: entry.$1 == pendingTake10.length - 1,
-                  ),
-                ),
+                Builder(builder: (context) {
+                  final lesson = entry.$2;
+                  final isLast = entry.$1 == pendingTake10.length - 1;
+                  return AnimatedTapScale(
+                    onTap: () => _openAttendance(context, lesson),
+                    child: LessonTile(
+                      controller: controller,
+                      lesson: lesson,
+                      pending: true,
+                      isLast: isLast,
+                    ),
+                  );
+                }),
             if (pending.length > 10)
               _MorePendingIndicator(count: pending.length - 10),
           ],
@@ -121,8 +130,8 @@ class _MorePendingIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         border: const Border(
-          top: BorderSide(color: Color(0xFF0F172A), width: 2.0),
-          bottom: BorderSide(color: Color(0xFF0F172A), width: 2.0),
+          top: BorderSide(color: AppColors.slate950, width: 2.0),
+          bottom: BorderSide(color: AppColors.slate950, width: 2.0),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -130,14 +139,14 @@ class _MorePendingIndicator extends StatelessWidget {
         children: [
           Icon(
             Icons.more_horiz_rounded,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
             size: 20,
           ),
           const SizedBox(width: 12),
           Text(
             'Mais $count pendente${count == 1 ? '' : 's'}',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -212,7 +221,7 @@ class LessonHeroCard extends StatelessWidget {
                   child: AppButton(
                     key: const ValueKey('start_attendance'),
                     text: 'Iniciar chamada',
-                    color: const Color(0xFF1E40AF),
+                    color: AppColors.primaryAction,
                     height: 66,
                     onPressed: () => _openAttendance(context, lesson),
                   ),
@@ -221,8 +230,8 @@ class LessonHeroCard extends StatelessWidget {
                   flex: 1,
                   child: HoldToConfirmButton(
                     text: 'Cancelar chamada',
-                    baseColor: const Color(0xFF2C1616),
-                    fillColor: const Color(0xFFB91C1C),
+                    baseColor: AppColors.cancelBase,
+                    fillColor: AppColors.cancelFill,
                     height: 66,
                     onConfirmed: () => controller.cancelLesson(lesson),
                   ),
@@ -286,9 +295,9 @@ class LessonTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         border: Border(
-          top: const BorderSide(color: Color(0xFF0F172A), width: 2.0),
+          top: const BorderSide(color: AppColors.slate950, width: 2.0),
           bottom: isLast
-              ? const BorderSide(color: Color(0xFF0F172A), width: 2.0)
+              ? const BorderSide(color: AppColors.slate950, width: 2.0)
               : BorderSide.none,
         ),
       ),

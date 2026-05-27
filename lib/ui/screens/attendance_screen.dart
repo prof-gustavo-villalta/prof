@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
+import '../design_system/app_colors.dart';
 import '../prof_controller.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/student_avatar.dart';
@@ -30,9 +31,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     return ListenableBuilder(
       listenable: widget.controller,
       builder: (context, _) {
-        final attendance = widget.controller.data.attendances.firstWhere(
-          (item) => item.id == widget.attendanceId,
-        );
+        final attendance = widget.controller.attendanceById(widget.attendanceId)!;
         final group = widget.controller.classGroup(
           widget.lesson.weeklyClass.classGroupId,
         );
@@ -72,11 +71,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           'Justificados',
                         ],
                         filterColors: const {
-                          'Todos': Color(0xFF64748B),
-                          'Presentes': Color(0xFF10B981),
-                          'Ausentes': Color(0xFFEF4444),
-                          'Atrasos': Color(0xFFF59E0B),
-                          'Justificados': Color(0xFF3B82F6),
+                          'Todos': AppColors.slate500,
+                          'Presentes': AppColors.present,
+                          'Ausentes': AppColors.absent,
+                          'Atrasos': AppColors.lateColor,
+                          'Justificados': AppColors.justified,
                         },
                         selectedFilter: statusFilter,
                         onSelected: (value) {
@@ -109,7 +108,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       ? AppButton(
                           key: const ValueKey('reopen_attendance'),
                           text: 'Reabrir chamada',
-                          color: const Color(0xFF1E293B),
+                          color: AppColors.slate900,
                           height: 66,
                           onPressed: () =>
                               widget.controller.reopenAttendance(attendance),
@@ -117,7 +116,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       : AppButton(
                           key: const ValueKey('close_attendance'),
                           text: 'Fechar chamada',
-                          color: const Color(0xFF1E40AF),
+                          color: AppColors.primaryAction,
                           height: 66,
                           onPressed: () async {
                             await widget.controller.closeAttendance(attendance);
@@ -172,9 +171,9 @@ class StudentAttendanceCard extends StatelessWidget {
         color: Theme.of(context).cardTheme.color ??
             Theme.of(context).colorScheme.surface,
         border: Border(
-          top: const BorderSide(color: Color(0xFF0F172A), width: 2.0),
+          top: const BorderSide(color: AppColors.slate950, width: 2.0),
           bottom: isLast
-              ? const BorderSide(color: Color(0xFF0F172A), width: 2.0)
+              ? const BorderSide(color: AppColors.slate950, width: 2.0)
               : BorderSide.none,
         ),
       ),
@@ -222,13 +221,13 @@ class StudentAttendanceCard extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          flex: 50,
-                          child: Row(
-                            children: [
-                              StudentAvatar(student: student),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
+                          flex: 20,
+                          child: StudentAvatar(student: student),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex: 30,
+                          child: Text(
                                   student.name,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w800,
@@ -241,9 +240,6 @@ class StudentAttendanceCard extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
                         Expanded(
                           flex: 30,
                           child: Row(
@@ -306,7 +302,7 @@ class _StatusToggleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = resolveAttendanceStatusStyle(targetStatus);
-    final activeBg = style.accentColor.withOpacity(0.15);
+    final activeBg = style.accentColor.withValues(alpha: 0.15);
 
     return AnimatedTapScale(
       onTap: onTap,
@@ -318,7 +314,7 @@ class _StatusToggleButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isActive
               ? activeBg
-              : Theme.of(context).colorScheme.onSurface.withOpacity(0.08),
+              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.zero,
           border: Border.all(
@@ -330,7 +326,7 @@ class _StatusToggleButton extends StatelessWidget {
           icon,
           color: isActive
               ? style.accentColor
-              : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           size: 20,
         ),
       ),

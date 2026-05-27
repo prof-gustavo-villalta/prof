@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../prof_controller.dart';
 import '../widgets/shared_ui.dart';
-import '../widgets/animated_tap_scale.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key, required this.controller});
@@ -43,7 +42,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.12),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.12),
                       shape: BoxShape.rectangle,
                       borderRadius: BorderRadius.zero,
                       border: Border.all(color: theme.colorScheme.primary, width: 2.0),
@@ -70,7 +69,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   'Configure o mínimo para abrir a chamada.',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -99,19 +98,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           keyName: 'onboarding_disciplina',
                         ),
                         const SizedBox(height: 4),
-                        TextField(
+                        MultilineField(
                           key: const ValueKey('onboarding_alunos'),
                           controller: alunos,
                           minLines: 2,
                           maxLines: 4,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          decoration: const InputDecoration(
-                            labelText: 'Alunos, um por linha',
-                            alignLabelWithHint: true,
-                          ),
+                          label: 'Alunos, um por linha',
                         ),
                       ],
                     ),
