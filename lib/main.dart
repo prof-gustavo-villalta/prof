@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/diario_storage.dart';
 import 'ui/home_shell.dart';
@@ -6,13 +7,14 @@ import 'ui/home_shell.dart';
 import 'ui/screens/onboarding_screen.dart';
 import 'domain/diario_de_classe.dart';
 
-void main() {
-  runApp(const ProfApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  runApp(ProfApp(storage: SharedPreferencesDiarioStorage(prefs)));
 }
 
 class ProfApp extends StatefulWidget {
-  const ProfApp({super.key, DiarioStorage? storage, this.now})
-    : storage = storage ?? const SharedPreferencesDiarioStorage();
+  const ProfApp({super.key, required this.storage, this.now});
 
   final DiarioStorage storage;
   final DateTime? now;

@@ -18,11 +18,12 @@ abstract class DiarioStorage {
 }
 
 class SharedPreferencesDiarioStorage implements DiarioStorage {
-  const SharedPreferencesDiarioStorage();
+  const SharedPreferencesDiarioStorage(this.prefs);
+
+  final SharedPreferences prefs;
 
   @override
   Future<ProfData> loadAll() async {
-    final prefs = await SharedPreferences.getInstance();
 
     final legacyData = prefs.getString('prof.data.v1');
     if (legacyData != null && legacyData.isNotEmpty) {
@@ -103,7 +104,6 @@ class SharedPreferencesDiarioStorage implements DiarioStorage {
   }
 
   Future<void> _saveEntity(String prefix, String id, Map<String, Object?> json) async {
-    final prefs = await SharedPreferences.getInstance();
     await prefs.setString('$prefix$id', jsonEncode(json));
   }
 
@@ -128,7 +128,6 @@ class SharedPreferencesDiarioStorage implements DiarioStorage {
 
   @override
   Future<void> deleteWeeklyClass(String id) async {
-    final prefs = await SharedPreferences.getInstance();
     await prefs.remove('prof.weekly.$id');
   }
 
