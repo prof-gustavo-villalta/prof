@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'data/diario_storage.dart';
 import 'ui/home_shell.dart';
-import 'ui/prof_controller.dart';
+
 import 'ui/screens/onboarding_screen.dart';
 import 'domain/diario_de_classe.dart';
 
@@ -22,20 +22,21 @@ class ProfApp extends StatefulWidget {
 }
 
 class _ProfAppState extends State<ProfApp> {
-  late final ProfController controller;
+  late final DiarioDeClasseImpl diario;
 
   @override
   void initState() {
     super.initState();
-    controller = ProfController(
-      diario: DiarioDeClasseImpl(storage: widget.storage), 
-      now: widget.now,
-    )..load();
+    diario = DiarioDeClasseImpl(
+      storage: widget.storage, 
+      
+    );
+    diario.load();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    diario.dispose();
     super.dispose();
   }
 
@@ -212,17 +213,17 @@ class _ProfAppState extends State<ProfApp> {
         ),
       ),
       home: ListenableBuilder(
-        listenable: controller,
+        listenable: diario,
         builder: (context, _) {
-          if (!controller.isLoaded) {
+          if (!diario.isLoaded) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          if (!controller.hasMinimumSetup) {
-            return OnboardingScreen(controller: controller);
+          if (!diario.hasMinimumSetup) {
+            return OnboardingScreen(diario: diario);
           }
-          return HomeShell(controller: controller);
+          return HomeShell(diario: diario, now: widget.now ?? DateTime.now());
         },
       ),
     );

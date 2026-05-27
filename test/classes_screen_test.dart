@@ -26,6 +26,9 @@ void main() {
       expect(find.textContaining('2026/1'), findsWidgets);
 
       // Adiciona aluno na tela de detalhe
+      await tester.tap(find.text('Adicionar'));
+      await tester.pumpAndSettle();
+      
       await tester.scrollUntilVisible(
         find.byKey(const ValueKey('add_students_field')),
         300,
@@ -40,10 +43,13 @@ void main() {
       expect(find.text('Carla Rocha'), findsOneWidget);
 
       // Vai para Grade semanal
-      await tester.tap(find.text('Grade semanal'));
+      await tester.tap(find.text('Grade'));
       await tester.pumpAndSettle();
 
       // Adiciona disciplina
+      await tester.tap(find.text('Nova Disciplina'));
+      await tester.pumpAndSettle();
+      
       await tester.enterText(
         find.byKey(const ValueKey('new_discipline_name')),
         'WEB2',
@@ -55,11 +61,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // Adiciona horário
+      await tester.tap(find.text('Novo Horário'));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('schedule_discipline')));
       await tester.pumpAndSettle();
       await tester.tap(find.text('WEB2').last);
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('add_weekly_class')));
+      await tester.tap(find.byKey(const ValueKey('save_schedule')));
       await tester.pumpAndSettle();
 
       expect(find.textContaining('DS3 - WEB2'), findsOneWidget);

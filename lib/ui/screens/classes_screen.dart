@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
-import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/bordered_container.dart';
 import '../widgets/shared_ui.dart';
 import 'class_group_detail_screen.dart';
 import 'group_form_screen.dart';
 class ClassesScreen extends StatelessWidget {
-  const ClassesScreen({super.key, required this.controller});
+  const ClassesScreen({super.key, required this.diario});
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: controller,
+      listenable: diario,
       builder: (context, _) {
-        final groups = controller.classGroups;
+        final groups = diario.classGroups;
 
         return Scaffold(
           body: SafeArea(
@@ -46,15 +45,15 @@ class ClassesScreen extends StatelessWidget {
                           Builder(builder: (context) {
                             final group = entry.$2;
                             final isLast = entry.$1 == groups.length - 1;
-                            final term = controller.term(group.termId);
-                            final studentCount = controller.studentsForClass(group.id).length;
+                            final term = diario.term(group.termId);
+                            final studentCount = diario.studentsForClass(group.id).length;
                             
                             return AnimatedTapScale(
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute<void>(
                                     builder: (_) => ClassGroupDetailScreen(
-                                      controller: controller,
+                                      diario: diario,
                                       groupId: group.id,
                                     ),
                                   ),
@@ -137,7 +136,7 @@ class ClassesScreen extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (_) => GroupFormScreen(
-                            controller: controller,
+                            diario: diario,
                           ),
                         ),
                       );

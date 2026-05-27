@@ -240,6 +240,30 @@ class Attendance {
     statusByStudentId: statusByStudentId ?? this.statusByStudentId,
   );
 
+  Attendance markStudent(String studentId, AttendanceStatus status) {
+    if (isClosed) throw StateError('Cannot modify closed attendance');
+    final newStatus = Map<String, AttendanceStatus>.from(statusByStudentId);
+    newStatus[studentId] = status;
+    return copyWith(statusByStudentId: newStatus);
+  }
+
+  Attendance togglePresence(String studentId) {
+    if (isClosed) throw StateError('Cannot modify closed attendance');
+    final current = statusByStudentId[studentId] ?? AttendanceStatus.absent;
+    final next = current == AttendanceStatus.present 
+        ? AttendanceStatus.absent 
+        : AttendanceStatus.present;
+    return markStudent(studentId, next);
+  }
+
+  Attendance close() {
+    return copyWith(isClosed: true);
+  }
+
+  Attendance reopen() {
+    return copyWith(isClosed: false);
+  }
+
   Map<String, Object?> toJson() => {
     'id': id,
     'lessonId': lessonId,

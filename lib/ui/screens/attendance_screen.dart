@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/student_avatar.dart';
 import '../widgets/shared_ui.dart';
@@ -9,12 +9,12 @@ import '../widgets/shared_ui.dart';
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({
     super.key,
-    required this.controller,
+    required this.diario,
     required this.lesson,
     required this.attendanceId,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final LessonOccurrence lesson;
   final String attendanceId;
 
@@ -29,13 +29,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: widget.controller,
+      listenable: widget.diario,
       builder: (context, _) {
-        final attendance = widget.controller.attendanceById(widget.attendanceId)!;
-        final group = widget.controller.classGroup(
+        final attendance = widget.diario.attendanceById(widget.attendanceId)!;
+        final group = widget.diario.classGroup(
           widget.lesson.weeklyClass.classGroupId,
         );
-        final discipline = widget.controller.discipline(
+        final discipline = widget.diario.discipline(
           widget.lesson.weeklyClass.disciplineId,
         );
 
@@ -94,7 +94,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         for (final entry in students.indexed)
                           StudentAttendanceCard(
                             key: ValueKey('student_card_${entry.$2.id}'),
-                            controller: widget.controller,
+                            diario: widget.diario,
                             attendance: attendance,
                             student: entry.$2,
                             isLast: entry.$1 == students.length - 1,
@@ -111,7 +111,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           color: AppColors.slate900,
                           height: 66,
                           onPressed: () =>
-                              widget.controller.reopenAttendance(attendance),
+                              widget.diario.reopenAttendance(attendance),
                         )
                       : AppButton(
                           key: const ValueKey('close_attendance'),
@@ -119,7 +119,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           color: AppColors.primaryAction,
                           height: 66,
                           onPressed: () async {
-                            await widget.controller.closeAttendance(attendance);
+                            await widget.diario.closeAttendance(attendance);
                             if (context.mounted) Navigator.of(context).pop();
                           },
                         ),
@@ -134,7 +134,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
   List<Student> _filteredStudents(Attendance attendance, String groupId) {
     final query = studentQuery.trim().toLowerCase();
-    return widget.controller.studentsForClass(groupId).where((student) {
+    return widget.diario.studentsForClass(groupId).where((student) {
       final matchesQuery =
           query.isEmpty || student.name.toLowerCase().contains(query);
       final status = attendance.statusByStudentId[student.id] ??
@@ -147,13 +147,13 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 class StudentAttendanceCard extends StatelessWidget {
   const StudentAttendanceCard({
     super.key,
-    required this.controller,
+    required this.diario,
     required this.attendance,
     required this.student,
     required this.isLast,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final Attendance attendance;
   final Student student;
   final bool isLast;
@@ -182,7 +182,7 @@ class StudentAttendanceCard extends StatelessWidget {
         child: InkWell(
           key: ValueKey('student_${student.name}'),
           borderRadius: BorderRadius.zero,
-          onTap: () => controller.togglePresence(attendance, student.id),
+          onTap: attendance.isClosed ? null : () => diario.togglePresence(attendance, student.id),
           child: IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -249,26 +249,30 @@ class StudentAttendanceCard extends StatelessWidget {
                                 icon: Icons.hourglass_empty_rounded,
                                 targetStatus: AttendanceStatus.late,
                                 isActive: status == AttendanceStatus.late,
-                                onTap: () => controller.markStudent(
-                                  attendance,
-                                  student.id,
-                                  status == AttendanceStatus.late
-                                      ? AttendanceStatus.absent
-                                      : AttendanceStatus.late,
-                                ),
+                                onTap: attendance.isClosed
+                                    ? () {}
+                                    : () => diario.markStudent(
+                                          attendance,
+                                          student.id,
+                                          status == AttendanceStatus.late
+                                              ? AttendanceStatus.absent
+                                              : AttendanceStatus.late,
+                                        ),
                               ),
                               const SizedBox(width: 8),
                               _StatusToggleButton(
                                 icon: Icons.verified_user_rounded,
                                 targetStatus: AttendanceStatus.justified,
                                 isActive: status == AttendanceStatus.justified,
-                                onTap: () => controller.markStudent(
-                                  attendance,
-                                  student.id,
-                                  status == AttendanceStatus.justified
-                                      ? AttendanceStatus.absent
-                                      : AttendanceStatus.justified,
-                                ),
+                                onTap: attendance.isClosed
+                                    ? () {}
+                                    : () => diario.markStudent(
+                                          attendance,
+                                          student.id,
+                                          status == AttendanceStatus.justified
+                                              ? AttendanceStatus.absent
+                                              : AttendanceStatus.justified,
+                                        ),
                               ),
                             ],
                           ),

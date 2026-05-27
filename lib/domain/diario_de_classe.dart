@@ -19,7 +19,7 @@ class DashboardView {
   final List<LessonOccurrence> pendingLessons;
 }
 
-abstract class DiarioDeClasse {
+abstract class DiarioDeClasse implements Listenable {
   Future<void> load();
   bool get isLoaded;
   bool get hasMinimumSetup;
@@ -93,7 +93,7 @@ abstract class DiarioDeClasse {
   List<ClosedAttendanceView> closedAttendanceViews();
 }
 
-class DiarioDeClasseImpl implements DiarioDeClasse {
+class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   DiarioDeClasseImpl({
     required DiarioStorage storage,
     AttendanceReporter attendanceReporter = const AttendanceReporter(),
@@ -104,6 +104,13 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
   final AttendanceReporter _attendanceReporter;
   
   ProfData _data = const ProfData();
+  GradeSemanal _gradeSemanal = GradeSemanal(
+    weeklyClasses: [],
+    classGroups: [],
+    terms: [],
+    cancelledLessons: [],
+  );
+
   bool _isLoaded = false;
   int _idSequence = 0;
 
@@ -111,37 +118,50 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
   bool get isLoaded => _isLoaded;
 
   @override
-  bool get hasMinimumSetup => _data.hasMinimumSetup;
+  bool get hasMinimumSetup =>
+      classGroups.isNotEmpty &&
+      disciplines.isNotEmpty &&
+      terms.isNotEmpty &&
+      weeklyClasses.isNotEmpty &&
+      students.isNotEmpty;
 
   @override
   Future<void> load() async {
     final loaded = await _storage.loadAll();
     final hasDuplicateStudentIds = _hasDuplicateStudentIds(loaded);
     _data = hasDuplicateStudentIds ? _repairDuplicateStudentIds(loaded) : loaded;
+    
+    _gradeSemanal = GradeSemanal(
+      weeklyClasses: _data.weeklyClasses.toList(),
+      classGroups: _data.classGroups.toList(),
+      terms: _data.terms.toList(),
+      cancelledLessons: _data.cancelledLessons.toList(),
+    );
+
     if (hasDuplicateStudentIds) {
-      for (final student in _data.students) await _storage.saveStudent(student);
-      for (final attendance in _data.attendances) await _storage.saveAttendance(attendance);
+      for (final student in _data.students) {
+        await _storage.saveStudent(student);
+      }
+      for (final attendance in _data.attendances) {
+        await _storage.saveAttendance(attendance);
+      }
     }
     _isLoaded = true;
+    notifyListeners();
   }
 
   @override
   DashboardView getDashboard(DateTime now) {
-    final grade = GradeSemanal(
-      weeklyClasses: _data.weeklyClasses,
-      classGroups: _data.classGroups,
-      terms: _data.terms,
-      cancelledLessons: _data.cancelledLessons,
-      closedAttendanceLessonIds: _data.attendances
-          .where((a) => a.isClosed)
-          .map((a) => a.lessonId)
-          .toSet(),
-    );
+    final closedAttendanceLessonIds = _data.attendances
+        .where((a) => a.isClosed)
+        .map((a) => a.lessonId)
+        .toSet();
+
     return DashboardView(
-      currentLesson: grade.currentLesson(now),
-      nextLesson: grade.nextLesson(now),
-      todaysLessons: grade.todaysLessons(now),
-      pendingLessons: grade.pendingLessons(now),
+      currentLesson: _gradeSemanal.currentLesson(now),
+      nextLesson: _gradeSemanal.nextLesson(now),
+      todaysLessons: _gradeSemanal.todaysLessons(now),
+      pendingLessons: _gradeSemanal.pendingLessons(now, closedAttendanceLessonIds),
     );
   }
 
@@ -171,30 +191,29 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
       disciplineId: discipline.id,
     );
     
+    _gradeSemanal.addClassGroup(group, term);
+    _gradeSemanal.addWeeklyClass(weeklyClass);
+    
     _data = _data.copyWith(
-      terms: [..._data.terms, term],
-      classGroups: [..._data.classGroups, group],
       disciplines: [..._data.disciplines, discipline],
       students: [..._data.students, ...students],
-      weeklyClasses: [..._data.weeklyClasses, weeklyClass],
     );
     await _storage.saveTerm(term);
     await _storage.saveClassGroup(group);
     await _storage.saveDiscipline(discipline);
     for (final s in students) { await _storage.saveStudent(s); }
     await _storage.saveWeeklyClass(weeklyClass);
+    notifyListeners();
   }
 
   @override
   Future<void> addClassGroup({required String turma, required String periodo}) async {
     final term = Term(id: _id('term'), name: periodo.trim());
     final group = ClassGroup(id: _id('turma'), name: turma.trim(), termId: term.id);
-    _data = _data.copyWith(
-      terms: [..._data.terms, term],
-      classGroups: [..._data.classGroups, group],
-    );
+    _gradeSemanal.addClassGroup(group, term);
     await _storage.saveTerm(term);
     await _storage.saveClassGroup(group);
+    notifyListeners();
   }
 
   @override
@@ -209,18 +228,10 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
     final updatedGroup = group.copyWith(name: name.trim());
     final updatedTerm = term(group.termId).copyWith(name: termName.trim(), startDate: termStartDate, endDate: termEndDate);
     
-    _data = _data.copyWith(
-      classGroups: [
-        for (final item in _data.classGroups)
-          item.id == classGroupId ? updatedGroup : item,
-      ],
-      terms: [
-        for (final item in _data.terms)
-          item.id == group.termId ? updatedTerm : item,
-      ],
-    );
+    _gradeSemanal.updateClassGroup(updatedGroup, updatedTerm);
     await _storage.saveClassGroup(updatedGroup);
     await _storage.saveTerm(updatedTerm);
+    notifyListeners();
   }
 
   @override
@@ -232,6 +243,7 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
       disciplines: [..._data.disciplines, discipline],
     );
     await _storage.saveDiscipline(discipline);
+    notifyListeners();
   }
 
   @override
@@ -242,6 +254,7 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
     if (students.isEmpty) return;
     _data = _data.copyWith(students: [..._data.students, ...students]);
     for (final s in students) { await _storage.saveStudent(s); }
+    notifyListeners();
   }
 
   @override
@@ -253,6 +266,7 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
       students: [..._data.students, student],
     );
     await _storage.saveStudent(student);
+    notifyListeners();
   }
 
   @override
@@ -271,24 +285,16 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
       classGroupId: classGroupId,
       disciplineId: disciplineId,
     );
-    _data = _data.copyWith(
-      weeklyClasses: [
-        ..._data.weeklyClasses,
-        weeklyClass,
-      ],
-    );
+    _gradeSemanal.addWeeklyClass(weeklyClass);
     await _storage.saveWeeklyClass(weeklyClass);
+    notifyListeners();
   }
 
   @override
   Future<void> removeWeeklyClass(String id) async {
-    _data = _data.copyWith(
-      weeklyClasses: [
-        for (final weeklyClass in _data.weeklyClasses)
-          if (weeklyClass.id != id) weeklyClass,
-      ],
-    );
+    _gradeSemanal.removeWeeklyClass(id);
     await _storage.deleteWeeklyClass(id);
+    notifyListeners();
   }
 
   @override
@@ -300,25 +306,17 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
     required int startMinutes,
     required int endMinutes,
   }) async {
-    WeeklyClass? updated;
-    _data = _data.copyWith(
-      weeklyClasses: [
-        for (final weeklyClass in _data.weeklyClasses)
-          if (weeklyClass.id == id)
-            updated = weeklyClass.copyWith(
-              classGroupId: classGroupId,
-              disciplineId: disciplineId,
-              weekday: weekday,
-              startMinutes: startMinutes,
-              endMinutes: endMinutes,
-            )
-          else
-            weeklyClass,
-      ],
+    final old = _gradeSemanal.weeklyClasses.firstWhere((c) => c.id == id);
+    final updated = old.copyWith(
+      classGroupId: classGroupId,
+      disciplineId: disciplineId,
+      weekday: weekday,
+      startMinutes: startMinutes,
+      endMinutes: endMinutes,
     );
-    if (updated != null) {
-      await _storage.saveWeeklyClass(updated);
-    }
+    _gradeSemanal.updateWeeklyClass(updated);
+    await _storage.saveWeeklyClass(updated);
+    notifyListeners();
   }
 
   @override
@@ -329,13 +327,13 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
   }
 
   @override
-  ClassGroup classGroup(String id) => _data.classGroups.firstWhere((item) => item.id == id);
+  ClassGroup classGroup(String id) => _gradeSemanal.classGroups.firstWhere((item) => item.id == id);
 
   @override
   Discipline discipline(String id) => _data.disciplines.firstWhere((item) => item.id == id);
 
   @override
-  Term term(String id) => _data.terms.firstWhere((item) => item.id == id);
+  Term term(String id) => _gradeSemanal.terms.firstWhere((item) => item.id == id);
 
   @override
   Attendance? attendanceFor(String lessonId) {
@@ -378,42 +376,39 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
   @override
   Future<void> markStudent(Attendance attendance, String studentId, AttendanceStatus status) async {
     final current = _currentAttendance(attendance);
-    final updated = current.copyWith(
-      statusByStudentId: {...current.statusByStudentId, studentId: status},
-    );
+    final updated = current.markStudent(studentId, status);
     await _replaceAttendance(updated);
+    notifyListeners();
   }
 
   @override
   Future<void> togglePresence(Attendance attendance, String studentId) async {
-    final currentAttendance = _currentAttendance(attendance);
-    final current = currentAttendance.statusByStudentId[studentId] ?? AttendanceStatus.absent;
-    await markStudent(
-      currentAttendance,
-      studentId,
-      current == AttendanceStatus.present ? AttendanceStatus.absent : AttendanceStatus.present,
-    );
+    final current = _currentAttendance(attendance);
+    final updated = current.togglePresence(studentId);
+    await _replaceAttendance(updated);
+    notifyListeners();
   }
 
   @override
   Future<void> closeAttendance(Attendance attendance) async {
-    await _replaceAttendance(attendance.copyWith(isClosed: true));
+    final current = _currentAttendance(attendance);
+    await _replaceAttendance(current.close());
+    notifyListeners();
   }
 
   @override
   Future<void> reopenAttendance(Attendance attendance) async {
-    await _replaceAttendance(attendance.copyWith(isClosed: false));
+    final current = _currentAttendance(attendance);
+    await _replaceAttendance(current.reopen());
+    notifyListeners();
   }
 
   @override
   Future<void> cancelLesson(LessonOccurrence lesson) async {
-    // We can just check the list directly since it's simple.
-    if (_data.cancelledLessons.any((item) => item.lessonId == lesson.id)) return;
     final cancelled = CancelledLesson(lessonId: lesson.id);
-    _data = _data.copyWith(
-      cancelledLessons: [..._data.cancelledLessons, cancelled],
-    );
+    _gradeSemanal.cancelLesson(cancelled);
     await _storage.saveCancelledLesson(cancelled);
+    notifyListeners();
   }
 
   @override
@@ -423,18 +418,19 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
       students: [for (final item in _data.students) item.id == student.id ? updated : item],
     );
     await _storage.saveStudent(updated);
+    notifyListeners();
   }
 
   @override
   List<AttendanceSummary> summaries({String? classGroupId, String? disciplineId}) =>
-      _attendanceReporter.summaries(_data, classGroupId: classGroupId, disciplineId: disciplineId);
+      _attendanceReporter.summaries(_composedData, classGroupId: classGroupId, disciplineId: disciplineId);
 
   @override
   String csvExport({String? classGroupId, String? disciplineId}) =>
-      _attendanceReporter.csvExport(_data, classGroupId: classGroupId, disciplineId: disciplineId);
+      _attendanceReporter.csvExport(_composedData, classGroupId: classGroupId, disciplineId: disciplineId);
 
   @override
-  List<ClosedAttendanceView> closedAttendanceViews() => _attendanceReporter.closedAttendanceViews(_data);
+  List<ClosedAttendanceView> closedAttendanceViews() => _attendanceReporter.closedAttendanceViews(_composedData);
 
   @override
   Future<void> loadDemoData(DateTime now) async {
@@ -455,6 +451,7 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
       startMinutes: (now.hour * 60 + now.minute + 180).clamp(0, 23 * 60),
       endMinutes: (now.hour * 60 + now.minute + 300).clamp(1, 24 * 60 - 1),
     );
+    notifyListeners();
   }
 
   Future<void> _replaceAttendance(Attendance updated) async {
@@ -477,10 +474,10 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
   String _id(String prefix) => '$prefix-${DateTime.now().microsecondsSinceEpoch}-${_idSequence++}';
 
   @override
-  List<Term> get terms => _data.terms;
+  List<Term> get terms => _gradeSemanal.terms;
 
   @override
-  List<ClassGroup> get classGroups => _data.classGroups;
+  List<ClassGroup> get classGroups => _gradeSemanal.classGroups;
 
   @override
   List<Discipline> get disciplines => _data.disciplines;
@@ -489,10 +486,17 @@ class DiarioDeClasseImpl implements DiarioDeClasse {
   List<Student> get students => _data.students;
 
   @override
-  List<WeeklyClass> get weeklyClasses => _data.weeklyClasses;
+  List<WeeklyClass> get weeklyClasses => _gradeSemanal.weeklyClasses;
 
-  @visibleForTesting
-  ProfData get dataForTesting => _data;
+  ProfData get _composedData => ProfData(
+        classGroups: classGroups,
+        terms: terms,
+        disciplines: disciplines,
+        students: students,
+        weeklyClasses: weeklyClasses,
+        attendances: _data.attendances,
+        cancelledLessons: _gradeSemanal.cancelledLessons,
+      );
 }
 
 const demoStudentPhotoBase64 =

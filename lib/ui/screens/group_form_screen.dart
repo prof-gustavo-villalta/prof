@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/page_header.dart';
 import '../widgets/shared_ui.dart';
 
 class GroupFormScreen extends StatefulWidget {
   const GroupFormScreen({
     super.key,
-    required this.controller,
+    required this.diario,
     this.group,
     this.term,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final ClassGroup? group;
   final Term? term;
 
@@ -117,7 +117,7 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
                       color: AppColors.primaryAction,
                       onPressed: () async {
                         if (isEditing) {
-                          await widget.controller.updateClassGroup(
+                          await widget.diario.updateClassGroup(
                             classGroupId: widget.group!.id,
                             name: groupName.text,
                             termName: termName.text,
@@ -125,7 +125,7 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
                             termEndDate: parseDate(endDate.text),
                           );
                         } else {
-                          widget.controller.addClassGroup(
+                          widget.diario.addClassGroup(
                             turma: groupName.text,
                             periodo: termName.text,
                           );

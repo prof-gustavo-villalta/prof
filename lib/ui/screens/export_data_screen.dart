@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../design_system/app_colors.dart';
 import '../widgets/page_header.dart';
 import '../widgets/shared_ui.dart';
@@ -8,21 +8,21 @@ import '../widgets/shared_ui.dart';
 class ExportDataScreen extends StatelessWidget {
   const ExportDataScreen({
     super.key,
-    required this.controller,
+    required this.diario,
     this.classGroupId,
     this.disciplineId,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final String? classGroupId;
   final String? disciplineId;
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: controller,
+      listenable: diario,
       builder: (context, _) {
-        final csvData = controller.csvExport(
+        final csvData = diario.csvExport(
           classGroupId: classGroupId,
           disciplineId: disciplineId,
         );

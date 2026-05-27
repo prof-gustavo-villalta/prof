@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
-import 'prof_controller.dart';
+import '../domain/diario_de_classe.dart';
 import 'screens/today_screen.dart';
 import 'screens/classes_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/settings_screen.dart';
 import 'widgets/animated_tap_scale.dart';
 
-class HomeShell extends StatelessWidget {
-  const HomeShell({super.key, required this.controller});
+class HomeShell extends StatefulWidget {
+  const HomeShell({super.key, required this.diario, required this.now});
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
+  final DateTime now;
+
+  @override
+  State<HomeShell> createState() => _HomeShellState();
+}
+
+class _HomeShellState extends State<HomeShell> {
+  int _selectedIndex = 0;
+
+  void selectTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final pages = [
-      TodayScreen(controller: controller),
-      ClassesScreen(controller: controller),
-      HistoryScreen(controller: controller),
-      SettingsScreen(controller: controller),
+      TodayScreen(diario: widget.diario, now: widget.now),
+      ClassesScreen(diario: widget.diario),
+      HistoryScreen(diario: widget.diario),
+      SettingsScreen(diario: widget.diario),
     ];
     return Scaffold(
       body: SafeArea(
@@ -38,8 +52,8 @@ class HomeShell extends StatelessWidget {
             );
           },
           child: KeyedSubtree(
-            key: ValueKey<int>(controller.selectedIndex),
-            child: pages[controller.selectedIndex],
+            key: ValueKey<int>(_selectedIndex),
+            child: pages[_selectedIndex],
           ),
         ),
       ),
@@ -59,29 +73,29 @@ class HomeShell extends StatelessWidget {
                 icon: Icons.space_dashboard_outlined,
                 activeIcon: Icons.space_dashboard_rounded,
                 label: 'Hoje',
-                isSelected: controller.selectedIndex == 0,
-                onTap: () => controller.selectTab(0),
+                isSelected: _selectedIndex == 0,
+                onTap: () => selectTab(0),
               ),
               _NavBarItem(
                 icon: Icons.layers_outlined,
                 activeIcon: Icons.layers_rounded,
                 label: 'Turmas',
-                isSelected: controller.selectedIndex == 1,
-                onTap: () => controller.selectTab(1),
+                isSelected: _selectedIndex == 1,
+                onTap: () => selectTab(1),
               ),
               _NavBarItem(
                 icon: Icons.insights_outlined,
                 activeIcon: Icons.insights_rounded,
                 label: 'Historico',
-                isSelected: controller.selectedIndex == 2,
-                onTap: () => controller.selectTab(2),
+                isSelected: _selectedIndex == 2,
+                onTap: () => selectTab(2),
               ),
               _NavBarItem(
                 icon: Icons.tune_rounded,
                 activeIcon: Icons.tune_rounded,
                 label: 'Ajustes',
-                isSelected: controller.selectedIndex == 3,
-                onTap: () => controller.selectTab(3),
+                isSelected: _selectedIndex == 3,
+                onTap: () => selectTab(3),
               ),
             ],
           ),

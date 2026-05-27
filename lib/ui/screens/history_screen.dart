@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../design_system/app_colors.dart';
 import '../widgets/app_dropdown.dart';
 import '../widgets/page_header.dart';
@@ -12,9 +12,9 @@ import 'export_data_screen.dart';
 import 'student_summary_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key, required this.controller});
+  const HistoryScreen({super.key, required this.diario});
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
@@ -26,12 +26,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = widget.controller;
     final selectedClassGroupId =
-        classGroupId ?? controller.classGroups.firstOrNull?.id;
+        classGroupId ?? widget.diario.classGroups.firstOrNull?.id;
     final selectedDisciplineId =
-        disciplineId ?? controller.disciplines.firstOrNull?.id;
-    final closedAttendances = controller.closedAttendanceViews();
+        disciplineId ?? widget.diario.disciplines.firstOrNull?.id;
+    final closedAttendances = widget.diario.closedAttendanceViews();
     
     return Scaffold(
       body: SafeArea(
@@ -51,7 +50,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           value: selectedClassGroupId,
                           label: 'Turma',
                           items: [
-                            for (final group in controller.classGroups)
+                            for (final group in widget.diario.classGroups)
                               DropdownMenuItem(value: group.id, child: Text(group.name)),
                           ],
                           onChanged: (value) => setState(() => classGroupId = value),
@@ -63,7 +62,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           value: selectedDisciplineId,
                           label: 'Disciplina',
                           items: [
-                            for (final discipline in controller.disciplines)
+                            for (final discipline in widget.diario.disciplines)
                               DropdownMenuItem(
                                 value: discipline.id,
                                 child: Text(discipline.name),
@@ -88,7 +87,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => AttendanceScreen(
-                                  controller: controller,
+                                  diario: widget.diario,
                                   lesson: LessonOccurrence(
                                     weeklyClass: view.weeklyClass,
                                     date: view.attendance.date,
@@ -154,7 +153,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => StudentSummaryScreen(
-                              controller: controller,
+                              diario: widget.diario,
                               classGroupId: selectedClassGroupId,
                               disciplineId: selectedDisciplineId,
                             ),
@@ -174,7 +173,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (_) => ExportDataScreen(
-                              controller: controller,
+                              diario: widget.diario,
                               classGroupId: selectedClassGroupId,
                               disciplineId: selectedDisciplineId,
                             ),

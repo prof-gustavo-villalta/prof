@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../design_system/app_colors.dart';
 import '../widgets/page_header.dart';
 import '../widgets/shared_ui.dart';
 
 class DisciplineFormScreen extends StatefulWidget {
-  const DisciplineFormScreen({super.key, required this.controller});
+  const DisciplineFormScreen({super.key, required this.diario});
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
 
   @override
   State<DisciplineFormScreen> createState() => _DisciplineFormScreenState();
@@ -56,7 +56,7 @@ class _DisciplineFormScreenState extends State<DisciplineFormScreen> {
                 color: AppColors.primaryAction,
                 onPressed: () {
                   if (disciplina.text.trim().isNotEmpty) {
-                    widget.controller.addDiscipline(disciplina.text);
+                    widget.diario.addDiscipline(disciplina.text);
                   }
                   Navigator.of(context).pop();
                 },

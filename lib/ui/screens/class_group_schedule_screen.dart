@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/bordered_container.dart';
 import '../widgets/shared_ui.dart';
@@ -11,20 +10,20 @@ import 'schedule_form_screen.dart';
 class ClassGroupScheduleScreen extends StatelessWidget {
   const ClassGroupScheduleScreen({
     super.key,
-    required this.controller,
+    required this.diario,
     required this.groupId,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final String groupId;
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: controller,
+      listenable: diario,
       builder: (context, _) {
-        final group = controller.classGroup(groupId);
-        final classes = controller.weeklyClasses
+        final group = diario.classGroup(groupId);
+        final classes = diario.weeklyClasses
             .where((w) => w.classGroupId == groupId)
             .toList();
 
@@ -50,7 +49,7 @@ class ClassGroupScheduleScreen extends StatelessWidget {
                           Builder(builder: (context) {
                             final weeklyClass = entry.$2;
                             final isLast = entry.$1 == classes.length - 1;
-                            final discipline = controller.discipline(weeklyClass.disciplineId);
+                            final discipline = diario.discipline(weeklyClass.disciplineId);
                             
                             return BorderedContainer(
                               isLast: isLast,
@@ -118,7 +117,7 @@ class ClassGroupScheduleScreen extends StatelessWidget {
                                       Navigator.of(context).push(
                                         MaterialPageRoute<void>(
                                           builder: (_) => ScheduleFormScreen(
-                                            controller: controller,
+                                            diario: diario,
                                             weeklyClass: weeklyClass,
                                           ),
                                         ),
@@ -165,7 +164,7 @@ class ClassGroupScheduleScreen extends StatelessWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => DisciplineFormScreen(
-                                  controller: controller,
+                                  diario: diario,
                                 ),
                               ),
                             );
@@ -183,7 +182,7 @@ class ClassGroupScheduleScreen extends StatelessWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => ScheduleFormScreen(
-                                  controller: controller,
+                                  diario: diario,
                                   groupId: groupId,
                                 ),
                               ),

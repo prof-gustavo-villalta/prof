@@ -138,7 +138,7 @@ class SharedPreferencesDiarioStorage implements DiarioStorage {
 
   @override
   Future<void> saveCancelledLesson(CancelledLesson cancelledLesson) =>
-      _saveEntity('prof.canc.', cancelledLesson.id, cancelledLesson.toJson());
+      _saveEntity('prof.canc.', cancelledLesson.lessonId, cancelledLesson.toJson());
 }
 
 class InMemoryDiarioStorage implements DiarioStorage {
@@ -193,7 +193,7 @@ class InMemoryDiarioStorage implements DiarioStorage {
 
   @override
   Future<void> saveCancelledLesson(CancelledLesson cancelledLesson) async {
-    final list = _data.cancelledLessons.toList()..removeWhere((item) => item.id == cancelledLesson.id)..add(cancelledLesson);
+    final list = _data.cancelledLessons.toList()..removeWhere((item) => item.lessonId == cancelledLesson.lessonId)..add(cancelledLesson);
     _data = _data.copyWith(cancelledLessons: list);
   }
 }

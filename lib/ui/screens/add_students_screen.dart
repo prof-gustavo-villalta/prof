@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../design_system/app_colors.dart';
 import '../widgets/page_header.dart';
 import '../widgets/shared_ui.dart';
@@ -7,11 +7,11 @@ import '../widgets/shared_ui.dart';
 class AddStudentsScreen extends StatefulWidget {
   const AddStudentsScreen({
     super.key,
-    required this.controller,
+    required this.diario,
     required this.groupId,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final String groupId;
 
   @override
@@ -74,7 +74,7 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
                 color: AppColors.primaryAction,
                 onPressed: () {
                   if (_studentsController.text.trim().isEmpty) return;
-                  widget.controller.addStudents(
+                  widget.diario.addStudents(
                     widget.groupId,
                     _studentsController.text,
                   );

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/page_header.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key, required this.controller});
+  const SettingsScreen({super.key, required this.diario});
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class SettingsScreen extends StatelessWidget {
         const SizedBox(height: 20),
         AnimatedTapScale(
           onTap: () {
-            controller.loadDemoData();
+            diario.loadDemoData(DateTime.now());
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(

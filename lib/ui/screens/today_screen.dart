@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/shared_ui.dart';
 import 'attendance_screen.dart';
 
 class TodayScreen extends StatelessWidget {
-  const TodayScreen({super.key, required this.controller});
+  const TodayScreen({super.key, required this.diario, required this.now});
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
+  final DateTime now;
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: controller,
+      listenable: diario,
       builder: (context, _) {
-        final current = controller.currentLesson();
-        final next = current ?? controller.nextLesson();
-        final pending = controller.pendingLessons();
+        final current = diario.getDashboard(now).currentLesson;
+        final next = current ?? diario.getDashboard(now).nextLesson;
+        final pending = diario.getDashboard(now).pendingLessons;
         final pendingTake10 = pending.take(10).toList();
-        final todays = controller.todaysLessons();
-        final weekdayLabelStr = weekdayLabel(DateTime.now().weekday);
+        final todays = diario.getDashboard(now).todaysLessons;
+        final weekdayLabelStr = weekdayLabel(now.weekday);
 
         return ListView(
           padding: const EdgeInsets.symmetric(vertical: 24),
@@ -41,7 +42,7 @@ class TodayScreen extends StatelessWidget {
               )
             else
               LessonHeroCard(
-                controller: controller,
+                diario: diario,
                 lesson: next,
                 isCurrent: current != null,
               ),
@@ -61,7 +62,7 @@ class TodayScreen extends StatelessWidget {
                 return AnimatedTapScale(
                   onTap: () => _openAttendance(context, lesson),
                   child: LessonTile(
-                    controller: controller,
+                    diario: diario,
                     lesson: lesson,
                     isLast: isLast,
                   ),
@@ -89,7 +90,7 @@ class TodayScreen extends StatelessWidget {
                   return AnimatedTapScale(
                     onTap: () => _openAttendance(context, lesson),
                     child: LessonTile(
-                      controller: controller,
+                      diario: diario,
                       lesson: lesson,
                       pending: true,
                       isLast: isLast,
@@ -105,12 +106,12 @@ class TodayScreen extends StatelessWidget {
   }
 
   Future<void> _openAttendance(BuildContext context, LessonOccurrence lesson) async {
-    final attendance = await controller.startAttendance(lesson);
+    final attendance = await diario.startAttendance(lesson);
     if (!context.mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => AttendanceScreen(
-          controller: controller,
+          diario: diario,
           lesson: lesson,
           attendanceId: attendance.id,
         ),
@@ -160,24 +161,24 @@ class _MorePendingIndicator extends StatelessWidget {
 class LessonHeroCard extends StatelessWidget {
   const LessonHeroCard({
     super.key,
-    required this.controller,
+    required this.diario,
     required this.lesson,
     required this.isCurrent,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final LessonOccurrence lesson;
   final bool isCurrent;
 
   @override
   Widget build(BuildContext context) {
-    final group = controller.classGroup(lesson.weeklyClass.classGroupId);
-    final discipline = controller.discipline(lesson.weeklyClass.disciplineId);
+    final group = diario.classGroup(lesson.weeklyClass.classGroupId);
+    final discipline = diario.discipline(lesson.weeklyClass.disciplineId);
     final accentColor = isCurrent
         ? Theme.of(context).colorScheme.primary
         : Theme.of(context).colorScheme.secondary;
 
-    final attendance = controller.attendanceFor(lesson.id);
+    final attendance = diario.attendanceFor(lesson.id);
     final LessonDisplayStatus displayStatus;
     if (isCurrent) {
       if (attendance != null) {
@@ -233,7 +234,7 @@ class LessonHeroCard extends StatelessWidget {
                     baseColor: AppColors.cancelBase,
                     fillColor: AppColors.cancelFill,
                     height: 66,
-                    onConfirmed: () => controller.cancelLesson(lesson),
+                    onConfirmed: () => diario.cancelLesson(lesson),
                   ),
                 ),
               ],
@@ -245,12 +246,12 @@ class LessonHeroCard extends StatelessWidget {
   }
 
   Future<void> _openAttendance(BuildContext context, LessonOccurrence lesson) async {
-    final attendance = await controller.startAttendance(lesson);
+    final attendance = await diario.startAttendance(lesson);
     if (!context.mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => AttendanceScreen(
-          controller: controller,
+          diario: diario,
           lesson: lesson,
           attendanceId: attendance.id,
         ),
@@ -262,23 +263,23 @@ class LessonHeroCard extends StatelessWidget {
 class LessonTile extends StatelessWidget {
   const LessonTile({
     super.key,
-    required this.controller,
+    required this.diario,
     required this.lesson,
     this.pending = false,
     this.isLast = true,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final LessonOccurrence lesson;
   final bool pending;
   final bool isLast;
 
   @override
   Widget build(BuildContext context) {
-    final group = controller.classGroup(lesson.weeklyClass.classGroupId);
-    final discipline = controller.discipline(lesson.weeklyClass.disciplineId);
+    final group = diario.classGroup(lesson.weeklyClass.classGroupId);
+    final discipline = diario.discipline(lesson.weeklyClass.disciplineId);
 
-    final attendance = controller.attendanceFor(lesson.id);
+    final attendance = diario.attendanceFor(lesson.id);
     final LessonDisplayStatus displayStatus;
     if (pending) {
       displayStatus = LessonDisplayStatus.pending;

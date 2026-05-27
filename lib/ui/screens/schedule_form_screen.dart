@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/app_dropdown.dart';
 import '../widgets/page_header.dart';
 import '../widgets/shared_ui.dart';
@@ -9,12 +9,12 @@ import '../widgets/shared_ui.dart';
 class ScheduleFormScreen extends StatefulWidget {
   const ScheduleFormScreen({
     super.key,
-    required this.controller,
+    required this.diario,
     this.weeklyClass,
     this.groupId,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final WeeklyClass? weeklyClass;
   final String? groupId;
 
@@ -42,12 +42,12 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
     );
     weekday = widget.weeklyClass?.weekday ?? DateTime.now().weekday;
     classGroupId = widget.weeklyClass?.classGroupId ?? widget.groupId;
-    if (classGroupId == null && widget.controller.classGroups.isNotEmpty) {
-      classGroupId = widget.controller.classGroups.first.id;
+    if (classGroupId == null && widget.diario.classGroups.isNotEmpty) {
+      classGroupId = widget.diario.classGroups.first.id;
     }
     disciplineId = widget.weeklyClass?.disciplineId;
-    if (disciplineId == null && widget.controller.disciplines.isNotEmpty) {
-      disciplineId = widget.controller.disciplines.first.id;
+    if (disciplineId == null && widget.diario.disciplines.isNotEmpty) {
+      disciplineId = widget.diario.disciplines.first.id;
     }
   }
 
@@ -91,40 +91,39 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                     },
                   ),
                   const SizedBox(height: 8),
-                  if (classGroupId != null)
-                    AppDropdown<String>(
-                      value: classGroupId,
-                      label: 'Turma',
-                      items: [
-                        for (final group in widget.controller.classGroups)
-                          DropdownMenuItem(value: group.id, child: Text(group.name)),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() => classGroupId = value);
-                        }
-                      },
-                    ),
+                  AppDropdown<String>(
+                    value: classGroupId,
+                    label: 'Turma',
+                    items: [
+                      for (final group in widget.diario.classGroups)
+                        DropdownMenuItem(value: group.id, child: Text(group.name)),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => classGroupId = value);
+                      }
+                    },
+                  ),
                   const SizedBox(height: 8),
-                  if (disciplineId != null || widget.controller.disciplines.isEmpty)
-                    AppDropdown<String?>(
-                      value: disciplineId,
-                      label: 'Disciplina',
-                      items: [
-                        if (widget.controller.disciplines.isEmpty)
-                          const DropdownMenuItem(value: null, child: Text('Nenhuma cadastrada')),
-                        for (final discipline in widget.controller.disciplines)
-                          DropdownMenuItem(
-                            value: discipline.id,
-                            child: Text(discipline.name),
-                          ),
-                      ],
-                      onChanged: (value) {
-                        if (value != null) {
-                          setState(() => disciplineId = value);
-                        }
-                      },
-                    ),
+                  AppDropdown<String?>(
+                    key: const ValueKey('schedule_discipline'),
+                    value: disciplineId,
+                    label: 'Disciplina',
+                    items: [
+                      if (widget.diario.disciplines.isEmpty)
+                        const DropdownMenuItem(value: null, child: Text('Nenhuma cadastrada')),
+                      for (final discipline in widget.diario.disciplines)
+                        DropdownMenuItem(
+                          value: discipline.id,
+                          child: Text(discipline.name),
+                        ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => disciplineId = value);
+                      }
+                    },
+                  ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -162,7 +161,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                             baseColor: AppColors.cancelBase,
                             fillColor: AppColors.cancelFill,
                             onConfirmed: () async {
-                              await widget.controller.removeWeeklyClass(widget.weeklyClass!.id);
+                              await widget.diario.removeWeeklyClass(widget.weeklyClass!.id);
                               if (context.mounted) {
                                 Navigator.of(context).pop();
                               }
@@ -186,7 +185,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                       onPressed: () async {
                         if (classGroupId == null || disciplineId == null) return;
                         if (isEditing) {
-                          await widget.controller.updateWeeklyClass(
+                          await widget.diario.updateWeeklyClass(
                             id: widget.weeklyClass!.id,
                             classGroupId: classGroupId!,
                             disciplineId: disciplineId!,
@@ -195,7 +194,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                             endMinutes: parseClock(end.text),
                           );
                         } else {
-                          widget.controller.addWeeklyClass(
+                          widget.diario.addWeeklyClass(
                             classGroupId: classGroupId!,
                             disciplineId: disciplineId!,
                             weekday: weekday,

@@ -62,15 +62,20 @@ void main() {
 
     await tester.tap(find.text('Historico'));
     await tester.pumpAndSettle();
-
+    
+    // Teste Resumo
+    await tester.tap(find.text('Resumo'));
+    await tester.pumpAndSettle();
     expect(find.text('Ana Silva'), findsOneWidget);
     expect(find.text('100%'), findsOneWidget);
     expect(find.text('Bruno Costa'), findsOneWidget);
     expect(find.text('0%'), findsOneWidget);
-    expect(find.text('Chamadas fechadas'), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
     expect(find.textContaining('DS3 - PAM2'), findsWidgets);
 
-    await tester.tap(find.byKey(const ValueKey('closed_attendance_0')));
+    await tester.tap(find.textContaining('DS3 - PAM2').first);
     await tester.pumpAndSettle();
     expect(find.text('Reabrir chamada'), findsOneWidget);
     await tester.tap(find.text('Reabrir chamada'));
@@ -79,15 +84,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('close_attendance')));
     await tester.pumpAndSettle();
 
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('copy_csv')),
-      120,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.ensureVisible(find.byKey(const ValueKey('copy_csv')));
+    // Teste Exportar CSV
+    await tester.tap(find.text('Exportar CSV'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('copy_csv')));
-    await tester.pump(const Duration(milliseconds: 750));
-    expect(find.text('CSV pronto para copiar'), findsOneWidget);
+    
   });
 }

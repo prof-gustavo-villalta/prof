@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/bordered_container.dart';
 import '../widgets/shared_ui.dart';
@@ -14,11 +14,11 @@ import 'class_group_schedule_screen.dart';
 class ClassGroupDetailScreen extends StatefulWidget {
   const ClassGroupDetailScreen({
     super.key,
-    required this.controller,
+    required this.diario,
     required this.groupId,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final String groupId;
 
   @override
@@ -37,11 +37,11 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: widget.controller,
+      listenable: widget.diario,
       builder: (context, _) {
-        final group = widget.controller.classGroup(widget.groupId);
-        final term = widget.controller.term(group.termId);
-        final students = widget.controller.studentsForClass(widget.groupId);
+        final group = widget.diario.classGroup(widget.groupId);
+        final term = widget.diario.term(group.termId);
+        final students = widget.diario.studentsForClass(widget.groupId);
 
         return Scaffold(
           appBar: AppBar(
@@ -114,7 +114,7 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
                                           icon: Icons.camera_rounded,
                                           onTap: () => _pickPhoto(
                                             context,
-                                            widget.controller,
+                                            widget.diario,
                                             student,
                                             ImageSource.camera,
                                           ),
@@ -124,7 +124,7 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
                                           icon: Icons.add_photo_alternate_rounded,
                                           onTap: () => _pickPhoto(
                                             context,
-                                            widget.controller,
+                                            widget.diario,
                                             student,
                                             ImageSource.gallery,
                                           ),
@@ -154,7 +154,7 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => ClassGroupScheduleScreen(
-                                  controller: widget.controller,
+                                  diario: widget.diario,
                                   groupId: widget.groupId,
                                 ),
                               ),
@@ -173,7 +173,7 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
                                 builder: (_) => AddStudentsScreen(
-                                  controller: widget.controller,
+                                  diario: widget.diario,
                                   groupId: widget.groupId,
                                 ),
                               ),
@@ -194,7 +194,7 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
 
   Future<void> _pickPhoto(
     BuildContext context,
-    ProfController controller,
+    DiarioDeClasse diario,
     Student student,
     ImageSource source,
   ) async {
@@ -205,7 +205,7 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
       return;
     }
     final bytes = await image.readAsBytes();
-    await controller.saveStudentPhotoBase64(student, base64Encode(bytes));
+    await diario.saveStudentPhotoBase64(student, base64Encode(bytes));
     if (context.mounted) _showSnackBar(context, 'Foto atualizada');
   }
 

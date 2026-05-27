@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../widgets/shared_ui.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key, required this.controller});
+  const OnboardingScreen({super.key, required this.diario});
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -114,11 +114,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   key: const ValueKey('onboarding_submit'),
                   text: 'Começar',
                   icon: Icons.arrow_forward_rounded,
-                  onPressed: () => widget.controller.completeOnboarding(
+                  onPressed: () => widget.diario.completeOnboarding(
                     turma: turma.text,
                     periodo: periodo.text,
                     disciplina: disciplina.text,
                     alunos: alunos.text,
+                    now: DateTime.now(),
                   ),
                 ),
               ],

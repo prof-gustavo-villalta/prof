@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../prof_controller.dart';
+import '../../domain/diario_de_classe.dart';
 import '../design_system/app_colors.dart';
 import '../widgets/bordered_container.dart';
 import '../widgets/page_header.dart';
@@ -9,21 +9,21 @@ import '../widgets/student_avatar.dart';
 class StudentSummaryScreen extends StatelessWidget {
   const StudentSummaryScreen({
     super.key,
-    required this.controller,
+    required this.diario,
     this.classGroupId,
     this.disciplineId,
   });
 
-  final ProfController controller;
+  final DiarioDeClasse diario;
   final String? classGroupId;
   final String? disciplineId;
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: controller,
+      listenable: diario,
       builder: (context, _) {
-        final summaries = controller.summaries(
+        final summaries = diario.summaries(
           classGroupId: classGroupId,
           disciplineId: disciplineId,
         );
