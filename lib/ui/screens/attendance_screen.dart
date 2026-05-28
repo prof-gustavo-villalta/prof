@@ -9,6 +9,7 @@ import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/student_avatar.dart';
 import '../widgets/shared_ui.dart';
+import '../widgets/single_column_screen.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({
@@ -45,92 +46,80 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
         final students = _filteredStudents(attendance, group.id);
 
-        return Scaffold(
-          appBar: AppBar(title: Text('${group.name} - ${discipline.name}')),
-          body: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.only(
-                      top: AppSpacing.gutter,
-                      bottom: AppSpacing.loose,
-                    ),
-                    children: [
-                      AppSearchBar(
-                        hintText: 'Buscar aluno',
-                        onChanged: (value) {
-                          setState(() {
-                            studentQuery = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.gutter),
-                      AppFilterRow(
-                        filters: const [
-                          'Todos',
-                          'Presentes',
-                          'Ausentes',
-                          'Atrasos',
-                          'Justificados',
-                        ],
-                        filterColors: const {
-                          'Todos': AppColors.slate500,
-                          'Presentes': AppColors.present,
-                          'Ausentes': AppColors.absent,
-                          'Atrasos': AppColors.lateColor,
-                          'Justificados': AppColors.justified,
-                        },
-                        selectedFilter: statusFilter,
-                        onSelected: (value) {
-                          setState(() {
-                            statusFilter = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.page),
-                      if (students.isEmpty)
-                        const EmptyCard(
-                          text: 'Nenhum aluno encontrado para este filtro.',
-                          noSideBorders: true,
-                        )
-                      else
-                        for (final entry in students.indexed)
-                          StudentAttendanceCard(
-                            key: ValueKey('student_card_${entry.$2.id}'),
-                            diario: widget.diario,
-                            attendance: attendance,
-                            student: entry.$2,
-                            isLast: entry.$1 == students.length - 1,
-                          ),
-                    ],
-                  ),
-                ),
-                BottomActionBar(
-                  child: attendance.isClosed
-                      ? AppButton(
-                          key: const ValueKey('reopen_attendance'),
-                          text: 'Reabrir chamada',
-                          color: AppColors.slate900,
-                          height: AppSizes.actionHeight,
-                          onPressed: () =>
-                              widget.diario.reopenAttendance(attendance),
-                        )
-                      : AppButton(
-                          key: const ValueKey('close_attendance'),
-                          text: 'Fechar chamada',
-                          color: AppColors.primaryAction,
-                          height: AppSizes.actionHeight,
-                          onPressed: () async {
-                            await widget.diario.closeAttendance(attendance);
-                            if (context.mounted) Navigator.of(context).pop();
-                          },
-                        ),
-                ),
-              ],
-            ),
+        return SingleColumnScreen(
+          appBarTitle: '${group.name} - ${discipline.name}',
+          padding: const EdgeInsets.only(
+            top: AppSpacing.gutter,
+            bottom: AppSpacing.loose,
           ),
+          bottomActionBar: BottomActionBar(
+            child: attendance.isClosed
+                ? AppButton(
+                    key: const ValueKey('reopen_attendance'),
+                    text: 'Reabrir chamada',
+                    color: AppColors.slate900,
+                    height: AppSizes.actionHeight,
+                    onPressed: () => widget.diario.reopenAttendance(attendance),
+                  )
+                : AppButton(
+                    key: const ValueKey('close_attendance'),
+                    text: 'Fechar chamada',
+                    color: AppColors.primaryAction,
+                    height: AppSizes.actionHeight,
+                    onPressed: () async {
+                      await widget.diario.closeAttendance(attendance);
+                      if (context.mounted) Navigator.of(context).pop();
+                    },
+                  ),
+          ),
+          children: [
+            AppSearchBar(
+              hintText: 'Buscar aluno',
+              onChanged: (value) {
+                setState(() {
+                  studentQuery = value;
+                });
+              },
+            ),
+            const SizedBox(height: AppSpacing.gutter),
+            AppFilterRow(
+              filters: const [
+                'Todos',
+                'Presentes',
+                'Ausentes',
+                'Atrasos',
+                'Justificados',
+              ],
+              filterColors: const {
+                'Todos': AppColors.slate500,
+                'Presentes': AppColors.present,
+                'Ausentes': AppColors.absent,
+                'Atrasos': AppColors.lateColor,
+                'Justificados': AppColors.justified,
+              },
+              selectedFilter: statusFilter,
+              onSelected: (value) {
+                setState(() {
+                  statusFilter = value;
+                });
+              },
+            ),
+            const SizedBox(height: AppSpacing.page),
+            if (students.isEmpty)
+              const EmptyCard(
+                text: 'Nenhum aluno encontrado para este filtro.',
+                noSideBorders: true,
+              )
+            else
+              for (final entry in students.indexed)
+                StudentAttendanceCard(
+                  key: ValueKey('student_card_${entry.$2.id}'),
+                  diario: widget.diario,
+                  attendance: attendance,
+                  student: entry.$2,
+                  isLast: entry.$1 == students.length - 1,
+                ),
+          ],
         );
       },
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
-import '../widgets/page_header.dart';
 import '../widgets/shared_ui.dart';
+import '../widgets/single_column_screen.dart';
 import '../design_system/app_borders.dart';
 import '../design_system/app_sizes.dart';
 import '../design_system/app_spacing.dart';
@@ -16,11 +16,11 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ListView(
-      padding: AppSpacing.pageInsets,
+    return SingleColumnScreen(
+      title: 'Ajustes',
+      icon: Icons.tune_rounded,
+      spacingAfterHeader: AppSpacing.page,
       children: [
-        const PageHeader(title: 'Ajustes', icon: Icons.tune_rounded),
-        const SizedBox(height: AppSpacing.page),
         AnimatedTapScale(
           onTap: () {
             diario.loadDemoData(DateTime.now());

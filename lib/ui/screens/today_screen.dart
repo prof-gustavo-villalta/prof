@@ -8,6 +8,7 @@ import '../design_system/app_text_styles.dart';
 import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/shared_ui.dart';
+import '../widgets/single_column_screen.dart';
 import 'attendance_screen.dart';
 
 class TodayScreen extends StatelessWidget {
@@ -28,17 +29,12 @@ class TodayScreen extends StatelessWidget {
         final todays = diario.getDashboard(now).todaysLessons;
         final weekdayLabelStr = weekdayLabel(now.weekday);
 
-        return ListView(
-          padding: AppSpacing.listVertical,
+        return SingleColumnScreen(
+          title: weekdayLabelStr,
+          icon: Icons.today_rounded,
+          paddingPreset: AppScreenPadding.list,
+          spacingAfterHeader: AppSpacing.page,
           children: [
-            Padding(
-              padding: AppSpacing.pageHorizontal,
-              child: Text(
-                weekdayLabelStr,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.page),
             if (next == null)
               const EmptyCard(
                 text: 'Nenhuma aula encontrada na Grade Semanal.',
@@ -51,13 +47,7 @@ class TodayScreen extends StatelessWidget {
                 isCurrent: current != null,
               ),
             const SizedBox(height: AppSpacing.section),
-            Padding(
-              padding: AppSpacing.pageHorizontal,
-              child: Text(
-                'Aulas do dia',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-            ),
+            _SectionTitle(text: 'Aulas do dia', icon: Icons.event_note_rounded),
             const SizedBox(height: AppSpacing.xl),
             for (final entry in todays.indexed)
               Builder(
@@ -75,12 +65,9 @@ class TodayScreen extends StatelessWidget {
                 },
               ),
             const SizedBox(height: AppSpacing.section),
-            Padding(
-              padding: AppSpacing.pageHorizontal,
-              child: Text(
-                'Pendentes',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
+            _SectionTitle(
+              text: 'Pendentes',
+              icon: Icons.pending_actions_rounded,
             ),
             const SizedBox(height: AppSpacing.xl),
             if (pending.isEmpty)
@@ -126,6 +113,31 @@ class TodayScreen extends StatelessWidget {
           lesson: lesson,
           attendanceId: attendance.id,
         ),
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.text, required this.icon});
+
+  final String text;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: AppSpacing.pageHorizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(text, style: Theme.of(context).textTheme.headlineMedium),
+          Icon(
+            icon,
+            color: Theme.of(context).colorScheme.primary,
+            size: AppSizes.pageIcon,
+          ),
+        ],
       ),
     );
   }
@@ -207,10 +219,7 @@ class LessonHeroCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         border: Border(
-          top: BorderSide(
-            color: accentColor,
-            width: AppSizes.accentDivider,
-          ),
+          top: BorderSide(color: accentColor, width: AppSizes.accentDivider),
         ),
       ),
       child: Column(
