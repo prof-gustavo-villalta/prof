@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
+import '../design_system/app_sizes.dart';
+import '../design_system/app_text_styles.dart';
 
 class StudentAvatar extends StatelessWidget {
   const StudentAvatar({super.key, required this.student});
@@ -26,8 +28,13 @@ class StudentAvatar extends StatelessWidget {
       aspectRatio: 1,
       child: Container(
         decoration: BoxDecoration(
-          color: photo == null ? color.withValues(alpha: 0.12) : Colors.transparent,
-          border: Border.all(color: color.withValues(alpha: 0.35), width: 1.5),
+          color: photo == null
+              ? color.withValues(alpha: 0.12)
+              : AppColors.transparent,
+          border: Border.all(
+            color: color.withValues(alpha: 0.35),
+            width: AppSizes.subtleDivider,
+          ),
           image: photo == null
               ? null
               : DecorationImage(
@@ -39,11 +46,9 @@ class StudentAvatar extends StatelessWidget {
             ? Center(
                 child: Text(
                   student.initials,
-                  style: TextStyle(
-                    fontSize: 13,
+                  style: AppTextStyles.badge.copyWith(
                     fontWeight: FontWeight.w900,
                     color: color,
-                    letterSpacing: 0.5,
                   ),
                 ),
               )

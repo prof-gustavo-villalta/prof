@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../domain/diario_de_classe.dart';
 import '../design_system/app_colors.dart';
+import '../design_system/app_sizes.dart';
+import '../design_system/app_spacing.dart';
 import '../widgets/page_header.dart';
 import '../widgets/shared_ui.dart';
 
@@ -32,13 +34,13 @@ class _DisciplineFormScreenState extends State<DisciplineFormScreen> {
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                padding: AppSpacing.pageInsets,
                 children: [
                   const PageHeader(
                     title: 'Nova disciplina',
                     icon: Icons.menu_book_rounded,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: AppSpacing.section),
                   Field(
                     label: 'Disciplina',
                     controller: disciplina,
@@ -47,13 +49,13 @@ class _DisciplineFormScreenState extends State<DisciplineFormScreen> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 66,
+            BottomActionBar(
               child: AppButton(
                 key: const ValueKey('add_discipline'),
                 text: 'Adicionar',
                 icon: Icons.check_rounded,
                 color: AppColors.primaryAction,
+                height: AppSizes.actionHeight,
                 onPressed: () {
                   if (disciplina.text.trim().isNotEmpty) {
                     widget.diario.addDiscipline(disciplina.text);

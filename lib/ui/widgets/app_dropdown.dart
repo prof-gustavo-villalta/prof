@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../design_system/app_spacing.dart';
+import '../design_system/app_text_styles.dart';
 
 /// Dropdown estilizado no padrão visual do app.
 ///
@@ -23,14 +25,13 @@ class AppDropdown<T> extends StatelessWidget {
     return DropdownButtonFormField<T>(
       initialValue: value,
       dropdownColor: Theme.of(context).colorScheme.surface,
-      style: TextStyle(
+      style: AppTextStyles.support.copyWith(
         color: Theme.of(context).colorScheme.onSurface,
-        fontWeight: FontWeight.w600,
       ),
       decoration: InputDecoration(
         labelText: label,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
+          horizontal: AppSpacing.xxl,
           vertical: 10,
         ),
       ),

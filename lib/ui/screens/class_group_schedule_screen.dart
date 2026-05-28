@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../design_system/app_colors.dart';
+import '../design_system/app_sizes.dart';
+import '../design_system/app_spacing.dart';
+import '../design_system/app_text_styles.dart';
 import '../../domain/diario_de_classe.dart';
-import '../widgets/animated_tap_scale.dart';
 import '../widgets/bordered_container.dart';
 import '../widgets/shared_ui.dart';
 import 'discipline_form_screen.dart';
@@ -28,16 +30,14 @@ class ClassGroupScheduleScreen extends StatelessWidget {
             .toList();
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text('Grade — ${group.name}'),
-          ),
+          appBar: AppBar(title: Text('Grade — ${group.name}')),
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    padding: AppSpacing.listVertical,
                     children: [
                       if (classes.isEmpty)
                         const EmptyCard(
@@ -46,111 +46,94 @@ class ClassGroupScheduleScreen extends StatelessWidget {
                         )
                       else
                         for (final entry in classes.indexed)
-                          Builder(builder: (context) {
-                            final weeklyClass = entry.$2;
-                            final isLast = entry.$1 == classes.length - 1;
-                            final discipline = diario.discipline(weeklyClass.disciplineId);
-                            
-                            return BorderedContainer(
-                              isLast: isLast,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 14,
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 6,
-                                    ),
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.slate950,
-                                    ),
-                                    child: Text(
-                                      weekdayLabel(weeklyClass.weekday)
-                                          .toUpperCase(),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w900,
-                                        fontSize: 11,
-                                        letterSpacing: 0.5,
+                          Builder(
+                            builder: (context) {
+                              final weeklyClass = entry.$2;
+                              final isLast = entry.$1 == classes.length - 1;
+                              final discipline = diario.discipline(
+                                weeklyClass.disciplineId,
+                              );
+
+                              return BorderedContainer(
+                                isLast: isLast,
+                                padding: AppSpacing.compactRow,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.lg,
+                                        vertical: AppSpacing.sm,
+                                      ),
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.slate950,
+                                      ),
+                                      child: Text(
+                                        weekdayLabel(
+                                          weeklyClass.weekday,
+                                        ).toUpperCase(),
+                                        style: AppTextStyles.action.copyWith(
+                                          fontSize: 11,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '${group.name} - ${discipline.name}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 15,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface,
+                                    const SizedBox(width: AppSpacing.xl),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${group.name} - ${discipline.name}',
+                                            style: AppTextStyles.rowTitle
+                                                .copyWith(
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.onSurface,
+                                                ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          '${clock(weeklyClass.startMinutes)} - ${clock(weeklyClass.endMinutes)}',
-                                          style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface
-                                                .withValues(alpha: 0.6),
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600,
+                                          const SizedBox(
+                                            height: AppSpacing.xxs,
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  AnimatedTapScale(
-                                    key: ValueKey(
-                                      'edit_schedule_${discipline.name}',
-                                    ),
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute<void>(
-                                          builder: (_) => ScheduleFormScreen(
-                                            diario: diario,
-                                            weeklyClass: weeklyClass,
+                                          Text(
+                                            '${clock(weeklyClass.startMinutes)} - ${clock(weeklyClass.endMinutes)}',
+                                            style: AppTextStyles.caption
+                                                .copyWith(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface
+                                                      .withValues(alpha: 0.6),
+                                                ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: AppColors.slate950,
-                                          width: 2,
-                                        ),
-                                      ),
-                                      child: Icon(
-                                        Icons.tune_rounded,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withValues(alpha: 0.7),
-                                        size: 18,
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
+                                    AppIconButton(
+                                      key: ValueKey(
+                                        'edit_schedule_${discipline.name}',
+                                      ),
+                                      icon: Icons.tune_rounded,
+                                      size: AppSizes.compactIconButton,
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute<void>(
+                                            builder: (_) => ScheduleFormScreen(
+                                              diario: diario,
+                                              weeklyClass: weeklyClass,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                     ],
                   ),
                 ),
                 SizedBox(
-                  height: 66,
+                  height: AppSizes.actionHeight,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -163,15 +146,14 @@ class ClassGroupScheduleScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute<void>(
-                                builder: (_) => DisciplineFormScreen(
-                                  diario: diario,
-                                ),
+                                builder: (_) =>
+                                    DisciplineFormScreen(diario: diario),
                               ),
                             );
                           },
                         ),
                       ),
-                      Container(width: 2, color: AppColors.slate950),
+                      const ActionDivider(),
                       Expanded(
                         flex: 50,
                         child: AppButton(
@@ -201,4 +183,3 @@ class ClassGroupScheduleScreen extends StatelessWidget {
     );
   }
 }
-

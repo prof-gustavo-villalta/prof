@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
+import '../design_system/app_borders.dart';
 import '../design_system/app_colors.dart';
+import '../design_system/app_sizes.dart';
+import '../design_system/app_spacing.dart';
+import '../design_system/app_text_styles.dart';
 import '../../domain/diario_de_classe.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/shared_ui.dart';
@@ -25,16 +29,16 @@ class TodayScreen extends StatelessWidget {
         final weekdayLabelStr = weekdayLabel(now.weekday);
 
         return ListView(
-          padding: const EdgeInsets.symmetric(vertical: 24),
+          padding: AppSpacing.listVertical,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: AppSpacing.pageHorizontal,
               child: Text(
                 weekdayLabelStr,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.page),
             if (next == null)
               const EmptyCard(
                 text: 'Nenhuma aula encontrada na Grade Semanal.',
@@ -46,37 +50,39 @@ class TodayScreen extends StatelessWidget {
                 lesson: next,
                 isCurrent: current != null,
               ),
-            const SizedBox(height: 28),
+            const SizedBox(height: AppSpacing.section),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: AppSpacing.pageHorizontal,
               child: Text(
                 'Aulas do dia',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.xl),
             for (final entry in todays.indexed)
-              Builder(builder: (context) {
-                final lesson = entry.$2;
-                final isLast = entry.$1 == todays.length - 1;
-                return AnimatedTapScale(
-                  onTap: () => _openAttendance(context, lesson),
-                  child: LessonTile(
-                    diario: diario,
-                    lesson: lesson,
-                    isLast: isLast,
-                  ),
-                );
-              }),
-            const SizedBox(height: 28),
+              Builder(
+                builder: (context) {
+                  final lesson = entry.$2;
+                  final isLast = entry.$1 == todays.length - 1;
+                  return AnimatedTapScale(
+                    onTap: () => _openAttendance(context, lesson),
+                    child: LessonTile(
+                      diario: diario,
+                      lesson: lesson,
+                      isLast: isLast,
+                    ),
+                  );
+                },
+              ),
+            const SizedBox(height: AppSpacing.section),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: AppSpacing.pageHorizontal,
               child: Text(
                 'Pendentes',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.xl),
             if (pending.isEmpty)
               const EmptyCard(
                 text: 'Nenhuma chamada pendente.',
@@ -84,19 +90,21 @@ class TodayScreen extends StatelessWidget {
               )
             else
               for (final entry in pendingTake10.indexed)
-                Builder(builder: (context) {
-                  final lesson = entry.$2;
-                  final isLast = entry.$1 == pendingTake10.length - 1;
-                  return AnimatedTapScale(
-                    onTap: () => _openAttendance(context, lesson),
-                    child: LessonTile(
-                      diario: diario,
-                      lesson: lesson,
-                      pending: true,
-                      isLast: isLast,
-                    ),
-                  );
-                }),
+                Builder(
+                  builder: (context) {
+                    final lesson = entry.$2;
+                    final isLast = entry.$1 == pendingTake10.length - 1;
+                    return AnimatedTapScale(
+                      onTap: () => _openAttendance(context, lesson),
+                      child: LessonTile(
+                        diario: diario,
+                        lesson: lesson,
+                        pending: true,
+                        isLast: isLast,
+                      ),
+                    );
+                  },
+                ),
             if (pending.length > 10)
               _MorePendingIndicator(count: pending.length - 10),
           ],
@@ -105,7 +113,10 @@ class TodayScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _openAttendance(BuildContext context, LessonOccurrence lesson) async {
+  Future<void> _openAttendance(
+    BuildContext context,
+    LessonOccurrence lesson,
+  ) async {
     final attendance = await diario.startAttendance(lesson);
     if (!context.mounted) return;
     await Navigator.of(context).push(
@@ -130,26 +141,25 @@ class _MorePendingIndicator extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
-        border: const Border(
-          top: BorderSide(color: AppColors.slate950, width: 2.0),
-          bottom: BorderSide(color: AppColors.slate950, width: 2.0),
-        ),
+        border: AppBorders.horizontal,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      padding: AppSpacing.compactRow,
       child: Row(
         children: [
           Icon(
             Icons.more_horiz_rounded,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-            size: 20,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
+            size: AppSizes.icon,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.xl),
           Text(
             'Mais $count pendente${count == 1 ? '' : 's'}',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.rowMeta.copyWith(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ],
@@ -197,14 +207,17 @@ class LessonHeroCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         border: Border(
-          top: BorderSide(color: accentColor, width: 2.5),
+          top: BorderSide(
+            color: accentColor,
+            width: AppSizes.accentDivider,
+          ),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            padding: AppSpacing.card,
             child: LessonInfoRow(
               statusLabel: status.label,
               statusColor: status.color,
@@ -213,7 +226,7 @@ class LessonHeroCard extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 66,
+            height: AppSizes.actionHeight,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -223,7 +236,7 @@ class LessonHeroCard extends StatelessWidget {
                     key: const ValueKey('start_attendance'),
                     text: 'Iniciar chamada',
                     color: AppColors.primaryAction,
-                    height: 66,
+                    height: AppSizes.actionHeight,
                     onPressed: () => _openAttendance(context, lesson),
                   ),
                 ),
@@ -233,7 +246,7 @@ class LessonHeroCard extends StatelessWidget {
                     text: 'Cancelar chamada',
                     baseColor: AppColors.cancelBase,
                     fillColor: AppColors.cancelFill,
-                    height: 66,
+                    height: AppSizes.actionHeight,
                     onConfirmed: () => diario.cancelLesson(lesson),
                   ),
                 ),
@@ -245,7 +258,10 @@ class LessonHeroCard extends StatelessWidget {
     );
   }
 
-  Future<void> _openAttendance(BuildContext context, LessonOccurrence lesson) async {
+  Future<void> _openAttendance(
+    BuildContext context,
+    LessonOccurrence lesson,
+  ) async {
     final attendance = await diario.startAttendance(lesson);
     if (!context.mounted) return;
     await Navigator.of(context).push(
@@ -296,13 +312,11 @@ class LessonTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
         border: Border(
-          top: const BorderSide(color: AppColors.slate950, width: 2.0),
-          bottom: isLast
-              ? const BorderSide(color: AppColors.slate950, width: 2.0)
-              : BorderSide.none,
+          top: AppBorders.strongSide,
+          bottom: isLast ? AppBorders.strongSide : BorderSide.none,
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      padding: AppSpacing.row,
       child: LessonInfoRow(
         statusLabel: status.label,
         statusColor: status.color,

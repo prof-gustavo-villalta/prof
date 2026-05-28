@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
+import '../design_system/app_spacing.dart';
 import '../../domain/diario_de_classe.dart';
 import '../widgets/page_header.dart';
 import '../widgets/shared_ui.dart';
@@ -54,22 +55,22 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Editar turma' : 'Nova turma'),
-      ),
+      appBar: AppBar(title: Text(isEditing ? 'Editar turma' : 'Nova turma')),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                padding: AppSpacing.pageInsets,
                 children: [
                   PageHeader(
                     title: isEditing ? 'Editar turma' : 'Nova turma',
-                    icon: isEditing ? Icons.edit_rounded : Icons.group_add_rounded,
+                    icon: isEditing
+                        ? Icons.edit_rounded
+                        : Icons.group_add_rounded,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: AppSpacing.section),
                   Field(
                     label: 'Turma',
                     controller: groupName,
@@ -93,50 +94,37 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 66,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    flex: 50,
-                    child: AppButton(
-                      text: 'Cancelar',
-                      icon: Icons.close_rounded,
-                      color: AppColors.slate950,
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                  Container(width: 2, color: AppColors.slate950),
-                  Expanded(
-                    flex: 50,
-                    child: AppButton(
-                      key: const ValueKey('save_group'),
-                      text: 'Salvar',
-                      icon: Icons.check_rounded,
-                      color: AppColors.primaryAction,
-                      onPressed: () async {
-                        if (isEditing) {
-                          await widget.diario.updateClassGroup(
-                            classGroupId: widget.group!.id,
-                            name: groupName.text,
-                            termName: termName.text,
-                            termStartDate: parseDate(startDate.text),
-                            termEndDate: parseDate(endDate.text),
-                          );
-                        } else {
-                          widget.diario.addClassGroup(
-                            turma: groupName.text,
-                            periodo: termName.text,
-                          );
-                        }
-                        if (context.mounted) {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                    ),
-                  ),
-                ],
+            BottomSplitActionBar(
+              left: AppButton(
+                text: 'Cancelar',
+                icon: Icons.close_rounded,
+                color: AppColors.slate950,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              right: AppButton(
+                key: const ValueKey('save_group'),
+                text: 'Salvar',
+                icon: Icons.check_rounded,
+                color: AppColors.primaryAction,
+                onPressed: () async {
+                  if (isEditing) {
+                    await widget.diario.updateClassGroup(
+                      classGroupId: widget.group!.id,
+                      name: groupName.text,
+                      termName: termName.text,
+                      termStartDate: parseDate(startDate.text),
+                      termEndDate: parseDate(endDate.text),
+                    );
+                  } else {
+                    widget.diario.addClassGroup(
+                      turma: groupName.text,
+                      periodo: termName.text,
+                    );
+                  }
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
               ),
             ),
           ],

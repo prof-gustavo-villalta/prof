@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
+import '../design_system/app_borders.dart';
 import '../design_system/app_colors.dart';
+import '../design_system/app_sizes.dart';
+import '../design_system/app_spacing.dart';
+import '../design_system/app_text_styles.dart';
 import 'animated_tap_scale.dart';
 
 class SectionCard extends StatelessWidget {
@@ -13,21 +17,19 @@ class SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: AppSpacing.card,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               title,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.2,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.2,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: AppSpacing.xxl),
             ...children,
           ],
         ),
@@ -37,7 +39,12 @@ class SectionCard extends StatelessWidget {
 }
 
 class Field extends StatelessWidget {
-  const Field({super.key, required this.label, required this.controller, this.keyName});
+  const Field({
+    super.key,
+    required this.label,
+    required this.controller,
+    this.keyName,
+  });
 
   final String label;
   final TextEditingController controller;
@@ -46,14 +53,14 @@ class Field extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: AppSpacing.formFieldGap,
       child: TextField(
         key: keyName == null ? null : ValueKey<String>(keyName!),
         controller: controller,
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w600),
-        decoration: InputDecoration(
-          labelText: label,
+        style: AppTextStyles.support.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
         ),
+        decoration: InputDecoration(labelText: label),
       ),
     );
   }
@@ -79,14 +86,10 @@ class MultilineField extends StatelessWidget {
       controller: controller,
       minLines: minLines,
       maxLines: maxLines,
-      style: TextStyle(
+      style: AppTextStyles.support.copyWith(
         color: Theme.of(context).colorScheme.onSurface,
-        fontWeight: FontWeight.w600,
       ),
-      decoration: InputDecoration(
-        labelText: label,
-        alignLabelWithHint: true,
-      ),
+      decoration: InputDecoration(labelText: label, alignLabelWithHint: true),
     );
   }
 }
@@ -100,21 +103,24 @@ class EmptyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final content = Padding(
-      padding: const EdgeInsets.all(20),
+      padding: AppSpacing.card,
       child: Row(
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-            size: 22,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
+            size: AppSizes.infoIcon,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.xl),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                fontSize: 14,
+              style: AppTextStyles.bodyLarge.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -127,10 +133,7 @@ class EmptyCard extends StatelessWidget {
       return Container(
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color,
-          border: const Border(
-            top: BorderSide(color: AppColors.slate950, width: 2.0),
-            bottom: BorderSide(color: AppColors.slate950, width: 2.0),
-          ),
+          border: AppBorders.horizontal,
         ),
         child: content,
       );
@@ -155,29 +158,30 @@ class StatBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.zero,
-        border: Border.all(color: color.withValues(alpha: 0.25), width: 1.5),
+        borderRadius: AppBorders.radius,
+        border: Border.all(
+          color: color.withValues(alpha: 0.25),
+          width: AppSizes.subtleDivider,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 6,
-            height: 6,
+            width: AppSizes.badgeDot,
+            height: AppSizes.badgeDot,
             color: color,
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppSpacing.sm),
           Text(
             '$label $value',
-            style: TextStyle(
-              color: color,
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 0.5,
-            ),
+            style: AppTextStyles.badge.copyWith(color: color),
           ),
         ],
       ),
@@ -194,7 +198,10 @@ enum LessonDisplayStatus { current, next, pending, open, closed, scheduled }
     LessonDisplayStatus.pending => (label: 'Pendente', color: AppColors.absent),
     LessonDisplayStatus.open => (label: 'Aberta', color: AppColors.open),
     LessonDisplayStatus.closed => (label: 'Fechada', color: AppColors.present),
-    LessonDisplayStatus.scheduled => (label: 'Agendada', color: AppColors.scheduled),
+    LessonDisplayStatus.scheduled => (
+      label: 'Agendada',
+      color: AppColors.scheduled,
+    ),
   };
 }
 
@@ -220,23 +227,16 @@ class LessonInfoRow extends StatelessWidget {
           flex: 20,
           child: Text(
             statusLabel.toUpperCase(),
-            style: TextStyle(
-              color: statusColor,
-              fontWeight: FontWeight.w900,
-              fontSize: 13,
-              letterSpacing: 0.5,
-            ),
+            style: AppTextStyles.rowKicker.copyWith(color: statusColor),
           ),
         ),
         Expanded(
           flex: 50,
           child: Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: AppSpacing.md),
             child: Text(
               title,
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 15,
+              style: AppTextStyles.rowTitle.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,
               ),
               maxLines: 1,
@@ -249,10 +249,10 @@ class LessonInfoRow extends StatelessWidget {
           child: Text(
             time,
             textAlign: TextAlign.right,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
+            style: AppTextStyles.rowMeta.copyWith(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ),
@@ -270,25 +270,25 @@ typedef AttendanceStatusStyle = ({
 AttendanceStatusStyle resolveAttendanceStatusStyle(AttendanceStatus status) {
   return switch (status) {
     AttendanceStatus.present => (
-        accentColor: AppColors.present,
-        borderColor: AppColors.present.withValues(alpha: 0.4),
-        label: 'Presente',
-      ),
+      accentColor: AppColors.present,
+      borderColor: AppColors.present.withValues(alpha: 0.4),
+      label: 'Presente',
+    ),
     AttendanceStatus.absent => (
-        accentColor: AppColors.absent,
-        borderColor: AppColors.absent.withValues(alpha: 0.4),
-        label: 'Ausente',
-      ),
+      accentColor: AppColors.absent,
+      borderColor: AppColors.absent.withValues(alpha: 0.4),
+      label: 'Ausente',
+    ),
     AttendanceStatus.late => (
-        accentColor: AppColors.lateColor,
-        borderColor: AppColors.lateColor.withValues(alpha: 0.4),
-        label: 'Atrasado',
-      ),
+      accentColor: AppColors.lateColor,
+      borderColor: AppColors.lateColor.withValues(alpha: 0.4),
+      label: 'Atrasado',
+    ),
     AttendanceStatus.justified => (
-        accentColor: AppColors.justified,
-        borderColor: AppColors.justified.withValues(alpha: 0.4),
-        label: 'Justificado',
-      ),
+      accentColor: AppColors.justified,
+      borderColor: AppColors.justified.withValues(alpha: 0.4),
+      label: 'Justificado',
+    ),
   };
 }
 
@@ -367,32 +367,26 @@ class AppSearchBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).cardTheme.color,
-        border: const Border(
-          top: BorderSide(color: AppColors.slate950, width: 2.0),
-          bottom: BorderSide(color: AppColors.slate950, width: 2.0),
-        ),
+        border: AppBorders.horizontal,
       ),
       child: TextField(
-        style: TextStyle(
+        style: AppTextStyles.titleLarge.copyWith(
           color: Theme.of(context).colorScheme.onSurface,
-          fontWeight: FontWeight.w800,
-          fontSize: 18,
         ),
         decoration: InputDecoration(
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           hintText: hintText,
-          hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-            fontWeight: FontWeight.w800,
-            fontSize: 18,
+          hintStyle: AppTextStyles.titleLarge.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 18,
-          ),
+          contentPadding: AppSpacing.row,
           border: InputBorder.none,
         ),
         onChanged: onChanged,
@@ -424,7 +418,9 @@ class AppFilterRow extends StatelessWidget {
             child: AnimatedTapScale(
               onTap: () => onSelected(entry.$2),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  vertical: AppSpacing.gutter,
+                ),
                 decoration: BoxDecoration(
                   color: selectedFilter == entry.$2
                       ? _colorFor(context, entry.$2)
@@ -434,26 +430,25 @@ class AppFilterRow extends StatelessWidget {
                       color: selectedFilter == entry.$2
                           ? _colorFor(context, entry.$2)
                           : AppColors.slate950,
-                      width: 2.0,
+                      width: AppSizes.divider,
                     ),
                     bottom: BorderSide(
                       color: selectedFilter == entry.$2
                           ? _colorFor(context, entry.$2)
                           : AppColors.slate950,
-                      width: 2.0,
+                      width: AppSizes.divider,
                     ),
                   ),
                 ),
                 child: Text(
                   entry.$2.toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
+                  style: AppTextStyles.badge.copyWith(
                     color: selectedFilter == entry.$2
-                        ? Colors.white
-                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                        ? AppColors.white
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -474,7 +469,7 @@ class AppButton extends StatelessWidget {
     required this.text,
     this.onPressed,
     this.color,
-    this.height = 54.0,
+    this.height = AppSizes.buttonHeight,
     this.fontSize,
     this.icon,
   });
@@ -489,19 +484,31 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final baseColor = color ?? Theme.of(context).colorScheme.primary;
-    final effectiveColor = onPressed == null ? baseColor.withValues(alpha: 0.4) : baseColor;
-    
+    final effectiveColor = onPressed == null
+        ? baseColor.withValues(alpha: 0.4)
+        : baseColor;
+
     // Gradiente sutil que escurece a cor base para dar o tom plano e mais escuro
     final gradient = LinearGradient(
       colors: [
-        Color.alphaBlend(Colors.black.withValues(alpha: 0.08), effectiveColor),
-        Color.alphaBlend(Colors.black.withValues(alpha: 0.24), effectiveColor),
+        Color.alphaBlend(
+          AppColors.black.withValues(alpha: 0.08),
+          effectiveColor,
+        ),
+        Color.alphaBlend(
+          AppColors.black.withValues(alpha: 0.24),
+          effectiveColor,
+        ),
       ],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     );
 
-    final effectiveFontSize = fontSize ?? (height >= 60 ? 18.0 : 15.0);
+    final effectiveFontSize =
+        fontSize ??
+        (height >= AppSizes.actionHeight
+            ? 18.0
+            : AppTextStyles.titleMedium.fontSize!);
 
     return AnimatedTapScale(
       onTap: onPressed,
@@ -509,37 +516,31 @@ class AppButton extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           gradient: gradient,
-          borderRadius: BorderRadius.zero,
+          borderRadius: AppBorders.radius,
         ),
         child: Container(
           alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: AppSpacing.actionHorizontal,
           child: icon == null
               ? Text(
                   text,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w900,
+                  style: AppTextStyles.action.copyWith(
                     fontSize: effectiveFontSize,
-                    letterSpacing: 0.5,
                   ),
                 )
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(icon, color: Colors.white, size: 20),
-                    const SizedBox(width: 8),
+                    Icon(icon, color: AppColors.white, size: AppSizes.icon),
+                    const SizedBox(width: AppSpacing.md),
                     Flexible(
                       child: Text(
                         text,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
+                        style: AppTextStyles.action.copyWith(
                           fontSize: effectiveFontSize,
-                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
@@ -558,7 +559,7 @@ class HoldToConfirmButton extends StatefulWidget {
     required this.onConfirmed,
     required this.baseColor,
     required this.fillColor,
-    this.height = 54.0,
+    this.height = AppSizes.buttonHeight,
     this.duration = const Duration(milliseconds: 1500),
   });
 
@@ -581,10 +582,7 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -623,8 +621,14 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
   Widget build(BuildContext context) {
     final baseGradient = LinearGradient(
       colors: [
-        Color.alphaBlend(Colors.black.withValues(alpha: 0.08), widget.baseColor),
-        Color.alphaBlend(Colors.black.withValues(alpha: 0.24), widget.baseColor),
+        Color.alphaBlend(
+          AppColors.black.withValues(alpha: 0.08),
+          widget.baseColor,
+        ),
+        Color.alphaBlend(
+          AppColors.black.withValues(alpha: 0.24),
+          widget.baseColor,
+        ),
       ],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -632,8 +636,14 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
 
     final fillGradient = LinearGradient(
       colors: [
-        Color.alphaBlend(Colors.black.withValues(alpha: 0.08), widget.fillColor),
-        Color.alphaBlend(Colors.black.withValues(alpha: 0.24), widget.fillColor),
+        Color.alphaBlend(
+          AppColors.black.withValues(alpha: 0.08),
+          widget.fillColor,
+        ),
+        Color.alphaBlend(
+          AppColors.black.withValues(alpha: 0.24),
+          widget.fillColor,
+        ),
       ],
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
@@ -650,7 +660,7 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
           height: widget.height,
           decoration: BoxDecoration(
             gradient: baseGradient,
-            borderRadius: BorderRadius.zero,
+            borderRadius: AppBorders.radius,
           ),
           child: Stack(
             children: [
@@ -663,9 +673,7 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
                       widthFactor: _controller.value,
                       heightFactor: 1.0,
                       child: Container(
-                        decoration: BoxDecoration(
-                          gradient: fillGradient,
-                        ),
+                        decoration: BoxDecoration(gradient: fillGradient),
                       ),
                     ),
                   );
@@ -673,15 +681,14 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
               ),
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: AppSpacing.actionHorizontal,
                   child: Text(
                     widget.text,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: widget.height >= 60 ? 18.0 : 15.0,
-                      letterSpacing: 0.5,
+                    style: AppTextStyles.action.copyWith(
+                      fontSize: widget.height >= AppSizes.actionHeight
+                          ? 18.0
+                          : AppTextStyles.titleMedium.fontSize!,
                     ),
                   ),
                 ),
@@ -692,4 +699,96 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
       ),
     );
   }
+}
+
+class BottomActionBar extends StatelessWidget {
+  const BottomActionBar({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(height: AppSizes.actionHeight, child: child);
+  }
+}
+
+class BottomSplitActionBar extends StatelessWidget {
+  const BottomSplitActionBar({
+    super.key,
+    required this.left,
+    required this.right,
+  });
+
+  final Widget left;
+  final Widget right;
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomActionBar(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(flex: 50, child: left),
+          const ActionDivider(),
+          Expanded(flex: 50, child: right),
+        ],
+      ),
+    );
+  }
+}
+
+class ActionDivider extends StatelessWidget {
+  const ActionDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(width: AppSizes.divider, color: AppColors.slate950);
+  }
+}
+
+class AppIconButton extends StatelessWidget {
+  const AppIconButton({
+    super.key,
+    required this.icon,
+    required this.onTap,
+    this.size = AppSizes.iconButton,
+  });
+
+  final IconData icon;
+  final VoidCallback onTap;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedTapScale(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        decoration: const BoxDecoration(border: AppBorders.strong),
+        child: Icon(
+          icon,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+          size: AppSizes.icon,
+        ),
+      ),
+    );
+  }
+}
+
+void showAppSnackBar(BuildContext context, String message) {
+  final theme = Theme.of(context);
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        message,
+        style: AppTextStyles.rowMeta.copyWith(
+          color: theme.colorScheme.onInverseSurface,
+        ),
+      ),
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: theme.colorScheme.inverseSurface,
+    ),
+  );
 }

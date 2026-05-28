@@ -5,6 +5,11 @@ import 'screens/classes_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/settings_screen.dart';
 import 'widgets/animated_tap_scale.dart';
+import 'design_system/app_borders.dart';
+import 'design_system/app_colors.dart';
+import 'design_system/app_sizes.dart';
+import 'design_system/app_spacing.dart';
+import 'design_system/app_text_styles.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key, required this.diario, required this.now});
@@ -60,11 +65,12 @@ class _HomeShellState extends State<HomeShell> {
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color,
-          border: Border(
-            top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 1.5),
-          ),
+          border: Border(top: AppBorders.subtleSide),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.md,
+          horizontal: AppSpacing.gutter,
+        ),
         child: SafeArea(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -123,15 +129,22 @@ class _NavBarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activeColor = Theme.of(context).colorScheme.primary;
-    final inactiveColor = Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
+    final inactiveColor = Theme.of(
+      context,
+    ).colorScheme.onSurface.withValues(alpha: 0.5);
 
     return AnimatedTapScale(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.gutter,
+          vertical: AppSpacing.md,
+        ),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withValues(alpha: 0.08) : Colors.transparent,
-          borderRadius: BorderRadius.zero,
+          color: isSelected
+              ? activeColor.withValues(alpha: 0.08)
+              : AppColors.transparent,
+          borderRadius: AppBorders.radius,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -139,13 +152,12 @@ class _NavBarItem extends StatelessWidget {
             Icon(
               isSelected ? activeIcon : icon,
               color: isSelected ? activeColor : inactiveColor,
-              size: 24,
+              size: AppSizes.navIcon,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.xs),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 12,
+              style: AppTextStyles.badge.copyWith(
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                 color: isSelected ? activeColor : inactiveColor,
               ),

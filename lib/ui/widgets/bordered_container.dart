@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../design_system/app_colors.dart';
+import '../design_system/app_borders.dart';
 
 /// Container com bordas horizontais no estilo do app.
 ///
@@ -36,21 +36,14 @@ class BorderedContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = AppColors.slate950;
-    final top = BorderSide(color: borderColor, width: 2.0);
-    final bottom = isLast ? BorderSide(color: borderColor, width: 2.0) : BorderSide.none;
-
     return Container(
       height: height,
       padding: padding,
       decoration: BoxDecoration(
         color: backgroundColor ?? Theme.of(context).cardTheme.color,
-        border: Border(
-          top: top,
-          bottom: bottom,
-          left: sideBorders ? BorderSide(color: borderColor, width: 2.0) : BorderSide.none,
-          right: sideBorders ? BorderSide(color: borderColor, width: 2.0) : BorderSide.none,
-        ),
+        border: sideBorders
+            ? AppBorders.horizontalWithSides(sideBorders: true)
+            : AppBorders.bottomWhen(isLast),
       ),
       child: child,
     );

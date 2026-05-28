@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../domain/diario_de_classe.dart';
+import '../design_system/app_borders.dart';
+import '../design_system/app_sizes.dart';
+import '../design_system/app_spacing.dart';
 import '../widgets/shared_ui.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -33,38 +36,43 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.loose,
+              vertical: AppSpacing.loose,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: AppSpacing.page),
                 Center(
                   child: Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: AppSpacing.panel,
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primary.withValues(alpha: 0.12),
                       shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.zero,
-                      border: Border.all(color: theme.colorScheme.primary, width: 2.0),
+                      borderRadius: AppBorders.radius,
+                      border: Border.all(
+                        color: theme.colorScheme.primary,
+                        width: AppSizes.divider,
+                      ),
                     ),
                     child: Icon(
                       Icons.hub_rounded,
-                      size: 36,
+                      size: AppSizes.heroIcon,
                       color: theme.colorScheme.primary,
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.gutter),
                 Text(
                   'Primeira turma',
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w900,
                     color: theme.colorScheme.onSurface,
-                    letterSpacing: -0.5,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.md),
                 Text(
                   'Configure o mínimo para abrir a chamada.',
                   textAlign: TextAlign.center,
@@ -73,10 +81,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.gutter),
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: AppSpacing.card,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -85,19 +93,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           controller: turma,
                           keyName: 'onboarding_turma',
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Field(
                           label: 'Período letivo (ex: 2026/1)',
                           controller: periodo,
                           keyName: 'onboarding_periodo',
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Field(
                           label: 'Disciplina (ex: PAM2)',
                           controller: disciplina,
                           keyName: 'onboarding_disciplina',
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         MultilineField(
                           key: const ValueKey('onboarding_alunos'),
                           controller: alunos,
@@ -109,7 +117,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.loose),
                 AppButton(
                   key: const ValueKey('onboarding_submit'),
                   text: 'Começar',

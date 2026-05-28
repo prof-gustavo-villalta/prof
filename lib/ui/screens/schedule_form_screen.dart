@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/models.dart';
 import '../design_system/app_colors.dart';
+import '../design_system/app_spacing.dart';
 import '../../domain/diario_de_classe.dart';
 import '../widgets/app_dropdown.dart';
 import '../widgets/page_header.dart';
@@ -70,19 +71,24 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                padding: AppSpacing.pageInsets,
                 children: [
                   PageHeader(
                     title: isEditing ? 'Editar horário' : 'Novo horário',
-                    icon: isEditing ? Icons.edit_rounded : Icons.schedule_rounded,
+                    icon: isEditing
+                        ? Icons.edit_rounded
+                        : Icons.schedule_rounded,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: AppSpacing.section),
                   AppDropdown<int>(
                     value: weekday,
                     label: 'Dia da semana',
                     items: [
                       for (var day = 1; day <= 7; day += 1)
-                        DropdownMenuItem(value: day, child: Text(weekdayLabel(day))),
+                        DropdownMenuItem(
+                          value: day,
+                          child: Text(weekdayLabel(day)),
+                        ),
                     ],
                     onChanged: (value) {
                       if (value != null) {
@@ -90,13 +96,16 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                       }
                     },
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.md),
                   AppDropdown<String>(
                     value: classGroupId,
                     label: 'Turma',
                     items: [
                       for (final group in widget.diario.classGroups)
-                        DropdownMenuItem(value: group.id, child: Text(group.name)),
+                        DropdownMenuItem(
+                          value: group.id,
+                          child: Text(group.name),
+                        ),
                     ],
                     onChanged: (value) {
                       if (value != null) {
@@ -104,14 +113,17 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                       }
                     },
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.md),
                   AppDropdown<String?>(
                     key: const ValueKey('schedule_discipline'),
                     value: disciplineId,
                     label: 'Disciplina',
                     items: [
                       if (widget.diario.disciplines.isEmpty)
-                        const DropdownMenuItem(value: null, child: Text('Nenhuma cadastrada')),
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('Nenhuma cadastrada'),
+                        ),
                       for (final discipline in widget.diario.disciplines)
                         DropdownMenuItem(
                           value: discipline.id,
@@ -124,7 +136,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                       }
                     },
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppSpacing.md),
                   Row(
                     children: [
                       Expanded(
@@ -134,7 +146,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                           keyName: 'edit_schedule_start',
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(
                         child: Field(
                           label: 'Fim',
@@ -147,68 +159,57 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 66,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(
-                    flex: 50,
-                    child: isEditing
-                        ? HoldToConfirmButton(
-                            key: const ValueKey('delete_schedule'),
-                            text: 'Remover',
-                            baseColor: AppColors.cancelBase,
-                            fillColor: AppColors.cancelFill,
-                            onConfirmed: () async {
-                              await widget.diario.removeWeeklyClass(widget.weeklyClass!.id);
-                              if (context.mounted) {
-                                Navigator.of(context).pop();
-                              }
-                            },
-                          )
-                        : AppButton(
-                            text: 'Cancelar',
-                            icon: Icons.close_rounded,
-                            color: AppColors.slate950,
-                            onPressed: () => Navigator.of(context).pop(),
-                          ),
-                  ),
-                  Container(width: 2, color: AppColors.slate950),
-                  Expanded(
-                    flex: 50,
-                    child: AppButton(
-                      key: const ValueKey('save_schedule'),
-                      text: 'Salvar',
-                      icon: Icons.check_rounded,
-                      color: AppColors.primaryAction,
-                      onPressed: () async {
-                        if (classGroupId == null || disciplineId == null) return;
-                        if (isEditing) {
-                          await widget.diario.updateWeeklyClass(
-                            id: widget.weeklyClass!.id,
-                            classGroupId: classGroupId!,
-                            disciplineId: disciplineId!,
-                            weekday: weekday,
-                            startMinutes: parseClock(start.text),
-                            endMinutes: parseClock(end.text),
-                          );
-                        } else {
-                          widget.diario.addWeeklyClass(
-                            classGroupId: classGroupId!,
-                            disciplineId: disciplineId!,
-                            weekday: weekday,
-                            startMinutes: parseClock(start.text),
-                            endMinutes: parseClock(end.text),
-                          );
-                        }
+            BottomSplitActionBar(
+              left: isEditing
+                  ? HoldToConfirmButton(
+                      key: const ValueKey('delete_schedule'),
+                      text: 'Remover',
+                      baseColor: AppColors.cancelBase,
+                      fillColor: AppColors.cancelFill,
+                      onConfirmed: () async {
+                        await widget.diario.removeWeeklyClass(
+                          widget.weeklyClass!.id,
+                        );
                         if (context.mounted) {
                           Navigator.of(context).pop();
                         }
                       },
+                    )
+                  : AppButton(
+                      text: 'Cancelar',
+                      icon: Icons.close_rounded,
+                      color: AppColors.slate950,
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                  ),
-                ],
+              right: AppButton(
+                key: const ValueKey('save_schedule'),
+                text: 'Salvar',
+                icon: Icons.check_rounded,
+                color: AppColors.primaryAction,
+                onPressed: () async {
+                  if (classGroupId == null || disciplineId == null) return;
+                  if (isEditing) {
+                    await widget.diario.updateWeeklyClass(
+                      id: widget.weeklyClass!.id,
+                      classGroupId: classGroupId!,
+                      disciplineId: disciplineId!,
+                      weekday: weekday,
+                      startMinutes: parseClock(start.text),
+                      endMinutes: parseClock(end.text),
+                    );
+                  } else {
+                    widget.diario.addWeeklyClass(
+                      classGroupId: classGroupId!,
+                      disciplineId: disciplineId!,
+                      weekday: weekday,
+                      startMinutes: parseClock(start.text),
+                      endMinutes: parseClock(end.text),
+                    );
+                  }
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
               ),
             ),
           ],
