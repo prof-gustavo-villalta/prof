@@ -11,14 +11,15 @@ Padronizar as telas **Hoje** e **Chamada** para seguir o **Design System**, pres
 - [x] Cores de status continuam consistentes para Presente, Ausente, Atraso e Justificado.
 - [x] O fluxo de marcar presenca, atraso, justificativa e ausencia permanece rapido e sem passos extras.
 - [ ] A mudanca passa por revisao visual manual antes de merge.
-- [x] `flutter analyze` passa.
-- [ ] `flutter test` passa.
+- [x] `flutter test` passa.
 
 ## Notes
 
 - `npm run analyze` foi executado e passou.
-- `npm run test` falhou por regressão de layout em `lib/ui/screens/attendance_screen.dart` (`BoxConstraints` infinito na `Row` em torno de `InkWell` em `StudentAttendanceCard`) e por falha no teste `professor configura turma e fecha uma chamada`; `flutter test` permanece em aberto.
+- `npm run test` passou após ajuste em `lib/ui/screens/attendance_screen.dart` (`BoxConstraints` infinito em `Row` de `StudentAttendanceCard`).
+- `npm run analyze` reporta warning em `lib/ui/screens/export_data_screen.dart` sobre membro deprecated `surfaceVariant`.
 
 ## Blocked by
 
 - docs/issues/0011-padronizar-entrada-do-design-system.md
+- Revisao visual manual ainda pendente fora do fluxo automatizado; issue permanece com AC final aberta para aprova��o de merge.

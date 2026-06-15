@@ -164,7 +164,6 @@ class StudentAttendanceCard extends StatelessWidget {
             ? null
             : () => diario.togglePresence(attendance, student.id),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _AttendanceStatusRail(
               label: style.label.toUpperCase(),

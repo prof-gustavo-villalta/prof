@@ -22,6 +22,22 @@ npm run ralph:afk -- 3
 npm run ralph:issues
 ```
 
+- Windows explicito:
+
+```powershell
+npm run w:ralph:issues
+npm run w:ralph:hitl
+npm run w:ralph:afk -- 3
+```
+
+- Linux explicito:
+
+```bash
+npm run l:ralph:issues
+npm run l:ralph:hitl
+npm run l:ralph:afk -- 3
+```
+
 ## Contrato
 
 Cada iteracao:
@@ -59,6 +75,6 @@ Se bloquear, deve emitir:
 <promise>ABORT</promise>
 ```
 
-## Windows
+## Windows e Linux
 
-Scripts ficam em PowerShell para evitar dependencia de Bash, `chmod`, `grep`, `jq` ou Docker. O comando espera `codex` disponivel no `PATH`.
+Scripts Windows ficam em PowerShell. Scripts Linux ficam em Bash. Ambos esperam `codex` disponivel no `PATH`.

@@ -57,7 +57,11 @@ class ClassesScreen extends StatelessWidget {
                         .studentsForClass(group.id)
                         .length;
 
-                    return AnimatedTapScale(
+                    return _ClassGroupListItem(
+                      groupName: group.name,
+                      termName: term.name,
+                      studentCount: studentCount,
+                      isLast: isLast,
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
@@ -68,74 +72,89 @@ class ClassesScreen extends StatelessWidget {
                           ),
                         );
                       },
-                      child: BorderedContainer(
-                        isLast: isLast,
-                        padding: AppSpacing.row,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 20,
-                              child: Text(
-                                term.name.toUpperCase(),
-                                style: AppTextStyles.rowKicker.copyWith(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 50,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  right: AppSpacing.md,
-                                ),
-                                child: Text(
-                                  group.name,
-                                  style: AppTextStyles.rowTitle.copyWith(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 30,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    '$studentCount aluno${studentCount == 1 ? '' : 's'}',
-                                    textAlign: TextAlign.right,
-                                    style: AppTextStyles.rowMeta.copyWith(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface
-                                          .withValues(alpha: 0.7),
-                                    ),
-                                  ),
-                                  const SizedBox(width: AppSpacing.xs),
-                                  Icon(
-                                    Icons.chevron_right_rounded,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.4),
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     );
                   },
                 ),
           ],
         );
       },
+    );
+  }
+}
+
+class _ClassGroupListItem extends StatelessWidget {
+  const _ClassGroupListItem({
+    required this.groupName,
+    required this.termName,
+    required this.studentCount,
+    required this.isLast,
+    required this.onTap,
+  });
+
+  final String groupName;
+  final String termName;
+  final int studentCount;
+  final bool isLast;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedTapScale(
+      onTap: onTap,
+      child: BorderedContainer(
+        isLast: isLast,
+        sideBorders: true,
+        padding: AppSpacing.compactRow,
+        child: Row(
+          children: [
+            Expanded(
+              flex: 20,
+              child: Text(
+                termName.toUpperCase(),
+                style: AppTextStyles.rowKicker.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 50,
+              child: Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.md),
+                child: Text(
+                  groupName,
+                  style: AppTextStyles.rowTitle.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 30,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    '$studentCount aluno${studentCount == 1 ? '' : 's'}',
+                    textAlign: TextAlign.right,
+                    style: AppTextStyles.rowMeta.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.xl),
+                  AppIconButton(
+                    icon: Icons.chevron_right_rounded,
+                    onTap: onTap,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -80,103 +80,103 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
             ),
           ),
           children: [
-            BorderedContainer(
-              padding: AppSpacing.compactRow,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: AppButton(
-                      key: const ValueKey('edit_group'),
-                      text: 'Editar turma',
-                      icon: Icons.edit_rounded,
-                      color: AppColors.slate950,
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute<void>(
-                            builder: (_) => GroupFormScreen(
-                              diario: widget.diario,
-                              group: group,
-                              term: term,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (students.isEmpty)
-              const EmptyCard(
-                text: 'Nenhum aluno cadastrado.',
-                noSideBorders: true,
-              )
-            else
-              for (final entry in students.indexed)
-                Builder(
-                  builder: (context) {
-                    final student = entry.$2;
-                    final isLast = entry.$1 == students.length - 1;
-
-                    return BorderedContainer(
-                      isLast: isLast,
-                      padding: AppSpacing.compactRow,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 20,
-                            child: StudentAvatar(student: student),
-                          ),
-                          Expanded(
-                            flex: 50,
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                right: AppSpacing.md,
-                              ),
-                              child: Text(
-                                student.name,
-                                style: AppTextStyles.rowTitle.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 30,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                AppIconButton(
-                                  icon: Icons.camera_rounded,
-                                  onTap: () => _pickPhoto(
-                                    context,
-                                    widget.diario,
-                                    student,
-                                    ImageSource.camera,
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.md),
-                                AppIconButton(
-                                  icon: Icons.add_photo_alternate_rounded,
-                                  onTap: () => _pickPhoto(
-                                    context,
-                                    widget.diario,
-                                    student,
-                                    ImageSource.gallery,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+            SectionCard(
+              title: 'Ações da turma',
+              children: [
+                AppButton(
+                  key: const ValueKey('edit_group'),
+                  text: 'Editar turma',
+                  icon: Icons.edit_rounded,
+                  color: AppColors.slate950,
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => GroupFormScreen(
+                          diario: widget.diario,
+                          group: group,
+                          term: term,
+                        ),
                       ),
                     );
                   },
                 ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.page),
+            SectionCard(
+              title: 'Alunos',
+              children: [
+                if (students.isEmpty)
+                  const EmptyCard(text: 'Nenhum aluno cadastrado.')
+                else
+                  for (final entry in students.indexed)
+                    Builder(
+                      builder: (context) {
+                        final student = entry.$2;
+                        final isLast = entry.$1 == students.length - 1;
+
+                        return BorderedContainer(
+                          sideBorders: true,
+                          isLast: isLast,
+                          padding: AppSpacing.compactRow,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 20,
+                                child: StudentAvatar(student: student),
+                              ),
+                              Expanded(
+                                flex: 50,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: AppSpacing.md,
+                                  ),
+                                  child: Text(
+                                    student.name,
+                                    style: AppTextStyles.rowTitle.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 30,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    AppIconButton(
+                                      icon: Icons.camera_rounded,
+                                      onTap: () => _pickPhoto(
+                                        context,
+                                        widget.diario,
+                                        student,
+                                        ImageSource.camera,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.md),
+                                    AppIconButton(
+                                      icon: Icons.add_photo_alternate_rounded,
+                                      onTap: () => _pickPhoto(
+                                        context,
+                                        widget.diario,
+                                        student,
+                                        ImageSource.gallery,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+              ],
+            ),
           ],
         );
       },

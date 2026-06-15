@@ -7,7 +7,7 @@ Padronizar as telas de **Historico**, **Exportacao** e **Resumo do Aluno** para 
 ## Acceptance criteria
 
 - [ ] Historico usa componentes e tokens do Design System para filtros, listas, empty states e status.
-- [ ] Exportacao usa componentes e tokens do Design System para descricao, seletores e acao principal.
+- [x] Exportacao usa componentes e tokens do Design System para descricao, seletores e acao principal.
 - [ ] Resumo do Aluno usa componentes e tokens do Design System para metricas, historico e status.
 - [ ] Percentuais e contagens permanecem iguais aos resultados atuais.
 - [ ] `flutter analyze` passa.

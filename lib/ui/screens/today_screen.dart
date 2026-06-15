@@ -4,7 +4,9 @@ import '../../domain/models.dart';
 import '../../domain/diario_de_classe.dart';
 import '../design_system.dart';
 import '../widgets/animated_tap_scale.dart';
+import '../widgets/bordered_container.dart';
 import '../widgets/shared_ui.dart';
+import '../widgets/page_header.dart';
 import '../widgets/single_column_screen.dart';
 import 'attendance_screen.dart';
 
@@ -44,7 +46,10 @@ class TodayScreen extends StatelessWidget {
                 isCurrent: current != null,
               ),
             const SizedBox(height: AppSpacing.section),
-            _SectionTitle(text: 'Aulas do dia', icon: Icons.event_note_rounded),
+            const PageHeader(
+              title: 'Aulas do dia',
+              icon: Icons.event_note_rounded,
+            ),
             const SizedBox(height: AppSpacing.xl),
             for (final entry in todays.indexed)
               Builder(
@@ -62,8 +67,8 @@ class TodayScreen extends StatelessWidget {
                 },
               ),
             const SizedBox(height: AppSpacing.section),
-            _SectionTitle(
-              text: 'Pendentes',
+            const PageHeader(
+              title: 'Pendentes',
               icon: Icons.pending_actions_rounded,
             ),
             const SizedBox(height: AppSpacing.xl),
@@ -115,31 +120,6 @@ class TodayScreen extends StatelessWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.text, required this.icon});
-
-  final String text;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: AppSpacing.pageHorizontal,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(text, style: Theme.of(context).textTheme.headlineMedium),
-          Icon(
-            icon,
-            color: Theme.of(context).colorScheme.primary,
-            size: AppSizes.pageIcon,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _MorePendingIndicator extends StatelessWidget {
   const _MorePendingIndicator({required this.count});
 
@@ -147,11 +127,10 @@ class _MorePendingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        border: AppBorders.horizontal,
-      ),
+    return BorderedContainer(
+      sideBorders: true,
+      isLast: true,
+      backgroundColor: Theme.of(context).cardTheme.color,
       padding: AppSpacing.compactRow,
       child: Row(
         children: [
@@ -314,14 +293,9 @@ class LessonTile extends StatelessWidget {
     }
     final status = resolveLessonStatus(displayStatus);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardTheme.color,
-        border: Border(
-          top: AppBorders.strongSide,
-          bottom: isLast ? AppBorders.strongSide : BorderSide.none,
-        ),
-      ),
+    return BorderedContainer(
+      isLast: isLast,
+      backgroundColor: Theme.of(context).cardTheme.color,
       padding: AppSpacing.row,
       child: LessonInfoRow(
         statusLabel: status.label,

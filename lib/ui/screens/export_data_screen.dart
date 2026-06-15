@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../domain/diario_de_classe.dart';
 import '../design_system.dart';
+import '../widgets/app_dropdown.dart';
 import '../widgets/shared_ui.dart';
 import '../widgets/single_column_screen.dart';
 
-class ExportDataScreen extends StatelessWidget {
+class ExportDataScreen extends StatefulWidget {
   const ExportDataScreen({
     super.key,
     required this.diario,
@@ -19,13 +20,36 @@ class ExportDataScreen extends StatelessWidget {
   final String? disciplineId;
 
   @override
+  State<ExportDataScreen> createState() => _ExportDataScreenState();
+}
+
+class _ExportDataScreenState extends State<ExportDataScreen> {
+  late String? _classGroupId;
+  late String? _disciplineId;
+
+  @override
+  void initState() {
+    super.initState();
+    _classGroupId =
+        widget.classGroupId ??
+        (widget.diario.classGroups.isNotEmpty
+            ? widget.diario.classGroups.first.id
+            : null);
+    _disciplineId =
+        widget.disciplineId ??
+        (widget.diario.disciplines.isNotEmpty
+            ? widget.diario.disciplines.first.id
+            : null);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: diario,
+      listenable: widget.diario,
       builder: (context, _) {
-        final csvData = diario.csvExport(
-          classGroupId: classGroupId,
-          disciplineId: disciplineId,
+        final csvData = widget.diario.csvExport(
+          classGroupId: _classGroupId,
+          disciplineId: _disciplineId,
         );
 
         return SingleColumnScreen(
@@ -48,27 +72,71 @@ class ExportDataScreen extends StatelessWidget {
             ),
           ),
           children: [
-            Text(
-              'Copie os dados em formato CSV para usar em planilhas como Excel ou Google Sheets.',
-              style: AppTextStyles.support.copyWith(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
+            SectionCard(
+              title: 'Configurações',
+              children: [
+                Text(
+                  'Copie os dados em formato CSV para usar em planilhas como Excel ou Google Sheets.',
+                  style: AppTextStyles.support.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppDropdown<String>(
+                        value: _classGroupId,
+                        label: 'Turma',
+                        items: [
+                          for (final group in widget.diario.classGroups)
+                            DropdownMenuItem(
+                              value: group.id,
+                              child: Text(group.name),
+                            ),
+                        ],
+                        onChanged: (value) {
+                          if (value == null) return;
+                          setState(() {
+                            _classGroupId = value;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: AppDropdown<String>(
+                        value: _disciplineId,
+                        label: 'Disciplina',
+                        items: [
+                          for (final discipline in widget.diario.disciplines)
+                            DropdownMenuItem(
+                              value: discipline.id,
+                              child: Text(discipline.name),
+                            ),
+                        ],
+                        onChanged: (value) {
+                          if (value == null) return;
+                          setState(() {
+                            _disciplineId = value;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.loose),
+            const SizedBox(height: AppSpacing.section),
             Container(
               width: double.infinity,
-              padding: AppSpacing.panel,
+              padding: AppSpacing.card,
               decoration: BoxDecoration(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.04),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: AppBorders.radius,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                  width: AppSizes.divider,
-                ),
+                border: AppBorders.horizontal,
               ),
               child: SelectableText(
                 csvData,

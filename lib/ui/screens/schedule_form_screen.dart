@@ -73,6 +73,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                 text: 'Remover',
                 baseColor: AppColors.cancelBase,
                 fillColor: AppColors.cancelFill,
+                height: AppSizes.actionHeight,
                 onConfirmed: () async {
                   await widget.diario.removeWeeklyClass(widget.weeklyClass!.id);
                   if (context.mounted) {
@@ -84,6 +85,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                 text: 'Cancelar',
                 icon: Icons.close_rounded,
                 color: AppColors.slate950,
+                height: AppSizes.actionHeight,
                 onPressed: () => Navigator.of(context).pop(),
               ),
         right: AppButton(
@@ -91,6 +93,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
           text: 'Salvar',
           icon: Icons.check_rounded,
           color: AppColors.primaryAction,
+          height: AppSizes.actionHeight,
           onPressed: () async {
             if (classGroupId == null || disciplineId == null) return;
             if (isEditing) {
@@ -118,73 +121,92 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
         ),
       ),
       children: [
-        AppDropdown<int>(
-          value: weekday,
-          label: 'Dia da semana',
-          items: [
-            for (var day = 1; day <= 7; day += 1)
-              DropdownMenuItem(value: day, child: Text(weekdayLabel(day))),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => weekday = value);
-            }
-          },
-        ),
-        const SizedBox(height: AppSpacing.md),
-        AppDropdown<String>(
-          value: classGroupId,
-          label: 'Turma',
-          items: [
-            for (final group in widget.diario.classGroups)
-              DropdownMenuItem(value: group.id, child: Text(group.name)),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => classGroupId = value);
-            }
-          },
-        ),
-        const SizedBox(height: AppSpacing.md),
-        AppDropdown<String?>(
-          key: const ValueKey('schedule_discipline'),
-          value: disciplineId,
-          label: 'Disciplina',
-          items: [
-            if (widget.diario.disciplines.isEmpty)
-              const DropdownMenuItem(
-                value: null,
-                child: Text('Nenhuma cadastrada'),
-              ),
-            for (final discipline in widget.diario.disciplines)
-              DropdownMenuItem(
-                value: discipline.id,
-                child: Text(discipline.name),
-              ),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => disciplineId = value);
-            }
-          },
-        ),
-        const SizedBox(height: AppSpacing.md),
-        Row(
+        SectionCard(
+          title: 'Dados da aula',
           children: [
-            Expanded(
-              child: Field(
-                label: 'Inicio',
-                controller: start,
-                keyName: 'edit_schedule_start',
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: AppDropdown<int>(
+                    value: weekday,
+                    label: 'Dia da semana',
+                    items: [
+                      for (var day = 1; day <= 7; day += 1)
+                        DropdownMenuItem(
+                          value: day,
+                          child: Text(weekdayLabel(day)),
+                        ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => weekday = value);
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: AppDropdown<String>(
+                    value: classGroupId,
+                    label: 'Turma',
+                    items: [
+                      for (final group in widget.diario.classGroups)
+                        DropdownMenuItem(
+                          value: group.id,
+                          child: Text(group.name),
+                        ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => classGroupId = value);
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Field(
-                label: 'Fim',
-                controller: end,
-                keyName: 'edit_schedule_end',
-              ),
+            const SizedBox(height: AppSpacing.md),
+            AppDropdown<String?>(
+              key: const ValueKey('schedule_discipline'),
+              value: disciplineId,
+              label: 'Disciplina',
+              items: [
+                if (widget.diario.disciplines.isEmpty)
+                  const DropdownMenuItem(
+                    value: null,
+                    child: Text('Nenhuma cadastrada'),
+                  ),
+                for (final discipline in widget.diario.disciplines)
+                  DropdownMenuItem(
+                    value: discipline.id,
+                    child: Text(discipline.name),
+                  ),
+              ],
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => disciplineId = value);
+                }
+              },
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              children: [
+                Expanded(
+                  child: Field(
+                    label: 'Inicio',
+                    controller: start,
+                    keyName: 'edit_schedule_start',
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Field(
+                    label: 'Fim',
+                    controller: end,
+                    keyName: 'edit_schedule_end',
+                  ),
+                ),
+              ],
             ),
           ],
         ),
