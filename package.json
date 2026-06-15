@@ -1,0 +1,27 @@
+{
+  "name": "prof",
+  "version": "1.0.0",
+  "description": "A new Flutter project.",
+  "scripts": {
+    "prepare": "husky",
+    "analyze": "flutter analyze",
+    "test": "flutter test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prof-gustavo-villalta/prof.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/prof-gustavo-villalta/prof/issues"
+  },
+  "homepage": "https://github.com/prof-gustavo-villalta/prof#readme",
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.4"
+  }
+}
