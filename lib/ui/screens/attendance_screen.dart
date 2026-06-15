@@ -4,6 +4,7 @@ import '../../domain/models.dart';
 import '../../domain/diario_de_classe.dart';
 import '../design_system.dart';
 import '../widgets/animated_tap_scale.dart';
+import '../widgets/bordered_container.dart';
 import '../widgets/student_avatar.dart';
 import '../widgets/shared_ui.dart';
 import '../widgets/single_column_screen.dart';
@@ -154,122 +155,113 @@ class StudentAttendanceCard extends StatelessWidget {
         attendance.statusByStudentId[student.id] ?? AttendanceStatus.absent;
     final style = resolveAttendanceStatusStyle(status);
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOutCubic,
-      decoration: BoxDecoration(
-        color:
-            Theme.of(context).cardTheme.color ??
-            Theme.of(context).colorScheme.surface,
-        border: Border(
-          top: AppBorders.strongSide,
-          bottom: isLast ? AppBorders.strongSide : BorderSide.none,
-        ),
-      ),
-      child: Material(
-        color: AppColors.transparent,
-        child: InkWell(
-          key: ValueKey('student_${student.name}'),
-          borderRadius: AppBorders.radius,
-          onTap: attendance.isClosed
-              ? null
-              : () => diario.togglePresence(attendance, student.id),
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  flex: 20,
-                  child: Container(
-                    color: style.accentColor,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xs,
-                    ),
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xs,
+    return BorderedContainer(
+      isLast: isLast,
+      backgroundColor: Theme.of(context).cardTheme.color,
+      child: InkWell(
+        key: ValueKey('student_${student.name}'),
+        onTap: attendance.isClosed
+            ? null
+            : () => diario.togglePresence(attendance, student.id),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _AttendanceStatusRail(
+              label: style.label.toUpperCase(),
+              color: style.accentColor,
+            ),
+            Expanded(
+              flex: 80,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.page,
+                  vertical: AppSpacing.gutter,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(flex: 20, child: StudentAvatar(student: student)),
+                    const SizedBox(width: AppSpacing.xl),
+                    Expanded(
+                      flex: 30,
+                      child: Text(
+                        student.name,
+                        style: AppTextStyles.titleLarge.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
-                        child: Text(
-                          style.label.toUpperCase(),
-                          textAlign: TextAlign.center,
-                          style: AppTextStyles.action.copyWith(
-                            fontSize: AppTextStyles.titleLarge.fontSize,
-                          ),
-                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  flex: 80,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.page,
-                      vertical: AppSpacing.gutter,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 20,
-                          child: StudentAvatar(student: student),
-                        ),
-                        const SizedBox(width: AppSpacing.xl),
-                        Expanded(
-                          flex: 30,
-                          child: Text(
-                            student.name,
-                            style: AppTextStyles.titleLarge.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                    Expanded(
+                      flex: 30,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          _StatusToggleButton(
+                            icon: Icons.hourglass_empty_rounded,
+                            targetStatus: AttendanceStatus.late,
+                            isActive: status == AttendanceStatus.late,
+                            onTap: attendance.isClosed
+                                ? null
+                                : () => diario.markStudent(
+                                    attendance,
+                                    student.id,
+                                    status == AttendanceStatus.late
+                                        ? AttendanceStatus.absent
+                                        : AttendanceStatus.late,
+                                  ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 30,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              _StatusToggleButton(
-                                icon: Icons.hourglass_empty_rounded,
-                                targetStatus: AttendanceStatus.late,
-                                isActive: status == AttendanceStatus.late,
-                                onTap: attendance.isClosed
-                                    ? () {}
-                                    : () => diario.markStudent(
-                                        attendance,
-                                        student.id,
-                                        status == AttendanceStatus.late
-                                            ? AttendanceStatus.absent
-                                            : AttendanceStatus.late,
-                                      ),
-                              ),
-                              const SizedBox(width: AppSpacing.md),
-                              _StatusToggleButton(
-                                icon: Icons.verified_user_rounded,
-                                targetStatus: AttendanceStatus.justified,
-                                isActive: status == AttendanceStatus.justified,
-                                onTap: attendance.isClosed
-                                    ? () {}
-                                    : () => diario.markStudent(
-                                        attendance,
-                                        student.id,
-                                        status == AttendanceStatus.justified
-                                            ? AttendanceStatus.absent
-                                            : AttendanceStatus.justified,
-                                      ),
-                              ),
-                            ],
+                          const SizedBox(width: AppSpacing.md),
+                          _StatusToggleButton(
+                            icon: Icons.verified_user_rounded,
+                            targetStatus: AttendanceStatus.justified,
+                            isActive: status == AttendanceStatus.justified,
+                            onTap: attendance.isClosed
+                                ? null
+                                : () => diario.markStudent(
+                                    attendance,
+                                    student.id,
+                                    status == AttendanceStatus.justified
+                                        ? AttendanceStatus.absent
+                                        : AttendanceStatus.justified,
+                                  ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AttendanceStatusRail extends StatelessWidget {
+  const _AttendanceStatusRail({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 20,
+      child: Container(
+        alignment: Alignment.center,
+        color: color,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.badge.copyWith(color: AppColors.white),
             ),
           ),
         ),
@@ -289,28 +281,29 @@ class _StatusToggleButton extends StatelessWidget {
   final IconData icon;
   final AttendanceStatus targetStatus;
   final bool isActive;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final style = resolveAttendanceStatusStyle(targetStatus);
     final activeBg = style.accentColor.withValues(alpha: 0.15);
+    final onSurface = Theme.of(context).colorScheme.onSurface;
 
     return AnimatedTapScale(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOutCubic,
-        width: AppSizes.iconButton,
-        height: AppSizes.iconButton,
+        width: AppSizes.compactIconButton,
+        height: AppSizes.compactIconButton,
         decoration: BoxDecoration(
-          color: isActive
-              ? activeBg
-              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+          color: isActive ? activeBg : onSurface.withValues(alpha: 0.08),
           shape: BoxShape.rectangle,
           borderRadius: AppBorders.radius,
           border: Border.all(
-            color: isActive ? style.accentColor : AppColors.transparent,
+            color: isActive
+                ? style.accentColor
+                : onSurface.withValues(alpha: 0.25),
             width: AppSizes.subtleDivider,
           ),
         ),
@@ -318,7 +311,7 @@ class _StatusToggleButton extends StatelessWidget {
           icon,
           color: isActive
               ? style.accentColor
-              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+              : onSurface.withValues(alpha: 0.45),
           size: AppSizes.icon,
         ),
       ),
