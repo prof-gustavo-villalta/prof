@@ -4,9 +4,9 @@ import '../../domain/models.dart';
 import '../../domain/diario_de_classe.dart';
 import '../design_system.dart';
 import '../widgets/app_dropdown.dart';
-import '../widgets/shared_ui.dart';
-import '../widgets/bordered_container.dart';
 import '../widgets/animated_tap_scale.dart';
+import '../widgets/bordered_container.dart';
+import '../widgets/shared_ui.dart';
 import '../widgets/single_column_screen.dart';
 import 'attendance_screen.dart';
 import 'export_data_screen.dart';
@@ -24,6 +24,7 @@ class HistoryScreen extends StatefulWidget {
 class _HistoryScreenState extends State<HistoryScreen> {
   String? classGroupId;
   String? disciplineId;
+  String statusFilter = 'Todos';
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +32,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
         classGroupId ?? widget.diario.classGroups.firstOrNull?.id;
     final selectedDisciplineId =
         disciplineId ?? widget.diario.disciplines.firstOrNull?.id;
-    final closedAttendances = widget.diario.closedAttendanceViews();
+
+    final closedAttendances = widget.diario.closedAttendanceViews().where((
+      view,
+    ) {
+      if (selectedClassGroupId != null &&
+          view.classGroup.id != selectedClassGroupId) {
+        return false;
+      }
+      if (selectedDisciplineId != null &&
+          view.discipline.id != selectedDisciplineId) {
+        return false;
+      }
+      return _matchesStatusFilter(view.attendance, statusFilter);
+    }).toList();
 
     return SingleColumnScreen(
-      title: 'Histórico',
+      title: 'HistÃ³rico',
       icon: Icons.insights_rounded,
       spacingAfterHeader: AppSpacing.page,
       bottomActionBar: BottomSplitActionBar(
@@ -102,6 +116,37 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           ],
         ),
+        const SizedBox(height: AppSpacing.gutter),
+        AppFilterRow(
+          filters: const [
+            'Todos',
+            'Presentes',
+            'Ausentes',
+            'Atrasos',
+            'Justificados',
+          ],
+          filterColors: {
+            'Todos': AppColors.slate500,
+            'Presentes': resolveAttendanceStatusStyle(
+              AttendanceStatus.present,
+            ).accentColor,
+            'Ausentes': resolveAttendanceStatusStyle(
+              AttendanceStatus.absent,
+            ).accentColor,
+            'Atrasos': resolveAttendanceStatusStyle(
+              AttendanceStatus.late,
+            ).accentColor,
+            'Justificados': resolveAttendanceStatusStyle(
+              AttendanceStatus.justified,
+            ).accentColor,
+          },
+          selectedFilter: statusFilter,
+          onSelected: (value) {
+            setState(() {
+              statusFilter = value;
+            });
+          },
+        ),
         const SizedBox(height: AppSpacing.loose),
         if (closedAttendances.isEmpty)
           const EmptyCard(
@@ -114,6 +159,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
               builder: (context) {
                 final view = entry.$2;
                 final isLast = entry.$1 == closedAttendances.length - 1;
+                final statusCounts = _attendanceCounts(view.attendance);
+                final summary = resolveLessonStatus(LessonDisplayStatus.closed);
 
                 return AnimatedTapScale(
                   onTap: () {
@@ -132,37 +179,74 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   },
                   child: BorderedContainer(
                     isLast: isLast,
-                    padding: AppSpacing.panel,
-                    child: Row(
+                    sideBorders: true,
+                    padding: AppSpacing.compactRow,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '${view.classGroup.name} - ${view.discipline.name}',
-                                style: AppTextStyles.rowTitle.copyWith(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: LessonInfoRow(
+                                statusLabel: summary.label,
+                                statusColor: summary.color,
+                                title:
+                                    '${view.classGroup.name} - ${view.discipline.name}',
+                                time:
+                                    '${dateText(view.attendance.date)} - ${clock(view.weeklyClass.startMinutes)} - ${clock(view.weeklyClass.endMinutes)}',
                               ),
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                dateText(view.attendance.date),
-                                style: AppTextStyles.caption.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.4),
+                            ),
+                          ],
                         ),
-                        Icon(
-                          Icons.chevron_right_rounded,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.4),
+                        const SizedBox(height: AppSpacing.sm),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _HistoryStatusChip(
+                                label: 'P',
+                                count: statusCounts.present,
+                                color: resolveAttendanceStatusStyle(
+                                  AttendanceStatus.present,
+                                ).accentColor,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            Expanded(
+                              child: _HistoryStatusChip(
+                                label: 'A',
+                                count: statusCounts.absent,
+                                color: resolveAttendanceStatusStyle(
+                                  AttendanceStatus.absent,
+                                ).accentColor,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            Expanded(
+                              child: _HistoryStatusChip(
+                                label: 'T',
+                                count: statusCounts.late,
+                                color: resolveAttendanceStatusStyle(
+                                  AttendanceStatus.late,
+                                ).accentColor,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            Expanded(
+                              child: _HistoryStatusChip(
+                                label: 'J',
+                                count: statusCounts.justified,
+                                color: resolveAttendanceStatusStyle(
+                                  AttendanceStatus.justified,
+                                ).accentColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -171,6 +255,79 @@ class _HistoryScreenState extends State<HistoryScreen> {
               },
             ),
       ],
+    );
+  }
+
+  ({int present, int late, int absent, int justified}) _attendanceCounts(
+    Attendance attendance,
+  ) {
+    var present = 0;
+    var late = 0;
+    var absent = 0;
+    var justified = 0;
+
+    for (final status in attendance.statusByStudentId.values) {
+      switch (status) {
+        case AttendanceStatus.present:
+          present++;
+        case AttendanceStatus.absent:
+          absent++;
+        case AttendanceStatus.late:
+          late++;
+        case AttendanceStatus.justified:
+          justified++;
+      }
+    }
+
+    return (present: present, late: late, absent: absent, justified: justified);
+  }
+
+  bool _matchesStatusFilter(Attendance attendance, String filter) {
+    if (filter == 'Todos') {
+      return true;
+    }
+
+    final counts = _attendanceCounts(attendance);
+    return switch (filter) {
+      'Presentes' => counts.present > 0,
+      'Ausentes' => counts.absent > 0,
+      'Atrasos' => counts.late > 0,
+      'Justificados' => counts.justified > 0,
+      _ => true,
+    };
+  }
+}
+
+class _HistoryStatusChip extends StatelessWidget {
+  const _HistoryStatusChip({
+    required this.label,
+    required this.count,
+    required this.color,
+  });
+
+  final String label;
+  final int count;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: AppBorders.radius,
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
+      ),
+      child: Text(
+        '$label $count',
+        textAlign: TextAlign.center,
+        style: AppTextStyles.badge.copyWith(color: color),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
     );
   }
 }

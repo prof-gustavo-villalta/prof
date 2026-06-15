@@ -10,7 +10,7 @@ Padronizar as telas **Hoje** e **Chamada** para seguir o **Design System**, pres
 - [x] A tela de Chamada usa componentes e tokens do Design System para busca, filtros, cards de alunos, status e acoes.
 - [x] Cores de status continuam consistentes para Presente, Ausente, Atraso e Justificado.
 - [x] O fluxo de marcar presenca, atraso, justificativa e ausencia permanece rapido e sem passos extras.
-- [ ] A mudanca passa por revisao visual manual antes de merge.
+- [x] A mudanca passa por revisao visual manual antes de merge.
 - [x] `flutter test` passa.
 
 ## Notes
