@@ -64,6 +64,7 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
           text: 'Cancelar',
           icon: Icons.close_rounded,
           color: AppColors.slate950,
+          height: AppSizes.actionHeight,
           onPressed: () => Navigator.of(context).pop(),
         ),
         right: AppButton(
@@ -71,6 +72,7 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
           text: 'Salvar',
           icon: Icons.check_rounded,
           color: AppColors.primaryAction,
+          height: AppSizes.actionHeight,
           onPressed: () async {
             if (isEditing) {
               await widget.diario.updateClassGroup(
@@ -95,25 +97,30 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
         ),
       ),
       children: [
-        Field(
-          label: 'Turma',
-          controller: groupName,
-          keyName: 'edit_group_name',
-        ),
-        Field(
-          label: 'Periodo letivo',
-          controller: termName,
-          keyName: 'edit_term_name',
-        ),
-        Field(
-          label: 'Inicio opcional',
-          controller: startDate,
-          keyName: 'edit_term_start',
-        ),
-        Field(
-          label: 'Fim opcional',
-          controller: endDate,
-          keyName: 'edit_term_end',
+        SectionCard(
+          title: 'Dados da turma',
+          children: [
+            Field(
+              label: 'Turma',
+              controller: groupName,
+              keyName: 'edit_group_name',
+            ),
+            Field(
+              label: 'Periodo letivo',
+              controller: termName,
+              keyName: 'edit_term_name',
+            ),
+            Field(
+              label: 'Inicio opcional',
+              controller: startDate,
+              keyName: 'edit_term_start',
+            ),
+            Field(
+              label: 'Fim opcional',
+              controller: endDate,
+              keyName: 'edit_term_end',
+            ),
+          ],
         ),
       ],
     );

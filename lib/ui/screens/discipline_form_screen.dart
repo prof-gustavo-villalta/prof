@@ -28,8 +28,14 @@ class _DisciplineFormScreenState extends State<DisciplineFormScreen> {
       appBarTitle: 'Nova disciplina',
       title: 'Nova disciplina',
       icon: Icons.menu_book_rounded,
-      bottomActionBar: BottomActionBar(
-        child: AppButton(
+      bottomActionBar: BottomSplitActionBar(
+        left: AppButton(
+          text: 'Cancelar',
+          icon: Icons.close_rounded,
+          color: AppColors.slate950,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        right: AppButton(
           key: const ValueKey('add_discipline'),
           text: 'Adicionar',
           icon: Icons.check_rounded,
@@ -46,10 +52,15 @@ class _DisciplineFormScreenState extends State<DisciplineFormScreen> {
         ),
       ),
       children: [
-        Field(
-          label: 'Disciplina',
-          controller: disciplina,
-          keyName: 'new_discipline_name',
+        SectionCard(
+          title: 'Dados da disciplina',
+          children: [
+            Field(
+              label: 'Disciplina',
+              controller: disciplina,
+              keyName: 'new_discipline_name',
+            ),
+          ],
         ),
       ],
     );

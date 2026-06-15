@@ -22,6 +22,32 @@ function Get-NextIssueLine {
   $issueStatus | Where-Object { $_ -match '\|\s+open\s+\|' } | Select-Object -First 1
 }
 
+function Get-FinalPromise {
+  param([string]$Text)
+
+  $lines = $Text -split "\r?\n" |
+    ForEach-Object { $_.Trim() } |
+    Where-Object { $_.Length -gt 0 }
+
+  if ($lines.Count -eq 0) {
+    return $null
+  }
+
+  $lastLines = $lines | Select-Object -Last 5
+
+  foreach ($line in $lastLines) {
+    if ($line -eq "<promise>NO MORE TASKS</promise>") {
+      return "NO_MORE_TASKS"
+    }
+
+    if ($line -eq "<promise>ABORT</promise>") {
+      return "ABORT"
+    }
+  }
+
+  return $null
+}
+
 Write-ProgressLine "Starting issue loop for $Iterations iteration(s). Model: $Model."
 
 for ($i = 1; $i -le $Iterations; $i++) {
@@ -60,12 +86,14 @@ for ($i = 1; $i -le $Iterations; $i++) {
     exit $exitCode
   }
 
-  if ($text.Contains("<promise>NO MORE TASKS</promise>")) {
+  $finalPromise = Get-FinalPromise -Text $text
+
+  if ($finalPromise -eq "NO_MORE_TASKS") {
     Write-ProgressLine "Issue loop complete after $i iteration(s)."
     exit 0
   }
 
-  if ($text.Contains("<promise>ABORT</promise>")) {
+  if ($finalPromise -eq "ABORT") {
     Write-ProgressLine "Issue loop aborted after $i iteration(s)."
     exit 1
   }

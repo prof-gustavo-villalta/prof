@@ -13,7 +13,6 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return SingleColumnScreen(
       title: 'Ajustes',
       icon: Icons.tune_rounded,
@@ -27,62 +26,45 @@ class SettingsScreen extends StatelessWidget {
               'Dados de demonstração carregados com sucesso!',
             );
           },
-          child: Card(
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.page,
-                vertical: AppSpacing.gutter,
-              ),
-              child: Row(
+          child: SectionCard(
+            title: 'Carregar dados demo',
+            children: [
+              Row(
                 children: [
                   Container(
                     width: AppSizes.iconButton,
                     height: AppSizes.iconButton,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                      color: AppColors.slate50,
                       borderRadius: AppBorders.radius,
                       border: Border.all(
-                        color: theme.colorScheme.primary,
+                        color: AppColors.primaryAction,
                         width: AppSizes.subtleDivider,
                       ),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.auto_awesome_rounded,
-                      color: theme.colorScheme.primary,
+                      color: AppColors.primaryAction,
                       size: AppSizes.infoIcon,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.gutter),
                   Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Carregar dados demo',
-                          style: AppTextStyles.rowTitle.copyWith(
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Text(
-                          'Carrega turmas, disciplinas e alunos fictícios para demonstração.',
-                          style: AppTextStyles.caption.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(
-                              alpha: 0.6,
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      'Carrega turmas, disciplinas e alunos fictícios para demonstração.',
+                      style: AppTextStyles.bodyLarge.copyWith(
+                        color: AppColors.slate900,
+                      ),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.gutter),
-                  Icon(
+                  const Icon(
                     Icons.chevron_right_rounded,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                    color: AppColors.slate600,
                   ),
                 ],
               ),
-            ),
+            ],
           ),
         ),
       ],

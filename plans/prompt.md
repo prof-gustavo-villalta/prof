@@ -25,7 +25,7 @@ Selection rules:
 1. Prefer the lowest-numbered issue with unchecked acceptance criteria.
 2. Skip issues whose `Blocked by` issue files still have unchecked acceptance criteria.
 3. If an issue is broad, complete the smallest unchecked acceptance criterion in that issue.
-4. If all issues are complete, emit <promise>NO MORE TASKS</promise>.
+4. If all issues are complete, emit exactly `<promise>NO MORE TASKS</promise>` as the final line.
 
 Before coding, state the selected issue path and the exact acceptance criterion you will complete.
 
@@ -61,9 +61,9 @@ Update the selected issue file:
 - Mark completed acceptance criteria with `[x]`.
 - Leave still-open criteria unchecked.
 - Do not mark `flutter analyze` or `flutter test` complete unless you ran them and they passed.
-- If blocked, add a short note under a `## Notes` section and output <promise>ABORT</promise>.
+- If blocked, add a short note under a `## Notes` section and output exactly `<promise>ABORT</promise>` as the final line.
 
-If anything blocks your completion of the task, output <promise>ABORT</promise>.
+If anything blocks your completion of the task, output exactly `<promise>ABORT</promise>` as the final line.
 
 # FEEDBACK LOOPS
 
@@ -91,3 +91,7 @@ ONLY WORK ON A SINGLE TASK.
 Do not rewrite unrelated code.
 
 Do not revert user changes.
+
+Never ask whether to continue to the next issue or criterion. In AFK mode, the outer script decides whether to run another iteration.
+
+Do not output `<promise>NO MORE TASKS</promise>` or `<promise>ABORT</promise>` unless that exact promise is the final line of your response.
