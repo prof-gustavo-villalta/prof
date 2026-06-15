@@ -66,9 +66,14 @@ Arquivos provaveis:
 - [x] Espacamentos entre cabecalho, secoes, listas e acoes usam tokens de `AppSpacing` sem valores soltos novos em telas.
 - [x] Linhas densas de listas continuam legiveis em Android e Web, com truncamento ou quebra controlada onde necessario.
 - [x] A informacao principal de cada tela fica visualmente acima de informacoes secundarias.
-- [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
+- [x] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
 - [ ] `flutter analyze` passa.
 - [ ] `flutter test` passa.
+
+## Notes
+
+- `npm run check:ui` retornou `exit 0` com apenas avisos de `manual decoration`, sem falhas de drift.
+- `flutter analyze` retornou código de saída não-zero (warnings em `lib/ui/design_system/app_theme.dart:58` e `lib/ui/widgets/app_dropdown.dart:43`), já conhecidos.
 
 ## Verification notes
 
