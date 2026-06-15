@@ -29,6 +29,21 @@ Selection rules:
 
 Before coding, state the selected issue path and the exact acceptance criterion you will complete.
 
+# SKILL GUIDANCE
+
+Use skills only when they match the selected issue:
+
+- Use `$tdd` for behavior/domain changes or bug fixes.
+- Use `$flutter-add-widget-test` for UI acceptance criteria needing widget coverage.
+- Use `$flutter-build-responsive-layout` for layout work across Android/Web.
+- Use `$flutter-fix-layout-issues` for overflows or constraint bugs.
+- Use `$flutter-add-integration-test` for full user flows.
+- Use `$code-simplifier` after tests pass if touched code got more complex.
+- Use `$diagnose` only when blocked by failing tests, `flutter analyze`, or unclear bugs.
+- Use `$review` before final commit when the change touches shared behavior or many files.
+
+Do not use skills as ritual. Small issue can use one matching skill or none.
+
 # EXPLORATION
 
 Explore the repo and fill your context window with relevant information that will allow you to complete the task.

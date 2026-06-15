@@ -1,3 +1,7 @@
+param(
+  [string]$Model = "gpt-5.3-codex-spark"
+)
+
 $ErrorActionPreference = "Stop"
 
 function Get-RecentCommits {
@@ -26,4 +30,4 @@ docs/issues snapshot:
 $issueSnapshot
 "@
 
-codex exec $prompt
+codex exec --yolo --model $Model $prompt

@@ -6,8 +6,8 @@ Criar uma entrada unica para o **Design System** da interface e usar essa entrad
 
 ## Acceptance criteria
 
-- [ ] Existe um arquivo de entrada unico para exportar os tokens do Design System.
-- [ ] Imports obvios de tokens visuais podem ser trocados para a entrada unica sem mudar comportamento.
+- [x] Existe um arquivo de entrada unico para exportar os tokens do Design System.
+- [x] Imports obvios de tokens visuais podem ser trocados para a entrada unica sem mudar comportamento.
 - [ ] O app continua usando o tema principal baseado no Design System.
 - [ ] `flutter analyze` passa.
 - [ ] `flutter test` passa.

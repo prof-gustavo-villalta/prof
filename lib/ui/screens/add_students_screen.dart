@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/diario_de_classe.dart';
-import '../design_system/app_colors.dart';
-import '../design_system/app_sizes.dart';
-import '../design_system/app_spacing.dart';
-import '../design_system/app_text_styles.dart';
+import '../design_system.dart';
 import '../widgets/shared_ui.dart';
 import '../widgets/single_column_screen.dart';
 
