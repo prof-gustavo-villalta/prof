@@ -108,25 +108,32 @@ class _ClassGroupListItem extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              flex: 20,
-              child: Text(
-                termName.toUpperCase(),
-                style: AppTextStyles.rowKicker.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 50,
+              flex: 70,
               child: Padding(
                 padding: const EdgeInsets.only(right: AppSpacing.md),
-                child: Text(
-                  groupName,
-                  style: AppTextStyles.rowTitle.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      groupName,
+                      style: AppTextStyles.rowTitle.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      termName.toUpperCase(),
+                      style: AppTextStyles.rowMeta.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.85),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -143,6 +150,8 @@ class _ClassGroupListItem extends StatelessWidget {
                         context,
                       ).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(width: AppSpacing.xl),
                   AppIconButton(

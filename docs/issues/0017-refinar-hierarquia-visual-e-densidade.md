@@ -62,10 +62,10 @@ Arquivos provaveis:
 
 ## Acceptance criteria
 
-- [ ] Titulos, subtitulos, metadados e textos auxiliares usam uma hierarquia consistente baseada em `AppTextStyles` ou `Theme.of(context).textTheme`.
-- [ ] Espacamentos entre cabecalho, secoes, listas e acoes usam tokens de `AppSpacing` sem valores soltos novos em telas.
-- [ ] Linhas densas de listas continuam legiveis em Android e Web, com truncamento ou quebra controlada onde necessario.
-- [ ] A informacao principal de cada tela fica visualmente acima de informacoes secundarias.
+- [x] Titulos, subtitulos, metadados e textos auxiliares usam uma hierarquia consistente baseada em `AppTextStyles` ou `Theme.of(context).textTheme`.
+- [x] Espacamentos entre cabecalho, secoes, listas e acoes usam tokens de `AppSpacing` sem valores soltos novos em telas.
+- [x] Linhas densas de listas continuam legiveis em Android e Web, com truncamento ou quebra controlada onde necessario.
+- [x] A informacao principal de cada tela fica visualmente acima de informacoes secundarias.
 - [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
 - [ ] `flutter analyze` passa.
 - [ ] `flutter test` passa.
