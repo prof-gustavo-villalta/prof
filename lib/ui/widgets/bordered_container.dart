@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../design_system/app_borders.dart';
+
+import '../design_system.dart';
 
 /// Container com bordas horizontais no estilo do app.
 ///

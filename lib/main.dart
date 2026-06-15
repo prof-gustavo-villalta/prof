@@ -55,7 +55,10 @@ class _ProfAppState extends State<ProfApp> {
             );
           }
           if (!diario.hasMinimumSetup) {
-            return OnboardingScreen(diario: diario);
+            return OnboardingScreen(
+              diario: diario,
+              now: widget.now ?? DateTime.now(),
+            );
           }
           return HomeShell(diario: diario, now: widget.now ?? DateTime.now());
         },

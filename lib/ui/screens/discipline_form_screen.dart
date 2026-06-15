@@ -36,11 +36,13 @@ class _DisciplineFormScreenState extends State<DisciplineFormScreen> {
           icon: Icons.check_rounded,
           color: AppColors.primaryAction,
           height: AppSizes.actionHeight,
-          onPressed: () {
+          onPressed: () async {
             if (disciplina.text.trim().isNotEmpty) {
-              widget.diario.addDiscipline(disciplina.text);
+              await widget.diario.addDiscipline(disciplina.text);
             }
-            Navigator.of(context).pop();
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
           },
         ),
       ),

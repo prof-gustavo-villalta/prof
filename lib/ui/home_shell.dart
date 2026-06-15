@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'design_system.dart';
 import '../domain/diario_de_classe.dart';
 import 'screens/today_screen.dart';
 import 'screens/classes_screen.dart';
 import 'screens/history_screen.dart';
 import 'screens/settings_screen.dart';
 import 'widgets/animated_tap_scale.dart';
-import 'design_system/app_borders.dart';
-import 'design_system/app_colors.dart';
-import 'design_system/app_sizes.dart';
-import 'design_system/app_spacing.dart';
-import 'design_system/app_text_styles.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key, required this.diario, required this.now});

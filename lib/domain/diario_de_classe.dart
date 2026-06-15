@@ -49,7 +49,12 @@ abstract class DiarioDeClasse implements Listenable {
   });
   Future<void> loadDemoData(DateTime now);
 
-  Future<void> addClassGroup({required String turma, required String periodo});
+  Future<void> addClassGroup({
+    required String turma,
+    required String periodo,
+    DateTime? termStartDate,
+    DateTime? termEndDate,
+  });
   Future<void> updateClassGroup({
     required String classGroupId,
     required String name,
@@ -234,8 +239,15 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   Future<void> addClassGroup({
     required String turma,
     required String periodo,
+    DateTime? termStartDate,
+    DateTime? termEndDate,
   }) async {
-    final term = Term(id: _id('term'), name: periodo.trim());
+    final term = Term(
+      id: _id('term'),
+      name: periodo.trim(),
+      startDate: termStartDate,
+      endDate: termEndDate,
+    );
     final group = ClassGroup(
       id: _id('turma'),
       name: turma.trim(),

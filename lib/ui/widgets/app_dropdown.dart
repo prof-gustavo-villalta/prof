@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../design_system/app_spacing.dart';
-import '../design_system/app_text_styles.dart';
+
+import '../design_system.dart';
 
 /// Dropdown estilizado no padrão visual do app.
 ///

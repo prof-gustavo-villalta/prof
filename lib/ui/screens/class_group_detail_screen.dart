@@ -14,6 +14,7 @@ import '../widgets/single_column_screen.dart';
 import '../widgets/student_avatar.dart';
 import 'add_students_screen.dart';
 import 'class_group_schedule_screen.dart';
+import 'group_form_screen.dart';
 
 class ClassGroupDetailScreen extends StatefulWidget {
   const ClassGroupDetailScreen({
@@ -65,8 +66,8 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
               text: 'Adicionar',
               icon: Icons.person_add_rounded,
               color: AppColors.primaryAction,
-              onPressed: () {
-                Navigator.of(context).push(
+              onPressed: () async {
+                await Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => AddStudentsScreen(
                       diario: widget.diario,
@@ -74,10 +75,39 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
                     ),
                   ),
                 );
+                if (mounted) {
+                  setState(() {});
+                }
               },
             ),
           ),
           children: [
+            BorderedContainer(
+              padding: AppSpacing.compactRow,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: AppButton(
+                      key: const ValueKey('edit_group'),
+                      text: 'Editar turma',
+                      icon: Icons.edit_rounded,
+                      color: AppColors.slate950,
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => GroupFormScreen(
+                              diario: widget.diario,
+                              group: group,
+                              term: term,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
             if (students.isEmpty)
               const EmptyCard(
                 text: 'Nenhum aluno cadastrado.',

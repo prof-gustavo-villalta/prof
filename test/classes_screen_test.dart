@@ -4,6 +4,70 @@ import 'package:prof/data/diario_storage.dart';
 import 'package:prof/main.dart';
 
 void main() {
+  testWidgets('professor cria e edita turma com periodo letivo e datas', (
+    tester,
+  ) async {
+    final storage = InMemoryDiarioStorage();
+    await tester.pumpWidget(
+      ProfApp(storage: storage, now: DateTime(2026, 5, 21, 19)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('onboarding_submit')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Turmas'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Adicionar Turma'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('edit_group_name')),
+      'DS4',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('edit_term_name')),
+      '2026/2',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('edit_term_start')),
+      '2026-08-01',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('edit_term_end')),
+      '2026-11-30',
+    );
+    await tester.tap(find.byKey(const ValueKey('save_group')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('DS4'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('2026/2'), findsWidgets);
+
+    final created = await storage.loadAll();
+    final createdGroup = created.classGroups.singleWhere(
+      (group) => group.name == 'DS4',
+    );
+    final createdTerm = created.terms.singleWhere(
+      (term) => term.id == createdGroup.termId,
+    );
+    expect(createdTerm.startDate, DateTime(2026, 8));
+    expect(createdTerm.endDate, DateTime(2026, 11, 30));
+
+    await tester.tap(find.byKey(const ValueKey('edit_group')));
+    await tester.pumpAndSettle();
+    expect(find.text('2026-08-01'), findsOneWidget);
+    expect(find.text('2026-11-30'), findsOneWidget);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('edit_group_name')),
+      'DS4 Manha',
+    );
+    await tester.tap(find.byKey(const ValueKey('save_group')));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('DS4 Manha'), findsWidgets);
+  });
+
   testWidgets(
     'professor edita turma e cria horario com turma e disciplina escolhidas',
     (tester) async {
@@ -28,7 +92,7 @@ void main() {
       // Adiciona aluno na tela de detalhe
       await tester.tap(find.text('Adicionar'));
       await tester.pumpAndSettle();
-      
+
       await tester.scrollUntilVisible(
         find.byKey(const ValueKey('add_students_field')),
         300,
@@ -40,6 +104,11 @@ void main() {
       );
       await tester.tap(find.byKey(const ValueKey('add_students_button')));
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Carla Rocha'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text('Carla Rocha'), findsOneWidget);
 
       // Vai para Grade semanal
@@ -49,7 +118,7 @@ void main() {
       // Adiciona disciplina
       await tester.tap(find.text('Nova Disciplina'));
       await tester.pumpAndSettle();
-      
+
       await tester.enterText(
         find.byKey(const ValueKey('new_discipline_name')),
         'WEB2',

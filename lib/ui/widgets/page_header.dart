@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../design_system/app_sizes.dart';
-import '../design_system/app_spacing.dart';
+
+import '../design_system.dart';
 
 /// Cabeçalho padrão de página: título pesado + ícone à direita.
 ///

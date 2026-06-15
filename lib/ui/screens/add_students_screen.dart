@@ -44,10 +44,15 @@ class _AddStudentsScreenState extends State<AddStudentsScreen> {
           icon: Icons.check_rounded,
           color: AppColors.primaryAction,
           height: AppSizes.actionHeight,
-          onPressed: () {
+          onPressed: () async {
             if (_studentsController.text.trim().isEmpty) return;
-            widget.diario.addStudents(widget.groupId, _studentsController.text);
-            Navigator.of(context).pop();
+            await widget.diario.addStudents(
+              widget.groupId,
+              _studentsController.text,
+            );
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
           },
         ),
       ),

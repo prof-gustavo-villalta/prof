@@ -8,9 +8,10 @@ import '../widgets/shared_ui.dart';
 import '../widgets/single_column_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key, required this.diario});
+  const OnboardingScreen({super.key, required this.diario, required this.now});
 
   final DiarioDeClasse diario;
+  final DateTime now;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -124,7 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             periodo: periodo.text,
             disciplina: disciplina.text,
             alunos: alunos.text,
-            now: DateTime.now(),
+            now: widget.now,
           ),
         ),
       ],

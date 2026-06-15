@@ -6,10 +6,10 @@ Adicionar uma verificacao simples para reduzir desvios do **Design System** em t
 
 ## Acceptance criteria
 
-- [ ] Existe uma forma documentada de procurar desvios comuns nas telas, como `Colors.*`, `TextStyle(`, `EdgeInsets` numerico e decoracoes manuais.
-- [ ] A verificacao foca arquivos de UI e evita ruido em arquivos de dominio ou dados.
-- [ ] Casos aceitos por design podem ser mantidos com justificativa clara no codigo ou na documentacao.
-- [ ] A verificacao pode ser executada localmente antes de commits de UI.
+- [x] Existe uma forma documentada de procurar desvios comuns nas telas, como `Colors.*`, `TextStyle(`, `EdgeInsets` numerico e decoracoes manuais.
+- [x] A verificacao foca arquivos de UI e evita ruido em arquivos de dominio ou dados.
+- [x] Casos aceitos por design podem ser mantidos com justificativa clara no codigo ou na documentacao.
+- [x] A verificacao pode ser executada localmente antes de commits de UI.
 - [ ] `flutter analyze` passa.
 - [ ] `flutter test` passa.
 

@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+
 import '../../domain/models.dart';
-import '../design_system/app_colors.dart';
-import '../design_system/app_sizes.dart';
-import '../design_system/app_text_styles.dart';
+import '../design_system.dart';
 
 class StudentAvatar extends StatelessWidget {
   const StudentAvatar({super.key, required this.student});

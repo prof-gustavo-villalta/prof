@@ -81,9 +81,11 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
                 termEndDate: parseDate(endDate.text),
               );
             } else {
-              widget.diario.addClassGroup(
+              await widget.diario.addClassGroup(
                 turma: groupName.text,
                 periodo: termName.text,
+                termStartDate: parseDate(startDate.text),
+                termEndDate: parseDate(endDate.text),
               );
             }
             if (context.mounted) {

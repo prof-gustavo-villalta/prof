@@ -4,6 +4,34 @@ import 'package:prof/main.dart';
 import 'package:prof/data/diario_storage.dart';
 
 void main() {
+  testWidgets('onboarding cria Grade Semanal para o relogio do app', (
+    WidgetTester tester,
+  ) async {
+    final storage = InMemoryDiarioStorage();
+
+    await tester.pumpWidget(
+      ProfApp(storage: storage, now: DateTime(2026, 6, 16, 19)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Primeira turma'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('onboarding_submit')),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.byKey(const ValueKey('onboarding_submit')));
+    await tester.pumpAndSettle();
+
+    final data = await storage.loadAll();
+    expect(data.weeklyClasses.single.weekday, DateTime.tuesday);
+    expect(data.weeklyClasses.single.startMinutes, 18 * 60 + 45);
+    expect(data.weeklyClasses.single.endMinutes, 20 * 60 + 45);
+    expect(find.text('Hoje'), findsWidgets);
+    expect(find.byKey(const ValueKey('start_attendance')), findsOneWidget);
+  });
+
   testWidgets('professor configura turma e fecha uma chamada', (
     WidgetTester tester,
   ) async {
@@ -62,7 +90,7 @@ void main() {
 
     await tester.tap(find.text('Historico'));
     await tester.pumpAndSettle();
-    
+
     // Teste Resumo
     await tester.tap(find.text('Resumo'));
     await tester.pumpAndSettle();
@@ -87,6 +115,5 @@ void main() {
     // Teste Exportar CSV
     await tester.tap(find.text('Exportar CSV'));
     await tester.pumpAndSettle();
-    
   });
 }

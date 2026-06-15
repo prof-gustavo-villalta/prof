@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import '../design_system/app_colors.dart';
-import '../design_system/app_sizes.dart';
-import '../design_system/app_spacing.dart';
-import '../design_system/app_text_styles.dart';
+
 import '../../domain/diario_de_classe.dart';
+import '../design_system.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/bordered_container.dart';
 import '../widgets/shared_ui.dart';

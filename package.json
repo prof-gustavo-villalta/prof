@@ -5,7 +5,11 @@
   "scripts": {
     "prepare": "husky",
     "analyze": "flutter analyze",
-    "test": "flutter test"
+    "test": "flutter test",
+    "check:ui": "node scripts/check-ui-drift.js",
+    "check": "npm run analyze && npm run test",
+    "ralph:hitl": "powershell -NoProfile -ExecutionPolicy Bypass -File plans/once-codex.ps1",
+    "ralph:afk": "powershell -NoProfile -ExecutionPolicy Bypass -File plans/afk-codex.ps1"
   },
   "repository": {
     "type": "git",

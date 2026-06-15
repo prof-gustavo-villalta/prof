@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../../domain/diario_de_classe.dart';
+import '../design_system.dart';
 import '../widgets/animated_tap_scale.dart';
 import '../widgets/shared_ui.dart';
 import '../widgets/single_column_screen.dart';
-import '../design_system/app_borders.dart';
-import '../design_system/app_sizes.dart';
-import '../design_system/app_spacing.dart';
-import '../design_system/app_text_styles.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key, required this.diario});

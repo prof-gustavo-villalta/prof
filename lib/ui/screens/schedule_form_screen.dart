@@ -104,7 +104,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                 endMinutes: parseClock(end.text),
               );
             } else {
-              widget.diario.addWeeklyClass(
+              await widget.diario.addWeeklyClass(
                 classGroupId: classGroupId!,
                 disciplineId: disciplineId!,
                 weekday: weekday,
