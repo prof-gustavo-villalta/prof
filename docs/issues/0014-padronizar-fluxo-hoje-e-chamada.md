@@ -8,7 +8,7 @@ Padronizar as telas **Hoje** e **Chamada** para seguir o **Design System**, pres
 
 - [ ] A tela Hoje usa componentes e tokens do Design System para aula atual, proximas aulas, pendencias e acoes.
 - [ ] A tela de Chamada usa componentes e tokens do Design System para busca, filtros, cards de alunos, status e acoes.
-- [ ] Cores de status continuam consistentes para Presente, Ausente, Atraso e Justificado.
+- [x] Cores de status continuam consistentes para Presente, Ausente, Atraso e Justificado.
 - [ ] O fluxo de marcar presenca, atraso, justificativa e ausencia permanece rapido e sem passos extras.
 - [ ] A mudanca passa por revisao visual manual antes de merge.
 - [ ] `flutter analyze` passa.

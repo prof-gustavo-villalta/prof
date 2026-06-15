@@ -87,12 +87,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 'Atrasos',
                 'Justificados',
               ],
-              filterColors: const {
+              filterColors: {
                 'Todos': AppColors.slate500,
-                'Presentes': AppColors.present,
-                'Ausentes': AppColors.absent,
-                'Atrasos': AppColors.lateColor,
-                'Justificados': AppColors.justified,
+                'Presentes': _statusFilterColor(AttendanceStatus.present),
+                'Ausentes': _statusFilterColor(AttendanceStatus.absent),
+                'Atrasos': _statusFilterColor(AttendanceStatus.late),
+                'Justificados': _statusFilterColor(AttendanceStatus.justified),
               },
               selectedFilter: statusFilter,
               onSelected: (value) {
@@ -324,4 +324,8 @@ class _StatusToggleButton extends StatelessWidget {
       ),
     );
   }
+}
+
+Color _statusFilterColor(AttendanceStatus status) {
+  return resolveAttendanceStatusStyle(status).accentColor;
 }

@@ -279,7 +279,7 @@ AttendanceStatusStyle resolveAttendanceStatusStyle(AttendanceStatus status) {
     AttendanceStatus.late => (
       accentColor: AppColors.lateColor,
       borderColor: AppColors.lateColor.withValues(alpha: 0.4),
-      label: 'Atrasado',
+      label: 'Atraso',
     ),
     AttendanceStatus.justified => (
       accentColor: AppColors.justified,
