@@ -24,10 +24,11 @@ class SharedPreferencesDiarioStorage implements DiarioStorage {
 
   @override
   Future<ProfData> loadAll() async {
-
     final legacyData = prefs.getString('prof.data.v1');
     if (legacyData != null && legacyData.isNotEmpty) {
-      final data = ProfData.fromJson(jsonDecode(legacyData) as Map<String, Object?>);
+      final data = ProfData.fromJson(
+        jsonDecode(legacyData) as Map<String, Object?>,
+      );
       await _migrate(prefs, data);
       await prefs.remove('prof.data.v1');
       return data;
@@ -103,12 +104,17 @@ class SharedPreferencesDiarioStorage implements DiarioStorage {
     }
   }
 
-  Future<void> _saveEntity(String prefix, String id, Map<String, Object?> json) async {
+  Future<void> _saveEntity(
+    String prefix,
+    String id,
+    Map<String, Object?> json,
+  ) async {
     await prefs.setString('$prefix$id', jsonEncode(json));
   }
 
   @override
-  Future<void> saveTerm(Term term) => _saveEntity('prof.term.', term.id, term.toJson());
+  Future<void> saveTerm(Term term) =>
+      _saveEntity('prof.term.', term.id, term.toJson());
 
   @override
   Future<void> saveClassGroup(ClassGroup classGroup) =>
@@ -137,7 +143,11 @@ class SharedPreferencesDiarioStorage implements DiarioStorage {
 
   @override
   Future<void> saveCancelledLesson(CancelledLesson cancelledLesson) =>
-      _saveEntity('prof.canc.', cancelledLesson.lessonId, cancelledLesson.toJson());
+      _saveEntity(
+        'prof.canc.',
+        cancelledLesson.lessonId,
+        cancelledLesson.toJson(),
+      );
 }
 
 class InMemoryDiarioStorage implements DiarioStorage {
@@ -150,49 +160,64 @@ class InMemoryDiarioStorage implements DiarioStorage {
 
   @override
   Future<void> saveTerm(Term term) async {
-    final list = _data.terms.toList()..removeWhere((item) => item.id == term.id)..add(term);
+    final list = _data.terms.toList()
+      ..removeWhere((item) => item.id == term.id)
+      ..add(term);
     _data = _data.copyWith(terms: list);
   }
 
   @override
   Future<void> saveClassGroup(ClassGroup classGroup) async {
-    final list = _data.classGroups.toList()..removeWhere((item) => item.id == classGroup.id)..add(classGroup);
+    final list = _data.classGroups.toList()
+      ..removeWhere((item) => item.id == classGroup.id)
+      ..add(classGroup);
     _data = _data.copyWith(classGroups: list);
   }
 
   @override
   Future<void> saveDiscipline(Discipline discipline) async {
-    final list = _data.disciplines.toList()..removeWhere((item) => item.id == discipline.id)..add(discipline);
+    final list = _data.disciplines.toList()
+      ..removeWhere((item) => item.id == discipline.id)
+      ..add(discipline);
     _data = _data.copyWith(disciplines: list);
   }
 
   @override
   Future<void> saveStudent(Student student) async {
-    final list = _data.students.toList()..removeWhere((item) => item.id == student.id)..add(student);
+    final list = _data.students.toList()
+      ..removeWhere((item) => item.id == student.id)
+      ..add(student);
     _data = _data.copyWith(students: list);
   }
 
   @override
   Future<void> saveWeeklyClass(WeeklyClass weeklyClass) async {
-    final list = _data.weeklyClasses.toList()..removeWhere((item) => item.id == weeklyClass.id)..add(weeklyClass);
+    final list = _data.weeklyClasses.toList()
+      ..removeWhere((item) => item.id == weeklyClass.id)
+      ..add(weeklyClass);
     _data = _data.copyWith(weeklyClasses: list);
   }
 
   @override
   Future<void> deleteWeeklyClass(String id) async {
-    final list = _data.weeklyClasses.toList()..removeWhere((item) => item.id == id);
+    final list = _data.weeklyClasses.toList()
+      ..removeWhere((item) => item.id == id);
     _data = _data.copyWith(weeklyClasses: list);
   }
 
   @override
   Future<void> saveAttendance(Attendance attendance) async {
-    final list = _data.attendances.toList()..removeWhere((item) => item.id == attendance.id)..add(attendance);
+    final list = _data.attendances.toList()
+      ..removeWhere((item) => item.id == attendance.id)
+      ..add(attendance);
     _data = _data.copyWith(attendances: list);
   }
 
   @override
   Future<void> saveCancelledLesson(CancelledLesson cancelledLesson) async {
-    final list = _data.cancelledLessons.toList()..removeWhere((item) => item.lessonId == cancelledLesson.lessonId)..add(cancelledLesson);
+    final list = _data.cancelledLessons.toList()
+      ..removeWhere((item) => item.lessonId == cancelledLesson.lessonId)
+      ..add(cancelledLesson);
     _data = _data.copyWith(cancelledLessons: list);
   }
 }

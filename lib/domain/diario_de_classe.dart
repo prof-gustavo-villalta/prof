@@ -29,7 +29,11 @@ abstract class DiarioDeClasse implements Listenable {
 
   // Workflow: Attendance
   Future<Attendance> startAttendance(LessonOccurrence lesson);
-  Future<void> markStudent(Attendance attendance, String studentId, AttendanceStatus status);
+  Future<void> markStudent(
+    Attendance attendance,
+    String studentId,
+    AttendanceStatus status,
+  );
   Future<void> togglePresence(Attendance attendance, String studentId);
   Future<void> closeAttendance(Attendance attendance);
   Future<void> reopenAttendance(Attendance attendance);
@@ -85,10 +89,13 @@ abstract class DiarioDeClasse implements Listenable {
   ClassGroup classGroup(String id);
   Discipline discipline(String id);
   Term term(String id);
-  
+
   Attendance? attendanceFor(String lessonId);
   Attendance? attendanceById(String id);
-  List<AttendanceSummary> summaries({String? classGroupId, String? disciplineId});
+  List<AttendanceSummary> summaries({
+    String? classGroupId,
+    String? disciplineId,
+  });
   String csvExport({String? classGroupId, String? disciplineId});
   List<ClosedAttendanceView> closedAttendanceViews();
 }
@@ -97,12 +104,12 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   DiarioDeClasseImpl({
     required DiarioStorage storage,
     AttendanceReporter attendanceReporter = const AttendanceReporter(),
-  })  : _storage = storage,
-        _attendanceReporter = attendanceReporter;
+  }) : _storage = storage,
+       _attendanceReporter = attendanceReporter;
 
   final DiarioStorage _storage;
   final AttendanceReporter _attendanceReporter;
-  
+
   ProfData _data = const ProfData();
   GradeSemanal _gradeSemanal = GradeSemanal(
     weeklyClasses: [],
@@ -129,8 +136,10 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   Future<void> load() async {
     final loaded = await _storage.loadAll();
     final hasDuplicateStudentIds = _hasDuplicateStudentIds(loaded);
-    _data = hasDuplicateStudentIds ? _repairDuplicateStudentIds(loaded) : loaded;
-    
+    _data = hasDuplicateStudentIds
+        ? _repairDuplicateStudentIds(loaded)
+        : loaded;
+
     _gradeSemanal = GradeSemanal(
       weeklyClasses: _data.weeklyClasses.toList(),
       classGroups: _data.classGroups.toList(),
@@ -161,7 +170,10 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
       currentLesson: _gradeSemanal.currentLesson(now),
       nextLesson: _gradeSemanal.nextLesson(now),
       todaysLessons: _gradeSemanal.todaysLessons(now),
-      pendingLessons: _gradeSemanal.pendingLessons(now, closedAttendanceLessonIds),
+      pendingLessons: _gradeSemanal.pendingLessons(
+        now,
+        closedAttendanceLessonIds,
+      ),
     );
   }
 
@@ -174,12 +186,22 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
     required DateTime now,
   }) async {
     final term = Term(id: _id('term'), name: periodo.trim());
-    final group = ClassGroup(id: _id('turma'), name: turma.trim(), termId: term.id);
-    final discipline = Discipline(id: _id('disciplina'), name: disciplina.trim());
+    final group = ClassGroup(
+      id: _id('turma'),
+      name: turma.trim(),
+      termId: term.id,
+    );
+    final discipline = Discipline(
+      id: _id('disciplina'),
+      name: disciplina.trim(),
+    );
     final students = _parseStudentNames(alunos)
-        .map((name) => Student(id: _id('aluno'), classGroupId: group.id, name: name))
+        .map(
+          (name) =>
+              Student(id: _id('aluno'), classGroupId: group.id, name: name),
+        )
         .toList();
-    
+
     final currentMinutes = now.hour * 60 + now.minute;
     final startMinutes = (currentMinutes - 15).clamp(0, 22 * 60).toInt();
     final weeklyClass = WeeklyClass(
@@ -190,10 +212,10 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
       classGroupId: group.id,
       disciplineId: discipline.id,
     );
-    
+
     _gradeSemanal.addClassGroup(group, term);
     _gradeSemanal.addWeeklyClass(weeklyClass);
-    
+
     _data = _data.copyWith(
       disciplines: [..._data.disciplines, discipline],
       students: [..._data.students, ...students],
@@ -201,15 +223,24 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
     await _storage.saveTerm(term);
     await _storage.saveClassGroup(group);
     await _storage.saveDiscipline(discipline);
-    for (final s in students) { await _storage.saveStudent(s); }
+    for (final s in students) {
+      await _storage.saveStudent(s);
+    }
     await _storage.saveWeeklyClass(weeklyClass);
     notifyListeners();
   }
 
   @override
-  Future<void> addClassGroup({required String turma, required String periodo}) async {
+  Future<void> addClassGroup({
+    required String turma,
+    required String periodo,
+  }) async {
     final term = Term(id: _id('term'), name: periodo.trim());
-    final group = ClassGroup(id: _id('turma'), name: turma.trim(), termId: term.id);
+    final group = ClassGroup(
+      id: _id('turma'),
+      name: turma.trim(),
+      termId: term.id,
+    );
     _gradeSemanal.addClassGroup(group, term);
     await _storage.saveTerm(term);
     await _storage.saveClassGroup(group);
@@ -226,8 +257,12 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   }) async {
     final group = classGroup(classGroupId);
     final updatedGroup = group.copyWith(name: name.trim());
-    final updatedTerm = term(group.termId).copyWith(name: termName.trim(), startDate: termStartDate, endDate: termEndDate);
-    
+    final updatedTerm = term(group.termId).copyWith(
+      name: termName.trim(),
+      startDate: termStartDate,
+      endDate: termEndDate,
+    );
+
     _gradeSemanal.updateClassGroup(updatedGroup, updatedTerm);
     await _storage.saveClassGroup(updatedGroup);
     await _storage.saveTerm(updatedTerm);
@@ -239,9 +274,7 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
     final trimmed = name.trim();
     if (trimmed.isEmpty) return;
     final discipline = Discipline(id: _id('disciplina'), name: trimmed);
-    _data = _data.copyWith(
-      disciplines: [..._data.disciplines, discipline],
-    );
+    _data = _data.copyWith(disciplines: [..._data.disciplines, discipline]);
     await _storage.saveDiscipline(discipline);
     notifyListeners();
   }
@@ -249,11 +282,16 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   @override
   Future<void> addStudents(String classGroupId, String names) async {
     final students = _parseStudentNames(names)
-        .map((name) => Student(id: _id('aluno'), classGroupId: classGroupId, name: name))
+        .map(
+          (name) =>
+              Student(id: _id('aluno'), classGroupId: classGroupId, name: name),
+        )
         .toList();
     if (students.isEmpty) return;
     _data = _data.copyWith(students: [..._data.students, ...students]);
-    for (final s in students) { await _storage.saveStudent(s); }
+    for (final s in students) {
+      await _storage.saveStudent(s);
+    }
     notifyListeners();
   }
 
@@ -261,10 +299,12 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   Future<void> addStudent(String classGroupId, String name) async {
     final trimmed = name.trim();
     if (trimmed.isEmpty) return;
-    final student = Student(id: _id('aluno'), classGroupId: classGroupId, name: trimmed);
-    _data = _data.copyWith(
-      students: [..._data.students, student],
+    final student = Student(
+      id: _id('aluno'),
+      classGroupId: classGroupId,
+      name: trimmed,
     );
+    _data = _data.copyWith(students: [..._data.students, student]);
     await _storage.saveStudent(student);
     notifyListeners();
   }
@@ -321,19 +361,25 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
 
   @override
   List<Student> studentsForClass(String classGroupId) {
-    final students = _data.students.where((student) => student.classGroupId == classGroupId).toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
+    final students =
+        _data.students
+            .where((student) => student.classGroupId == classGroupId)
+            .toList()
+          ..sort((a, b) => a.name.compareTo(b.name));
     return students;
   }
 
   @override
-  ClassGroup classGroup(String id) => _gradeSemanal.classGroups.firstWhere((item) => item.id == id);
+  ClassGroup classGroup(String id) =>
+      _gradeSemanal.classGroups.firstWhere((item) => item.id == id);
 
   @override
-  Discipline discipline(String id) => _data.disciplines.firstWhere((item) => item.id == id);
+  Discipline discipline(String id) =>
+      _data.disciplines.firstWhere((item) => item.id == id);
 
   @override
-  Term term(String id) => _gradeSemanal.terms.firstWhere((item) => item.id == id);
+  Term term(String id) =>
+      _gradeSemanal.terms.firstWhere((item) => item.id == id);
 
   @override
   Attendance? attendanceFor(String lessonId) {
@@ -355,7 +401,7 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   Future<Attendance> startAttendance(LessonOccurrence lesson) async {
     final existing = attendanceFor(lesson.id);
     if (existing != null) return existing;
-    
+
     final statuses = {
       for (final student in studentsForClass(lesson.weeklyClass.classGroupId))
         student.id: AttendanceStatus.absent,
@@ -374,7 +420,11 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   }
 
   @override
-  Future<void> markStudent(Attendance attendance, String studentId, AttendanceStatus status) async {
+  Future<void> markStudent(
+    Attendance attendance,
+    String studentId,
+    AttendanceStatus status,
+  ) async {
     final current = _currentAttendance(attendance);
     final updated = current.markStudent(studentId, status);
     await _replaceAttendance(updated);
@@ -412,25 +462,42 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   }
 
   @override
-  Future<void> saveStudentPhotoBase64(Student student, String photoBase64) async {
+  Future<void> saveStudentPhotoBase64(
+    Student student,
+    String photoBase64,
+  ) async {
     final updated = student.copyWith(photoBase64: photoBase64);
     _data = _data.copyWith(
-      students: [for (final item in _data.students) item.id == student.id ? updated : item],
+      students: [
+        for (final item in _data.students)
+          item.id == student.id ? updated : item,
+      ],
     );
     await _storage.saveStudent(updated);
     notifyListeners();
   }
 
   @override
-  List<AttendanceSummary> summaries({String? classGroupId, String? disciplineId}) =>
-      _attendanceReporter.summaries(_composedData, classGroupId: classGroupId, disciplineId: disciplineId);
+  List<AttendanceSummary> summaries({
+    String? classGroupId,
+    String? disciplineId,
+  }) => _attendanceReporter.summaries(
+    _composedData,
+    classGroupId: classGroupId,
+    disciplineId: disciplineId,
+  );
 
   @override
   String csvExport({String? classGroupId, String? disciplineId}) =>
-      _attendanceReporter.csvExport(_composedData, classGroupId: classGroupId, disciplineId: disciplineId);
+      _attendanceReporter.csvExport(
+        _composedData,
+        classGroupId: classGroupId,
+        disciplineId: disciplineId,
+      );
 
   @override
-  List<ClosedAttendanceView> closedAttendanceViews() => _attendanceReporter.closedAttendanceViews(_composedData);
+  List<ClosedAttendanceView> closedAttendanceViews() =>
+      _attendanceReporter.closedAttendanceViews(_composedData);
 
   @override
   Future<void> loadDemoData(DateTime now) async {
@@ -471,7 +538,8 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
     return attendance;
   }
 
-  String _id(String prefix) => '$prefix-${DateTime.now().microsecondsSinceEpoch}-${_idSequence++}';
+  String _id(String prefix) =>
+      '$prefix-${DateTime.now().microsecondsSinceEpoch}-${_idSequence++}';
 
   @override
   List<Term> get terms => _gradeSemanal.terms;
@@ -489,14 +557,14 @@ class DiarioDeClasseImpl with ChangeNotifier implements DiarioDeClasse {
   List<WeeklyClass> get weeklyClasses => _gradeSemanal.weeklyClasses;
 
   ProfData get _composedData => ProfData(
-        classGroups: classGroups,
-        terms: terms,
-        disciplines: disciplines,
-        students: students,
-        weeklyClasses: weeklyClasses,
-        attendances: _data.attendances,
-        cancelledLessons: _gradeSemanal.cancelledLessons,
-      );
+    classGroups: classGroups,
+    terms: terms,
+    disciplines: disciplines,
+    students: students,
+    weeklyClasses: weeklyClasses,
+    attendances: _data.attendances,
+    cancelledLessons: _gradeSemanal.cancelledLessons,
+  );
 }
 
 const demoStudentPhotoBase64 =
@@ -529,7 +597,8 @@ ProfData _repairDuplicateStudentIds(ProfData data) {
   String nextStudentId() {
     String id;
     do {
-      id = 'aluno-repaired-${DateTime.now().microsecondsSinceEpoch}-${sequence++}';
+      id =
+          'aluno-repaired-${DateTime.now().microsecondsSinceEpoch}-${sequence++}';
     } while (usedIds.contains(id));
     usedIds.add(id);
     return id;

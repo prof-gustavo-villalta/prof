@@ -6,10 +6,10 @@ class GradeSemanal {
     required List<ClassGroup> classGroups,
     required List<Term> terms,
     required List<CancelledLesson> cancelledLessons,
-  })  : _weeklyClasses = List.from(weeklyClasses),
-        _classGroups = List.from(classGroups),
-        _terms = List.from(terms),
-        _cancelledLessons = List.from(cancelledLessons);
+  }) : _weeklyClasses = List.from(weeklyClasses),
+       _classGroups = List.from(classGroups),
+       _terms = List.from(terms),
+       _cancelledLessons = List.from(cancelledLessons);
 
   final List<WeeklyClass> _weeklyClasses;
   final List<ClassGroup> _classGroups;
@@ -20,7 +20,8 @@ class GradeSemanal {
   List<WeeklyClass> get weeklyClasses => List.unmodifiable(_weeklyClasses);
   List<ClassGroup> get classGroups => List.unmodifiable(_classGroups);
   List<Term> get terms => List.unmodifiable(_terms);
-  List<CancelledLesson> get cancelledLessons => List.unmodifiable(_cancelledLessons);
+  List<CancelledLesson> get cancelledLessons =>
+      List.unmodifiable(_cancelledLessons);
 
   // Mutations
   void addClassGroup(ClassGroup group, Term term) {
@@ -61,12 +62,15 @@ class GradeSemanal {
   }
 
   bool _withinTerm(LessonOccurrence lesson) {
-    final group = _classGroups.firstWhere((item) => item.id == lesson.weeklyClass.classGroupId);
+    final group = _classGroups.firstWhere(
+      (item) => item.id == lesson.weeklyClass.classGroupId,
+    );
     final currentTerm = _terms.firstWhere((item) => item.id == group.termId);
     final day = DateTime(lesson.date.year, lesson.date.month, lesson.date.day);
     final start = currentTerm.startDate;
     final end = currentTerm.endDate;
-    if (start != null && day.isBefore(DateTime(start.year, start.month, start.day))) {
+    if (start != null &&
+        day.isBefore(DateTime(start.year, start.month, start.day))) {
       return false;
     }
     if (end != null && day.isAfter(DateTime(end.year, end.month, end.day))) {
@@ -123,18 +127,23 @@ class GradeSemanal {
   }
 
   List<LessonOccurrence> todaysLessons(DateTime now) {
-    final lessons = _weeklyClasses
-        .where((weeklyClass) => weeklyClass.weekday == now.weekday)
-        .map(
-          (weeklyClass) => LessonOccurrence(weeklyClass: weeklyClass, date: now),
-        )
-        .where((lesson) => !_isCancelled(lesson.id) && _withinTerm(lesson))
-        .toList()
-      ..sort((a, b) => a.start.compareTo(b.start));
+    final lessons =
+        _weeklyClasses
+            .where((weeklyClass) => weeklyClass.weekday == now.weekday)
+            .map(
+              (weeklyClass) =>
+                  LessonOccurrence(weeklyClass: weeklyClass, date: now),
+            )
+            .where((lesson) => !_isCancelled(lesson.id) && _withinTerm(lesson))
+            .toList()
+          ..sort((a, b) => a.start.compareTo(b.start));
     return lessons;
   }
 
-  List<LessonOccurrence> pendingLessons(DateTime now, Set<String> closedAttendanceLessonIds) {
+  List<LessonOccurrence> pendingLessons(
+    DateTime now,
+    Set<String> closedAttendanceLessonIds,
+  ) {
     final pending = <LessonOccurrence>[];
     final today = DateTime(now.year, now.month, now.day);
     for (var offset = 1; offset <= 21; offset += 1) {

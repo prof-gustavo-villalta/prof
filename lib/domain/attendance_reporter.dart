@@ -44,9 +44,13 @@ class AttendanceReporter {
               break;
           }
         }
-        
-        final group = data.classGroups.firstWhere((item) => item.id == weeklyClass.classGroupId);
-        final discipline = data.disciplines.firstWhere((item) => item.id == weeklyClass.disciplineId);
+
+        final group = data.classGroups.firstWhere(
+          (item) => item.id == weeklyClass.classGroupId,
+        );
+        final discipline = data.disciplines.firstWhere(
+          (item) => item.id == weeklyClass.disciplineId,
+        );
         final term = data.terms.firstWhere((item) => item.id == group.termId);
 
         result.add(
@@ -113,8 +117,12 @@ class AttendanceReporter {
       final weeklyClass = data.weeklyClasses.firstWhere(
         (item) => item.id == attendance.weeklyClassId,
       );
-      final group = data.classGroups.firstWhere((item) => item.id == weeklyClass.classGroupId);
-      final disc = data.disciplines.firstWhere((item) => item.id == weeklyClass.disciplineId);
+      final group = data.classGroups.firstWhere(
+        (item) => item.id == weeklyClass.classGroupId,
+      );
+      final disc = data.disciplines.firstWhere(
+        (item) => item.id == weeklyClass.disciplineId,
+      );
       result.add(
         ClosedAttendanceView(
           attendance: attendance,

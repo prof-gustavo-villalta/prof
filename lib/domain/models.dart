@@ -250,8 +250,8 @@ class Attendance {
   Attendance togglePresence(String studentId) {
     if (isClosed) throw StateError('Cannot modify closed attendance');
     final current = statusByStudentId[studentId] ?? AttendanceStatus.absent;
-    final next = current == AttendanceStatus.present 
-        ? AttendanceStatus.absent 
+    final next = current == AttendanceStatus.present
+        ? AttendanceStatus.absent
         : AttendanceStatus.present;
     return markStudent(studentId, next);
   }
