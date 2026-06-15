@@ -10,8 +10,8 @@ Adicionar uma verificacao simples para reduzir desvios do **Design System** em t
 - [x] A verificacao foca arquivos de UI e evita ruido em arquivos de dominio ou dados.
 - [x] Casos aceitos por design podem ser mantidos com justificativa clara no codigo ou na documentacao.
 - [x] A verificacao pode ser executada localmente antes de commits de UI.
-- [ ] `flutter analyze` passa.
-- [ ] `flutter test` passa.
+- [x] `flutter analyze` passa.
+- [x] `flutter test` passa.
 
 ## Blocked by
 
