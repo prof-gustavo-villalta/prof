@@ -32,7 +32,7 @@ class _DisciplineFormScreenState extends State<DisciplineFormScreen> {
         left: AppButton(
           text: 'Cancelar',
           icon: Icons.close_rounded,
-          color: AppColors.slate950,
+          color: AppColors.cancelBase,
           onPressed: () => Navigator.of(context).pop(),
         ),
         right: AppButton(

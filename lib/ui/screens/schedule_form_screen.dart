@@ -84,7 +84,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             : AppButton(
                 text: 'Cancelar',
                 icon: Icons.close_rounded,
-                color: AppColors.slate950,
+                color: AppColors.cancelBase,
                 height: AppSizes.actionHeight,
                 onPressed: () => Navigator.of(context).pop(),
               ),

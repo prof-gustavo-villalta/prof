@@ -63,7 +63,7 @@ class _GroupFormScreenState extends State<GroupFormScreen> {
         left: AppButton(
           text: 'Cancelar',
           icon: Icons.close_rounded,
-          color: AppColors.slate950,
+          color: AppColors.cancelBase,
           height: AppSizes.actionHeight,
           onPressed: () => Navigator.of(context).pop(),
         ),
