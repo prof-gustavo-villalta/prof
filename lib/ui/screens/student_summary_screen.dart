@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/diario_de_classe.dart';
+import '../../domain/models.dart';
 import '../design_system.dart';
 import '../widgets/bordered_container.dart';
 import '../widgets/shared_ui.dart';
@@ -36,7 +37,7 @@ class StudentSummaryScreen extends StatelessWidget {
           children: [
             if (summaries.isEmpty)
               const EmptyCard(
-                text: 'Nenhum dado disponível para o filtro selecionado.',
+                text: 'Nenhum dado disponÃ­vel para o filtro selecionado.',
                 noSideBorders: true,
               )
             else
@@ -45,6 +46,25 @@ class StudentSummaryScreen extends StatelessWidget {
                   builder: (context) {
                     final summary = summaryEntry.$2;
                     final isLast = summaryEntry.$1 == summaries.length - 1;
+                    final presentStyle = resolveAttendanceStatusStyle(
+                      AttendanceStatus.present,
+                    );
+                    final absentStyle = resolveAttendanceStatusStyle(
+                      AttendanceStatus.absent,
+                    );
+                    final lateStyle = resolveAttendanceStatusStyle(
+                      AttendanceStatus.late,
+                    );
+                    final justifiedStyle = resolveAttendanceStatusStyle(
+                      AttendanceStatus.justified,
+                    );
+                    final rateStyle = resolveAttendanceStatusStyle(
+                      switch (summary.presencePercent) {
+                        >= 75 => AttendanceStatus.present,
+                        >= 50 => AttendanceStatus.late,
+                        _ => AttendanceStatus.absent,
+                      },
+                    );
 
                     return BorderedContainer(
                       isLast: isLast,
@@ -111,38 +131,54 @@ class StudentSummaryScreen extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: AppSpacing.xl),
+                                    const SizedBox(height: AppSpacing.md),
+                                    const _SectionTitle(text: 'Metricas'),
+                                    const SizedBox(height: AppSpacing.sm),
                                     Row(
                                       children: [
                                         Expanded(
-                                          child: StatBadge(
-                                            label: 'P',
+                                          child: StudentSummaryStatusChip(
+                                            label: presentStyle.label,
                                             value: summary.present,
-                                            color: AppColors.present,
+                                            color: presentStyle.accentColor,
                                           ),
                                         ),
                                         const SizedBox(width: AppSpacing.xs),
                                         Expanded(
-                                          child: StatBadge(
-                                            label: 'A',
+                                          child: StudentSummaryStatusChip(
+                                            label: absentStyle.label,
                                             value: summary.absent,
-                                            color: AppColors.absent,
+                                            color: absentStyle.accentColor,
                                           ),
                                         ),
                                         const SizedBox(width: AppSpacing.xs),
                                         Expanded(
-                                          child: StatBadge(
-                                            label: 'T',
+                                          child: StudentSummaryStatusChip(
+                                            label: lateStyle.label,
                                             value: summary.late,
-                                            color: AppColors.lateColor,
+                                            color: lateStyle.accentColor,
                                           ),
                                         ),
                                         const SizedBox(width: AppSpacing.xs),
                                         Expanded(
-                                          child: StatBadge(
-                                            label: 'J',
+                                          child: StudentSummaryStatusChip(
+                                            label: justifiedStyle.label,
                                             value: summary.justified,
-                                            color: AppColors.justified,
+                                            color: justifiedStyle.accentColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: AppSpacing.md),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: StudentSummaryMetric(
+                                            label: 'Chamadas',
+                                            value: summary.calledLessons,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
                                           ),
                                         ),
                                       ],
@@ -157,41 +193,9 @@ class StudentSummaryScreen extends StatelessWidget {
                             ),
                             Expanded(
                               flex: 30,
-                              child: Builder(
-                                builder: (context) {
-                                  final rate = summary.presencePercent;
-                                  final Color rateColor;
-                                  final Color rateBg;
-                                  if (rate >= 75) {
-                                    rateColor = AppColors.present;
-                                    rateBg = AppColors.present.withValues(
-                                      alpha: 0.12,
-                                    );
-                                  } else if (rate >= 50) {
-                                    rateColor = AppColors.lateColor;
-                                    rateBg = AppColors.lateColor.withValues(
-                                      alpha: 0.12,
-                                    );
-                                  } else {
-                                    rateColor = AppColors.absent;
-                                    rateBg = AppColors.absent.withValues(
-                                      alpha: 0.12,
-                                    );
-                                  }
-                                  return Container(
-                                    decoration: BoxDecoration(color: rateBg),
-                                    child: Center(
-                                      child: Text(
-                                        '${summary.presencePercent}%',
-                                        style: AppTextStyles.titleLarge
-                                            .copyWith(
-                                              fontWeight: FontWeight.w900,
-                                              color: rateColor,
-                                            ),
-                                      ),
-                                    ),
-                                  );
-                                },
+                              child: StudentSummaryRate(
+                                percent: summary.presencePercent,
+                                color: rateStyle.accentColor,
                               ),
                             ),
                           ],
@@ -203,6 +207,136 @@ class StudentSummaryScreen extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text.toUpperCase(),
+      style: AppTextStyles.rowKicker.copyWith(
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+      ),
+    );
+  }
+}
+
+class StudentSummaryStatusChip extends StatelessWidget {
+  const StudentSummaryStatusChip({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final int value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: AppBorders.radius,
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Text(
+        '$label: $value',
+        textAlign: TextAlign.center,
+        style: AppTextStyles.badge.copyWith(color: color),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+}
+
+class StudentSummaryMetric extends StatelessWidget {
+  const StudentSummaryMetric({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final int value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: AppBorders.radius,
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: AppSizes.badgeDot,
+            height: AppSizes.badgeDot,
+            color: color,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              '$label: $value',
+              style: AppTextStyles.badge.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.8),
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class StudentSummaryRate extends StatelessWidget {
+  const StudentSummaryRate({
+    super.key,
+    required this.percent,
+    required this.color,
+  });
+
+  final int percent;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        border: Border(left: BorderSide(color: color.withValues(alpha: 0.3))),
+      ),
+      child: Text(
+        '$percent%',
+        style: AppTextStyles.titleLarge.copyWith(
+          fontWeight: FontWeight.w900,
+          color: color,
+        ),
+      ),
     );
   }
 }
