@@ -8,7 +8,7 @@ Padronizar o fluxo de **Turmas** e **Grade Semanal** para seguir o **Design Syst
 
 - [ ] A lista de Turmas usa componentes e tokens do Design System para listas, empty states, acoes e divisorias.
 - [ ] O detalhe da Turma usa componentes e tokens do Design System para secoes, alunos e acoes.
-- [ ] A Grade Semanal da Turma usa componentes e tokens do Design System para linhas, status e empty states.
+- [x] A Grade Semanal da Turma usa componentes e tokens do Design System para linhas, status e empty states.
 - [ ] O formulario de Aula da Grade usa componentes e tokens do Design System para campos, seletores e acoes.
 - [ ] Nao ha regressao em cadastro, edicao ou remocao de Turmas, Alunos, Disciplinas ou itens da Grade Semanal.
 - [ ] `flutter analyze` passa.
