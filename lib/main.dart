@@ -6,7 +6,7 @@ import 'ui/home_shell.dart';
 
 import 'ui/screens/onboarding_screen.dart';
 import 'domain/diario_de_classe.dart';
-import 'ui/design_system/app_theme.dart';
+import 'ui/design_system.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

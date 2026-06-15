@@ -30,4 +30,4 @@ docs/issues snapshot:
 $issueSnapshot
 "@
 
-codex exec --yolo --model $Model $prompt
+codex exec --dangerously-bypass-approvals-and-sandbox --model $Model $prompt

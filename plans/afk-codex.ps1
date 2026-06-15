@@ -38,14 +38,17 @@ for ($i = 1; $i -le $Iterations; $i++) {
 
   $tmpFile = New-TemporaryFile
   $exitCode = 0
+  $previousErrorActionPreference = $ErrorActionPreference
 
   try {
+    $ErrorActionPreference = "Continue"
     & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\once-codex.ps1" -Model $Model 2>&1 |
       Tee-Object -FilePath $tmpFile.FullName
     $exitCode = $LASTEXITCODE
 
     $text = Get-Content -Raw $tmpFile.FullName
   } finally {
+    $ErrorActionPreference = $previousErrorActionPreference
     Remove-Item -LiteralPath $tmpFile.FullName -Force -ErrorAction SilentlyContinue
   }
 
