@@ -1,6 +1,8 @@
-# PRD
+# SOURCE OF TRUTH
 
-Pull @plans/prd.md into your context.
+Primary work queue is @docs/issues.
+
+Use @plans/prd.md as product context, not as the task queue.
 
 Also read:
 
@@ -8,21 +10,24 @@ Also read:
 - @docs/product-direction.md for product/UI direction
 - @docs/development-notes.md for implementation notes
 - @docs/adr for architectural decisions
-- @docs/issues for existing planned slices
+- the selected file inside @docs/issues
 
-You've been passed a file containing the last 10 RALPH commits (SHA, date, full message). Review these to understand what work has been done.
+You've been passed recent git commits (SHA, date, full message). Review these with the issue snapshot to understand what was already done and what should happen next.
 
-# TASK BREAKDOWN
+# ISSUE SELECTION
 
-Break down the PRD into tasks.
+You've also been passed a docs/issues snapshot.
 
-Make each task the smallest possible unit of work. Aim for one small behavior or one small structural improvement per task.
+Pick exactly one issue file from @docs/issues.
 
-# TASK SELECTION
+Selection rules:
 
-Pick the next task.
+1. Prefer the lowest-numbered issue with unchecked acceptance criteria.
+2. Skip issues whose `Blocked by` issue files still have unchecked acceptance criteria.
+3. If an issue is broad, complete the smallest unchecked acceptance criterion in that issue.
+4. If all issues are complete, emit <promise>NO MORE TASKS</promise>.
 
-If there are no more tasks, emit <promise>NO MORE TASKS</promise>.
+Before coding, state the selected issue path and the exact acceptance criterion you will complete.
 
 # EXPLORATION
 
@@ -34,7 +39,14 @@ Prefer existing domain terms, widgets, storage APIs and docs over inventing new 
 
 Complete the task.
 
-Only work on a single task.
+Only work on the selected issue and one small acceptance criterion unless the criterion cannot be completed without nearby checklist updates.
+
+Update the selected issue file:
+
+- Mark completed acceptance criteria with `[x]`.
+- Leave still-open criteria unchecked.
+- Do not mark `flutter analyze` or `flutter test` complete unless you ran them and they passed.
+- If blocked, add a short note under a `## Notes` section and output <promise>ABORT</promise>.
 
 If anything blocks your completion of the task, output <promise>ABORT</promise>.
 
@@ -49,11 +61,11 @@ Before committing, run:
 
 Make a git commit. The commit message must:
 
-1. Start with `RALPH:` prefix
-2. Include task completed + PRD reference
-3. Mention key decisions
-4. Mention files changed
-5. Mention blockers or notes for next iteration
+1. Be a normal project commit message, with no required prefix.
+2. Include selected issue path and acceptance criterion completed in the body.
+3. Mention key decisions.
+4. Mention files changed.
+5. Mention blockers or notes for next iteration.
 
 Keep it concise.
 

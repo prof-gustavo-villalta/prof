@@ -24,12 +24,12 @@ for ($i = 1; $i -le $Iterations; $i++) {
   }
 
   if ($text.Contains("<promise>NO MORE TASKS</promise>")) {
-    Write-Host "Ralph complete after $i iterations."
+    Write-Host "Issue loop complete after $i iterations."
     exit 0
   }
 
   if ($text.Contains("<promise>ABORT</promise>")) {
-    Write-Host "Ralph aborted after $i iterations."
+    Write-Host "Issue loop aborted after $i iterations."
     exit 1
   }
 }

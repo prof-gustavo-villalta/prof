@@ -1,21 +1,29 @@
 $ErrorActionPreference = "Stop"
 
-function Get-RalphCommits {
-  $commits = git log --grep="RALPH" -n 10 --format="%H%n%ad%n%B---" --date=short 2>$null
+function Get-RecentCommits {
+  $commits = git log -n 12 --format="%H%n%ad%n%B---" --date=short 2>$null
 
   if ([string]::IsNullOrWhiteSpace($commits)) {
-    return "No RALPH commits found"
+    return "No commits found"
   }
 
   return $commits
 }
 
-$ralphCommits = Get-RalphCommits
+function Get-IssueSnapshot {
+  return (& powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\issue-status.ps1" | Out-String)
+}
+
+$recentCommits = Get-RecentCommits
+$issueSnapshot = Get-IssueSnapshot
 $prompt = @"
 @plans/prompt.md
 
-Previous RALPH commits:
-$ralphCommits
+Recent commits:
+$recentCommits
+
+docs/issues snapshot:
+$issueSnapshot
 "@
 
 codex exec $prompt

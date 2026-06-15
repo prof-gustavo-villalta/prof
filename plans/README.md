@@ -16,17 +16,36 @@ npm run ralph:hitl
 npm run ralph:afk -- 3
 ```
 
+- Ver fila de issues:
+
+```powershell
+npm run ralph:issues
+```
+
 ## Contrato
 
 Cada iteracao:
 
-1. Le `plans/prd.md`, `CONTEXT.md`, docs e ultimos commits `RALPH:`.
-2. Quebra o PRD em tarefas pequenas.
-3. Escolhe exatamente uma tarefa.
+1. Le `docs/issues`, `plans/prd.md`, `CONTEXT.md`, docs e ultimos commits do git.
+2. Escolhe a menor issue desbloqueada com criterio aberto.
+3. Escolhe exatamente um criterio de aceite.
 4. Explora codigo relevante antes de editar.
 5. Implementa uma mudanca pequena.
-6. Roda `npm run analyze` e `npm run test`.
-7. Faz commit com prefixo `RALPH:`.
+6. Atualiza checklist da issue.
+7. Roda `npm run analyze` e `npm run test`.
+8. Faz commit normal, mencionando issue e criterio no corpo.
+
+## Selecao de issues
+
+`docs/issues` e a fila principal. `plans/prd.md` e contexto de produto.
+
+Regra:
+
+1. Pegar a menor issue numerada com criterios abertos.
+2. Pular issues bloqueadas por outra issue ainda aberta.
+3. Fazer uma mudanca pequena por iteracao.
+4. Marcar `[x]` apenas criterios realmente concluidos.
+5. Marcar checks de `flutter analyze` e `flutter test` apenas depois de executar e passar.
 
 Se nao houver tarefa restante, deve emitir:
 
