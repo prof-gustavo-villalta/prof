@@ -225,6 +225,8 @@ class LessonInfoRow extends StatelessWidget {
           child: Text(
             statusLabel.toUpperCase(),
             style: AppTextStyles.rowKicker.copyWith(color: statusColor),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         Expanded(
@@ -451,6 +453,8 @@ class AppFilterRow extends StatelessWidget {
                             context,
                           ).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ),

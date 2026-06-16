@@ -66,7 +66,7 @@ Verifique que esses textos nao causam overflow nas telas principais.
 ## Acceptance criteria
 
 - [ ] Linhas com proporcoes internas seguem padroes previsiveis como 20/50/30, 50/50 ou 2/3 + 1/3 quando houver conteudo horizontal.
-- [ ] Textos longos de **Turma**, **Disciplina**, **Aluno**, **Periodo letivo** e horarios nao causam overflow.
+- [x] Textos longos de **Turma**, **Disciplina**, **Aluno**, **Periodo letivo** e horarios nao causam overflow.
 - [ ] Listas e cards mantem largura total da coluna principal e nao criam alinhamentos inconsistentes entre telas.
 - [ ] Barras inferiores e areas rolaveis continuam acessiveis em telas pequenas.
 - [ ] Nenhuma tela troca para grid desktop; a lista vertical da **Chamada** permanece vertical em Android e Web.

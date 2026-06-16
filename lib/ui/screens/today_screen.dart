@@ -151,6 +151,8 @@ class _MorePendingIndicator extends StatelessWidget {
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.7),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
