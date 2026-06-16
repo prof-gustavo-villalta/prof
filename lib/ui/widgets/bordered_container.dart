@@ -40,6 +40,7 @@ class BorderedContainer extends StatelessWidget {
     return Container(
       height: height,
       padding: padding,
+      // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
       decoration: BoxDecoration(
         color: backgroundColor ?? Theme.of(context).cardTheme.color,
         border: sideBorders

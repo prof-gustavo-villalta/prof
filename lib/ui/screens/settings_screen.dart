@@ -34,6 +34,7 @@ class SettingsScreen extends StatelessWidget {
                   Container(
                     width: AppSizes.iconButton,
                     height: AppSizes.iconButton,
+                    // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
                     decoration: BoxDecoration(
                       color: AppColors.slate50,
                       borderRadius: AppBorders.radius,

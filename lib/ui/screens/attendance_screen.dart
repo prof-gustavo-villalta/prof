@@ -296,6 +296,7 @@ class _StatusToggleButton extends StatelessWidget {
         curve: Curves.easeInOutCubic,
         width: AppSizes.compactIconButton,
         height: AppSizes.compactIconButton,
+        // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
         decoration: BoxDecoration(
           color: isActive ? activeBg : onSurface.withValues(alpha: 0.08),
           shape: BoxShape.rectangle,

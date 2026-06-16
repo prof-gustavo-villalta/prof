@@ -43,6 +43,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         Center(
           child: Container(
             padding: AppSpacing.panel,
+            // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
             decoration: BoxDecoration(
               color: theme.colorScheme.primary.withValues(alpha: 0.12),
               shape: BoxShape.rectangle,

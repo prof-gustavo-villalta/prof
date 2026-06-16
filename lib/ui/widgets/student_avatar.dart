@@ -26,6 +26,7 @@ class StudentAvatar extends StatelessWidget {
     return AspectRatio(
       aspectRatio: 1,
       child: Container(
+        // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
         decoration: BoxDecoration(
           color: photo == null
               ? color.withValues(alpha: 0.12)

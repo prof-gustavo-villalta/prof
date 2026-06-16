@@ -317,6 +317,7 @@ class _HistoryStatusChip extends StatelessWidget {
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
+      // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: AppBorders.radius,

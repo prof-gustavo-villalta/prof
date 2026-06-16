@@ -136,6 +136,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
             Container(
               width: double.infinity,
               padding: AppSpacing.card,
+              // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: AppBorders.radius,

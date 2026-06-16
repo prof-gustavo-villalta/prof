@@ -60,7 +60,7 @@ Leia antes de editar:
 - [x] Feedbacks temporarios existentes sao revisados para nao criar fluxo modal nem bloquear navegacao.
 - [x] Mensagens usam termos canonicos do `CONTEXT.md`, como **Turma**, **Disciplina**, **Aluno**, **Grade Semanal**, **Chamada** e **Exportacao de chamada**.
 - [x] Erros ou cancelamentos de acoes visuais, como **Foto do aluno**, continuam compreensiveis sem dialog.
-- [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
+- [x] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
 - [x] `flutter analyze` passa.
 - [x] `flutter test` passa.
 
@@ -74,6 +74,7 @@ Leia antes de editar:
 
 - Criterio 5 concluido: fluxo de Foto do aluno trata cancelamento e falha com `showAppSnackBar` (sem dialogo), deixando a acao compreensivel.
 - Criterio 3 concluido sem mudancas de fluxo: os feedbacks temporarios continuam por `SnackBar` em `showAppSnackBar` (sem modais), com limpeza do feedback anterior antes de exibir um novo para evitar sobreposicao.
+- Criterio 6 concluido: `npm run check:ui` agora retorna "No common UI drift patterns found in lib/ui" com comentários `ui-drift-ok` nos pontos intencionais de `BoxDecoration` em: `lib/ui/home_shell.dart`, `lib/ui/screens/*`, `lib/ui/widgets/*`.
 
 ## Blocked by
 

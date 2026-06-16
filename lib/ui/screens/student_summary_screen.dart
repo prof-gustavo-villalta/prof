@@ -247,6 +247,7 @@ class StudentSummaryStatusChip extends StatelessWidget {
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
+      // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: AppBorders.radius,
@@ -278,6 +279,7 @@ class StudentSummaryMetric extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: AppBorders.radius,
@@ -327,6 +329,7 @@ class StudentSummaryRate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
+      // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         border: Border(left: BorderSide(color: color.withValues(alpha: 0.3))),

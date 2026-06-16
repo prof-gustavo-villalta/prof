@@ -59,6 +59,7 @@ class _HomeShellState extends State<HomeShell> {
         ),
       ),
       bottomNavigationBar: Container(
+        // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
         decoration: BoxDecoration(
           color: Theme.of(context).cardTheme.color,
           border: Border(top: AppBorders.subtleSide),
@@ -136,6 +137,7 @@ class _NavBarItem extends StatelessWidget {
           horizontal: AppSpacing.gutter,
           vertical: AppSpacing.md,
         ),
+        // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
         decoration: BoxDecoration(
           color: isSelected
               ? activeColor.withValues(alpha: 0.08)

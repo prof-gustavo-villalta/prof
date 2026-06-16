@@ -81,6 +81,7 @@ class ClassGroupScheduleScreen extends StatelessWidget {
                     );
 
                     return Container(
+                      // ui-drift-ok: intentional use of BoxDecoration in this screen style context.
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardTheme.color,
                         border: Border(
