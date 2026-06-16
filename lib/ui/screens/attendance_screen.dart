@@ -55,7 +55,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 ? AppButton(
                     key: const ValueKey('reopen_attendance'),
                     text: 'Reabrir chamada',
-                    color: AppColors.slate900,
+                    color: AppColors.primaryAction,
                     height: AppSizes.actionHeight,
                     onPressed: () => widget.diario.reopenAttendance(attendance),
                   )
@@ -105,7 +105,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             const SizedBox(height: AppSpacing.page),
             if (students.isEmpty)
               const EmptyCard(
-                text: 'Nenhum aluno encontrado para este filtro.',
+                text:
+                    'Sem alunos com esse filtro. Limpe a busca ou altere o filtro.',
                 noSideBorders: true,
               )
             else

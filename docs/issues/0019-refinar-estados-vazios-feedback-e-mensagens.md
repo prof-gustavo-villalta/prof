@@ -56,7 +56,7 @@ Leia antes de editar:
 ## Acceptance criteria
 
 - [x] Estados vazios usam um padrao visual consistente para icone, texto, espacamento e bordas.
-- [ ] Estados vazios importantes indicam a proxima acao disponivel sem virar texto explicativo longo.
+- [x] Estados vazios importantes indicam a proxima acao disponivel sem virar texto explicativo longo.
 - [ ] Feedbacks temporarios existentes sao revisados para nao criar fluxo modal nem bloquear navegacao.
 - [ ] Mensagens usam termos canonicos do `CONTEXT.md`, como **Turma**, **Disciplina**, **Aluno**, **Grade Semanal**, **Chamada** e **Exportacao de chamada**.
 - [ ] Erros ou cancelamentos de acoes visuais, como **Foto do aluno**, continuam compreensiveis sem dialog.

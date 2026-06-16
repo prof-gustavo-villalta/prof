@@ -43,7 +43,8 @@ class ClassesScreen extends StatelessWidget {
           children: [
             if (groups.isEmpty)
               const EmptyCard(
-                text: 'Nenhuma turma cadastrada.',
+                text:
+                    'Nenhuma Turma cadastrada. Toque em Adicionar Turma para comeÃ§ar.',
                 noSideBorders: true,
               )
             else

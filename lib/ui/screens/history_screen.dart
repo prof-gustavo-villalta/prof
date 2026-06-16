@@ -150,7 +150,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
         const SizedBox(height: AppSpacing.loose),
         if (closedAttendances.isEmpty)
           const EmptyCard(
-            text: 'Nenhuma chamada fechada ainda.',
+            text:
+                'Sem Chamada fechada ainda. Abra e feche uma Chamada para alimentar o Historico.',
             noSideBorders: true,
           )
         else

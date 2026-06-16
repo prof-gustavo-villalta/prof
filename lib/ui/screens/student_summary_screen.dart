@@ -37,7 +37,8 @@ class StudentSummaryScreen extends StatelessWidget {
           children: [
             if (summaries.isEmpty)
               const EmptyCard(
-                text: 'Nenhum dado disponÃ­vel para o filtro selecionado.',
+                text:
+                    'Sem dados de Aluno para o filtro atual. Abra e feche uma Chamada.',
                 noSideBorders: true,
               )
             else

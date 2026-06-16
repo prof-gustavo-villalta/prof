@@ -36,7 +36,8 @@ class TodayScreen extends StatelessWidget {
           children: [
             if (next == null)
               const EmptyCard(
-                text: 'Nenhuma aula encontrada na Grade Semanal.',
+                text:
+                    'Nenhuma aula na Grade Semanal agora. Abra a Turma e adicione Horario na Grade Semanal.',
                 noSideBorders: true,
               )
             else
@@ -74,7 +75,8 @@ class TodayScreen extends StatelessWidget {
             const SizedBox(height: AppSpacing.xl),
             if (pending.isEmpty)
               const EmptyCard(
-                text: 'Nenhuma chamada pendente.',
+                text:
+                    'Nenhuma Chamada pendente no momento. Toque em uma Aula para iniciar chamada.',
                 noSideBorders: true,
               )
             else
@@ -210,32 +212,20 @@ class LessonHeroCard extends StatelessWidget {
               time: lessonTime(lesson),
             ),
           ),
-          SizedBox(
-            height: AppSizes.actionHeight,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: AppButton(
-                    key: const ValueKey('start_attendance'),
-                    text: 'Iniciar chamada',
-                    color: AppColors.primaryAction,
-                    height: AppSizes.actionHeight,
-                    onPressed: () => _openAttendance(context, lesson),
-                  ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: HoldToConfirmButton(
-                    text: 'Cancelar chamada',
-                    baseColor: AppColors.cancelBase,
-                    fillColor: AppColors.cancelFill,
-                    height: AppSizes.actionHeight,
-                    onConfirmed: () => diario.cancelLesson(lesson),
-                  ),
-                ),
-              ],
+          BottomSplitActionBar(
+            left: HoldToConfirmButton(
+              text: 'Cancelar chamada',
+              baseColor: AppColors.cancelBase,
+              fillColor: AppColors.cancelFill,
+              height: AppSizes.actionHeight,
+              onConfirmed: () => diario.cancelLesson(lesson),
+            ),
+            right: AppButton(
+              key: const ValueKey('start_attendance'),
+              text: 'Iniciar chamada',
+              color: AppColors.primaryAction,
+              height: AppSizes.actionHeight,
+              onPressed: () => _openAttendance(context, lesson),
             ),
           ),
         ],

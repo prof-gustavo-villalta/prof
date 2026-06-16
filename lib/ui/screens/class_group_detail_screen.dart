@@ -107,7 +107,10 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
               title: 'Alunos',
               children: [
                 if (students.isEmpty)
-                  const EmptyCard(text: 'Nenhum aluno cadastrado.')
+                  const EmptyCard(
+                    text:
+                        'Nenhum Aluno cadastrado. Toque em Adicionar para incluir Alunos.',
+                  )
                 else
                   for (final entry in students.indexed)
                     Builder(

@@ -35,7 +35,7 @@ class ClassGroupScheduleScreen extends StatelessWidget {
           spacingAfterHeader: AppSpacing.xl,
           bottomActionBar: BottomSplitActionBar(
             left: AppButton(
-              text: 'Nova Disciplina',
+              text: 'Adicionar disciplina',
               icon: Icons.menu_book_rounded,
               color: AppColors.slate950,
               onPressed: () {
@@ -47,7 +47,7 @@ class ClassGroupScheduleScreen extends StatelessWidget {
               },
             ),
             right: AppButton(
-              text: 'Novo Hor\u00e1rio',
+              text: 'Adicionar horário',
               icon: Icons.schedule_rounded,
               color: AppColors.primaryAction,
               onPressed: () {
@@ -63,7 +63,8 @@ class ClassGroupScheduleScreen extends StatelessWidget {
           children: [
             if (classes.isEmpty)
               const EmptyCard(
-                text: 'Nenhum horÃƒÂ¡rio cadastrado.',
+                text:
+                    'Nenhum Horario cadastrado na Grade Semanal. Toque em Adicionar Horario para iniciar.',
                 noSideBorders: true,
               )
             else
