@@ -18,11 +18,16 @@ class PageHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style:
-                Theme.of(context).textTheme.titleLarge ??
-                AppTextStyles.titleLarge,
+          Expanded(
+            child: Text(
+              title,
+              style:
+                  Theme.of(context).textTheme.titleLarge ??
+                  AppTextStyles.titleLarge,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+            ),
           ),
           Icon(
             icon,

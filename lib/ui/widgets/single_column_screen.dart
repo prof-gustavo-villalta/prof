@@ -48,7 +48,16 @@ class SingleColumnScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: appBarTitle == null ? null : AppBar(title: Text(appBarTitle!)),
+      appBar: appBarTitle == null
+          ? null
+          : AppBar(
+              title: Text(
+                appBarTitle!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+              ),
+            ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
