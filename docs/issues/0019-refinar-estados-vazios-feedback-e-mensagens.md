@@ -62,7 +62,7 @@ Leia antes de editar:
 - [ ] Erros ou cancelamentos de acoes visuais, como **Foto do aluno**, continuam compreensiveis sem dialog.
 - [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
 - [x] `flutter analyze` passa.
-- [ ] `flutter test` passa.
+- [x] `flutter test` passa.
 
 ## Verification notes
 
