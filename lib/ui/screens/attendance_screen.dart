@@ -182,7 +182,7 @@ class StudentAttendanceCard extends StatelessWidget {
                     Expanded(flex: 20, child: StudentAvatar(student: student)),
                     const SizedBox(width: AppSpacing.xl),
                     Expanded(
-                      flex: 30,
+                      flex: 50,
                       child: Text(
                         student.name,
                         style: AppTextStyles.titleLarge.copyWith(
@@ -192,8 +192,9 @@ class StudentAttendanceCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Expanded(
-                      flex: 30,
+                    const SizedBox(width: AppSpacing.xs),
+                    SizedBox(
+                      width: AppSizes.compactIconButton * 2 + AppSpacing.md,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [

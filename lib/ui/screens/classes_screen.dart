@@ -109,7 +109,7 @@ class _ClassGroupListItem extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              flex: 70,
+              flex: 2,
               child: Padding(
                 padding: const EdgeInsets.only(right: AppSpacing.md),
                 child: Column(
@@ -139,7 +139,7 @@ class _ClassGroupListItem extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 30,
+              flex: 1,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

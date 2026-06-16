@@ -76,7 +76,7 @@ class StudentSummaryScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(
-                              flex: 70,
+                              flex: 2,
                               child: Padding(
                                 padding: AppSpacing.panel,
                                 child: Column(
@@ -193,7 +193,7 @@ class StudentSummaryScreen extends StatelessWidget {
                               color: AppColors.slate950,
                             ),
                             Expanded(
-                              flex: 30,
+                              flex: 1,
                               child: StudentSummaryRate(
                                 percent: summary.presencePercent,
                                 color: rateStyle.accentColor,
