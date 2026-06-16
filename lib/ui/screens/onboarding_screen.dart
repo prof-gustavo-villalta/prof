@@ -116,7 +116,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         const SizedBox(height: AppSpacing.loose),
         AppButton(
           key: const ValueKey('onboarding_submit'),
-          text: 'Começar',
+          text: 'Iniciar chamada',
           icon: Icons.arrow_forward_rounded,
           onPressed: () => widget.diario.completeOnboarding(
             turma: turma.text,

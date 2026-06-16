@@ -26,7 +26,7 @@ abstract final class AppTheme {
       splashFactory: NoSplash.splashFactory,
       highlightColor: AppColors.transparent,
       fontFamily: 'Roboto',
-      textTheme: const TextTheme(
+      textTheme: TextTheme(
         headlineMedium: AppTextStyles.headlineMedium,
         headlineSmall: AppTextStyles.headlineSmall,
         titleLarge: AppTextStyles.titleLarge,
@@ -56,7 +56,7 @@ abstract final class AppTheme {
         filled: true,
         fillColor: AppColors.white,
         contentPadding: EdgeInsets.symmetric(
-          horizontal: 18,
+          horizontal: AppSpacing.lg,
           vertical: AppSpacing.gutter,
         ),
         border: OutlineInputBorder(

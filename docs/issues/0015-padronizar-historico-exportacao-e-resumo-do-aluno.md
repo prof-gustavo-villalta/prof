@@ -11,7 +11,7 @@ Padronizar as telas de **Historico**, **Exportacao** e **Resumo do Aluno** para 
 - [x] Resumo do Aluno usa componentes e tokens do Design System para metricas, historico e status.
 - [x] Percentuais e contagens permanecem iguais aos resultados atuais.
 - [x] `flutter analyze` passa.
-- [ ] `flutter test` passa.
+- [x] `flutter test` passa.
 
 ## Blocked by
 

@@ -18,7 +18,12 @@ class PageHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: Theme.of(context).textTheme.headlineMedium),
+          Text(
+            title,
+            style:
+                Theme.of(context).textTheme.titleLarge ??
+                AppTextStyles.titleLarge,
+          ),
           Icon(
             icon,
             color: Theme.of(context).colorScheme.primary,

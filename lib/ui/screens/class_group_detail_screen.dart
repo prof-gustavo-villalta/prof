@@ -196,7 +196,10 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
     final image = await picker.pickImage(source: source, maxWidth: 1024);
     if (image == null) {
       if (context.mounted) {
-        showAppSnackBar(context, 'Foto do aluno nao alterada');
+        showAppSnackBar(
+          context,
+          'Selecao de Foto do aluno cancelada. A imagem continua igual.',
+        );
       }
       return;
     }

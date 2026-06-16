@@ -24,6 +24,7 @@ class AppDropdown<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<T>(
       initialValue: value,
+      isExpanded: true,
       dropdownColor: Theme.of(context).colorScheme.surface,
       style: AppTextStyles.support.copyWith(
         color: Theme.of(context).colorScheme.onSurface,
@@ -32,11 +33,45 @@ class AppDropdown<T> extends StatelessWidget {
         labelText: label,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.xxl,
-          vertical: 10,
+          vertical: AppSpacing.lg,
         ),
       ),
-      items: items,
+      items: items
+          .map(
+            (item) => DropdownMenuItem<T>(
+              value: item.value,
+              enabled: item.enabled,
+              alignment: item.alignment,
+              onTap: item.onTap,
+              child: _DropdownMenuItemLabel(child: item.child),
+            ),
+          )
+          .toList(),
+      selectedItemBuilder: (context) => items
+          .map((item) => _DropdownMenuItemLabel(child: item.child))
+          .toList(),
       onChanged: onChanged,
     );
+  }
+}
+
+class _DropdownMenuItemLabel extends StatelessWidget {
+  const _DropdownMenuItemLabel({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (child is Text) {
+      final text = child as Text;
+      return Text(
+        text.data ?? '',
+        style: text.style,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+
+    return child;
   }
 }
