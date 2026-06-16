@@ -68,7 +68,7 @@ for ($i = 1; $i -le $Iterations; $i++) {
 
   try {
     $ErrorActionPreference = "Continue"
-    & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\once-codex.ps1" -Model $Model 2>&1 |
+    & powershell -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot\once-codex.ps1" -Model $Model |
       Tee-Object -FilePath $tmpFile.FullName
     $exitCode = $LASTEXITCODE
 

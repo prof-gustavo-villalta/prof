@@ -92,9 +92,11 @@ $issueSnapshot
 
 Assert-CleanWorktree
 $tmpFile = New-TemporaryFile
+$previousErrorActionPreference = $ErrorActionPreference
 
 try {
-  $prompt | codex exec --dangerously-bypass-approvals-and-sandbox --model $Model - 2>&1 |
+  $ErrorActionPreference = "Continue"
+  $prompt | codex exec --dangerously-bypass-approvals-and-sandbox --model $Model - |
     Tee-Object -FilePath $tmpFile.FullName
 
   $codexExitCode = $LASTEXITCODE
@@ -104,6 +106,7 @@ try {
 
   $codexOutput = Get-Content -Raw $tmpFile.FullName
 } finally {
+  $ErrorActionPreference = $previousErrorActionPreference
   Remove-Item -LiteralPath $tmpFile.FullName -Force -ErrorAction SilentlyContinue
 }
 
