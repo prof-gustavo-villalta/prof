@@ -65,8 +65,8 @@ Arquivos provaveis:
 - [x] Telas com proxima acao obvia usam `BottomActionBar` ou `BottomSplitActionBar` de forma consistente.
 - [x] Acoes primarias usam cor, texto e posicao consistentes com o **Design System**.
 - [x] Acoes secundarias, destrutivas ou de cancelamento ficam diferenciadas sem parecerem a acao principal.
-- [ ] Textos de botoes usam verbos claros em portugues e termos canonicos do `CONTEXT.md`.
-- [ ] A largura, altura e alinhamento dos botoes permanecem estaveis em Android e Web.
+- [x] Textos de botoes usam verbos claros em portugues e termos canonicos do `CONTEXT.md`.
+- [x] A largura, altura e alinhamento dos botoes permanecem estaveis em Android e Web.
 - [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
 - [ ] `flutter analyze` passa.
 - [ ] `flutter test` passa.

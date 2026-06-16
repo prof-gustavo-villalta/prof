@@ -43,6 +43,9 @@ class SingleColumnScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasHeader = title != null && icon != null;
+    final horizontalSafeArea = (padding ?? paddingPreset.insets).resolve(
+      Directionality.of(context),
+    );
 
     return Scaffold(
       appBar: appBarTitle == null ? null : AppBar(title: Text(appBarTitle!)),
@@ -61,7 +64,14 @@ class SingleColumnScreen extends StatelessWidget {
                 ],
               ),
             ),
-            ?bottomActionBar,
+            if (bottomActionBar != null)
+              Padding(
+                padding: EdgeInsets.only(
+                  left: horizontalSafeArea.left,
+                  right: horizontalSafeArea.right,
+                ),
+                child: bottomActionBar,
+              ),
           ],
         ),
       ),

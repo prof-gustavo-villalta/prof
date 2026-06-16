@@ -21,8 +21,6 @@ class SectionCard extends StatelessWidget {
             Text(
               title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.2,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
@@ -510,6 +508,7 @@ class AppButton extends StatelessWidget {
     return AnimatedTapScale(
       onTap: onPressed,
       child: Container(
+        width: double.infinity,
         height: height,
         decoration: BoxDecoration(
           gradient: gradient,
@@ -525,6 +524,8 @@ class AppButton extends StatelessWidget {
                   style: AppTextStyles.action.copyWith(
                     fontSize: effectiveFontSize,
                   ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 )
               : Row(
                   mainAxisSize: MainAxisSize.min,
@@ -539,6 +540,8 @@ class AppButton extends StatelessWidget {
                         style: AppTextStyles.action.copyWith(
                           fontSize: effectiveFontSize,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
                   ],
@@ -654,6 +657,7 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
         scale: _isHolding ? 0.97 : 1.0,
         duration: const Duration(milliseconds: 100),
         child: Container(
+          width: double.infinity,
           height: widget.height,
           decoration: BoxDecoration(
             gradient: baseGradient,
@@ -687,6 +691,8 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
                           ? 18.0
                           : AppTextStyles.titleMedium.fontSize!,
                     ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
               ),
