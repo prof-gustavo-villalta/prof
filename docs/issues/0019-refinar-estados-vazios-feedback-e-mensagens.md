@@ -57,7 +57,7 @@ Leia antes de editar:
 
 - [x] Estados vazios usam um padrao visual consistente para icone, texto, espacamento e bordas.
 - [x] Estados vazios importantes indicam a proxima acao disponivel sem virar texto explicativo longo.
-- [ ] Feedbacks temporarios existentes sao revisados para nao criar fluxo modal nem bloquear navegacao.
+- [x] Feedbacks temporarios existentes sao revisados para nao criar fluxo modal nem bloquear navegacao.
 - [ ] Mensagens usam termos canonicos do `CONTEXT.md`, como **Turma**, **Disciplina**, **Aluno**, **Grade Semanal**, **Chamada** e **Exportacao de chamada**.
 - [ ] Erros ou cancelamentos de acoes visuais, como **Foto do aluno**, continuam compreensiveis sem dialog.
 - [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
@@ -69,6 +69,10 @@ Leia antes de editar:
 - Procurar proibidos: `rg -n "showDialog|AlertDialog|Dialog\\(|showModal|BottomSheet|PopupMenu" lib/ui`.
 - Procurar mensagens: `rg -n "EmptyCard\\(|showAppSnackBar|SnackBar\\(" lib/ui`.
 - Rode `npm run check:ui`, `flutter analyze`, `flutter test`.
+
+## Notes
+
+- Critério 3 concluído sem mudanças de fluxo: os feedbacks temporários continuam por `SnackBar` em `showAppSnackBar` (sem modais), com limpeza do feedback anterior antes de exibir um novo para evitar sobreposição.
 
 ## Blocked by
 

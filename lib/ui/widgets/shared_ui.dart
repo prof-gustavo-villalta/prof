@@ -781,8 +781,15 @@ class AppIconButton extends StatelessWidget {
 }
 
 void showAppSnackBar(BuildContext context, String message) {
+  if (!context.mounted) {
+    return;
+  }
+
   final theme = Theme.of(context);
-  ScaffoldMessenger.of(context).showSnackBar(
+  final messenger = ScaffoldMessenger.of(context);
+  messenger.removeCurrentSnackBar();
+
+  messenger.showSnackBar(
     SnackBar(
       content: Text(
         message,
@@ -790,6 +797,7 @@ void showAppSnackBar(BuildContext context, String message) {
           color: theme.colorScheme.onInverseSurface,
         ),
       ),
+      duration: const Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
       backgroundColor: theme.colorScheme.inverseSurface,
     ),
