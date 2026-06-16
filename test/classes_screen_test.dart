@@ -116,7 +116,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Adiciona disciplina
-      await tester.tap(find.text('Nova Disciplina'));
+      await tester.tap(find.text('Adicionar disciplina'));
       await tester.pumpAndSettle();
 
       await tester.enterText(
@@ -130,7 +130,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Adiciona horário
-      await tester.tap(find.text('Novo Horário'));
+      await tester.tap(find.text('Adicionar horário'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('schedule_discipline')));
       await tester.pumpAndSettle();

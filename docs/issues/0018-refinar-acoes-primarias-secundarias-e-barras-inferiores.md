@@ -1,4 +1,4 @@
-# Refinar acoes primarias, secundarias e barras inferiores
+﻿# Refinar acoes primarias, secundarias e barras inferiores
 
 ## What to build
 
@@ -67,15 +67,20 @@ Arquivos provaveis:
 - [x] Acoes secundarias, destrutivas ou de cancelamento ficam diferenciadas sem parecerem a acao principal.
 - [x] Textos de botoes usam verbos claros em portugues e termos canonicos do `CONTEXT.md`.
 - [x] A largura, altura e alinhamento dos botoes permanecem estaveis em Android e Web.
-- [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
-- [ ] `flutter analyze` passa.
-- [ ] `flutter test` passa.
+- [x] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
+- [x] `flutter analyze` passa.
+- [x] `flutter test` passa.
 
 ## Verification notes
 
 - Procurar usos diretos: `rg -n "FilledButton|ElevatedButton|TextButton|BottomActionBar|BottomSplitActionBar|AppButton|HoldToConfirmButton" lib/ui`.
 - Conferir que botoes longos nao estouram com `Flexible` ou texto menor ja suportado por `AppButton`.
 - Rode `npm run check:ui`, `flutter analyze`, `flutter test`.
+
+## Notes
+
+- 2026-06-16: `npm run check:ui` foi executado e finalizou com sucesso; reportou 22 achados de `manual decoration` sem bloqueio para o comando (sem bloqueio no status), concentrados em `lib/ui` já existentes.
+- 2026-06-16: `flutter test` foi executado e passou após ajuste de rótulos no teste `test/classes_screen_test.dart` para refletir os textos atuais da UI (`Adicionar disciplina` e `Adicionar horário`) no fluxo de grade semanal.
 
 ## Blocked by
 
