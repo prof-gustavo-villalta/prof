@@ -59,7 +59,7 @@ Leia antes de editar:
 - [x] Estados vazios importantes indicam a proxima acao disponivel sem virar texto explicativo longo.
 - [x] Feedbacks temporarios existentes sao revisados para nao criar fluxo modal nem bloquear navegacao.
 - [x] Mensagens usam termos canonicos do `CONTEXT.md`, como **Turma**, **Disciplina**, **Aluno**, **Grade Semanal**, **Chamada** e **Exportacao de chamada**.
-- [ ] Erros ou cancelamentos de acoes visuais, como **Foto do aluno**, continuam compreensiveis sem dialog.
+- [x] Erros ou cancelamentos de acoes visuais, como **Foto do aluno**, continuam compreensiveis sem dialog.
 - [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
 - [x] `flutter analyze` passa.
 - [x] `flutter test` passa.
@@ -72,7 +72,8 @@ Leia antes de editar:
 
 ## Notes
 
-- Critério 3 concluído sem mudanças de fluxo: os feedbacks temporários continuam por `SnackBar` em `showAppSnackBar` (sem modais), com limpeza do feedback anterior antes de exibir um novo para evitar sobreposição.
+- Criterio 5 concluido: fluxo de Foto do aluno trata cancelamento e falha com `showAppSnackBar` (sem dialogo), deixando a acao compreensivel.
+- Criterio 3 concluido sem mudancas de fluxo: os feedbacks temporarios continuam por `SnackBar` em `showAppSnackBar` (sem modais), com limpeza do feedback anterior antes de exibir um novo para evitar sobreposicao.
 
 ## Blocked by
 

@@ -193,20 +193,26 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
     ImageSource source,
   ) async {
     final picker = ImagePicker();
-    final image = await picker.pickImage(source: source, maxWidth: 1024);
-    if (image == null) {
+    try {
+      final image = await picker.pickImage(source: source, maxWidth: 1024);
+      if (image == null) {
+        if (context.mounted) {
+          showAppSnackBar(context, 'Selecionar Foto do aluno foi cancelado.');
+        }
+        return;
+      }
+      final bytes = await image.readAsBytes();
+      await diario.saveStudentPhotoBase64(student, base64Encode(bytes));
+      if (context.mounted) {
+        showAppSnackBar(context, 'Foto do aluno atualizada.');
+      }
+    } on Exception catch (_) {
       if (context.mounted) {
         showAppSnackBar(
           context,
-          'Selecao de Foto do aluno cancelada. A imagem continua igual.',
+          'Nao foi possivel atualizar a Foto do aluno. Tente novamente.',
         );
       }
-      return;
-    }
-    final bytes = await image.readAsBytes();
-    await diario.saveStudentPhotoBase64(student, base64Encode(bytes));
-    if (context.mounted) {
-      showAppSnackBar(context, 'Foto do aluno atualizada');
     }
   }
 }
