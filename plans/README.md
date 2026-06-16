@@ -51,6 +51,8 @@ Cada iteracao:
 7. Roda `npm run analyze` e `npm run test`.
 8. Faz commit normal, mencionando issue e criterio no corpo.
 
+`codex-once` exige worktree limpo antes de iniciar. Se o agente terminar com alteracoes sem commit, o wrapper roda `npm run analyze`, `npm run test` e cria um commit automatico com as alteracoes restantes.
+
 ## Selecao de issues
 
 `docs/issues` e a fila principal. `plans/prd.md` e contexto de produto.

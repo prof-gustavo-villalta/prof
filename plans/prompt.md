@@ -84,6 +84,8 @@ Make a git commit. The commit message must:
 
 Keep it concise.
 
+The `codex-once` wrapper will also auto-commit any remaining uncommitted changes after a successful run. Prefer committing yourself with a specific message; leave no dirty worktree unless blocked.
+
 # FINAL RULES
 
 ONLY WORK ON A SINGLE TASK.
