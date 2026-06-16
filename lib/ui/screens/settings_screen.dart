@@ -23,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
             diario.loadDemoData(DateTime.now());
             showAppSnackBar(
               context,
-              'Dados de demonstração carregados com sucesso!',
+              'Dados de Turma, Disciplina e Aluno demonstracao carregados com sucesso.',
             );
           },
           child: SectionCard(
@@ -51,7 +51,7 @@ class SettingsScreen extends StatelessWidget {
                   const SizedBox(width: AppSpacing.gutter),
                   Expanded(
                     child: Text(
-                      'Carrega turmas, disciplinas e alunos fictícios para demonstração.',
+                      'Carrega Turma, Disciplina e Aluno ficticios para demonstracao.',
                       style: AppTextStyles.bodyLarge.copyWith(
                         color: AppColors.slate900,
                       ),

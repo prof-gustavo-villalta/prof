@@ -66,7 +66,10 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: csvData));
                 if (context.mounted) {
-                  showAppSnackBar(context, 'CSV pronto para copiar');
+                  showAppSnackBar(
+                    context,
+                    'Exportacao de chamada em CSV pronta para copiar',
+                  );
                 }
               },
             ),

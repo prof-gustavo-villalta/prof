@@ -58,7 +58,7 @@ Leia antes de editar:
 - [x] Estados vazios usam um padrao visual consistente para icone, texto, espacamento e bordas.
 - [x] Estados vazios importantes indicam a proxima acao disponivel sem virar texto explicativo longo.
 - [x] Feedbacks temporarios existentes sao revisados para nao criar fluxo modal nem bloquear navegacao.
-- [ ] Mensagens usam termos canonicos do `CONTEXT.md`, como **Turma**, **Disciplina**, **Aluno**, **Grade Semanal**, **Chamada** e **Exportacao de chamada**.
+- [x] Mensagens usam termos canonicos do `CONTEXT.md`, como **Turma**, **Disciplina**, **Aluno**, **Grade Semanal**, **Chamada** e **Exportacao de chamada**.
 - [ ] Erros ou cancelamentos de acoes visuais, como **Foto do aluno**, continuam compreensiveis sem dialog.
 - [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
 - [ ] `flutter analyze` passa.

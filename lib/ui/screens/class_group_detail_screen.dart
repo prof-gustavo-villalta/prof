@@ -195,11 +195,15 @@ class _ClassGroupDetailScreenState extends State<ClassGroupDetailScreen> {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: source, maxWidth: 1024);
     if (image == null) {
-      if (context.mounted) showAppSnackBar(context, 'Foto não alterada');
+      if (context.mounted) {
+        showAppSnackBar(context, 'Foto do aluno nao alterada');
+      }
       return;
     }
     final bytes = await image.readAsBytes();
     await diario.saveStudentPhotoBase64(student, base64Encode(bytes));
-    if (context.mounted) showAppSnackBar(context, 'Foto atualizada');
+    if (context.mounted) {
+      showAppSnackBar(context, 'Foto do aluno atualizada');
+    }
   }
 }
