@@ -61,7 +61,7 @@ Leia antes de editar:
 - [x] Mensagens usam termos canonicos do `CONTEXT.md`, como **Turma**, **Disciplina**, **Aluno**, **Grade Semanal**, **Chamada** e **Exportacao de chamada**.
 - [ ] Erros ou cancelamentos de acoes visuais, como **Foto do aluno**, continuam compreensiveis sem dialog.
 - [ ] `npm run check:ui` passa ou mostra apenas excecoes justificadas com `ui-drift-ok:`.
-- [ ] `flutter analyze` passa.
+- [x] `flutter analyze` passa.
 - [ ] `flutter test` passa.
 
 ## Verification notes
