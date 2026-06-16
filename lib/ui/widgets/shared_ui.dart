@@ -97,44 +97,44 @@ class EmptyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = Padding(
+    final theme = Theme.of(context);
+    final content = _emptyCardContent(theme);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color,
+        border: AppBorders.horizontalWithSides(sideBorders: !noSideBorders),
+      ),
+      child: content,
+    );
+  }
+
+  Widget _emptyCardContent(ThemeData theme) {
+    return Padding(
       padding: AppSpacing.card,
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(
             Icons.info_outline_rounded,
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.5),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
             size: AppSizes.infoIcon,
           ),
-          const SizedBox(width: AppSpacing.xl),
+          const SizedBox(width: AppSpacing.lg),
           Expanded(
             child: Text(
               text,
               style: AppTextStyles.bodyLarge.copyWith(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.72),
                 fontWeight: FontWeight.w600,
               ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
       ),
     );
-
-    if (noSideBorders) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color,
-          border: AppBorders.horizontal,
-        ),
-        child: content,
-      );
-    }
-
-    return Card(child: content);
   }
 }
 
